@@ -80,6 +80,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A -- . ':!.github'
-          git diff --cached --check
           git commit -m 'Publish OpenBumpPlan v0.1.0 source, tests, examples and verified deliverables'
           git push origin HEAD:main
