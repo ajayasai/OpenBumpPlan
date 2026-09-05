@@ -1,0 +1,91 @@
+name: Verify and publish OpenBumpPlan 0.2 candidate
+on:
+  push:
+    branches: [release/v0.2.0-verified-planning]
+    paths: ['.upgrade-v02/ready.json']
+permissions:
+  contents: write
+concurrency:
+  group: openbumpplan-v02-publication
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: release/v0.2.0-verified-planning
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify and apply the prepared source patch
+        run: |
+          python - <<'PY'
+          import base64, hashlib, json, lzma, pathlib, re, subprocess
+          root = pathlib.Path('.').resolve()
+          m = json.loads((root / '.upgrade-v02/ready.json').read_text())
+          assert m['format'] == 'openbumpplan-patch/1'
+          subprocess.run(['git','merge-base','--is-ancestor',m['base_commit'],'HEAD'], check=True)
+          parts = sorted((root / '.upgrade-v02').glob('part-*.b64'))
+          assert len(parts) == m['parts']
+          payload = base64.b64decode(''.join(p.read_text().strip() for p in parts), validate=True)
+          assert hashlib.sha256(payload).hexdigest() == m['archive_sha256'], 'Transfer checksum mismatch'
+          decoder = lzma.LZMADecompressor()
+          patch = decoder.decompress(payload, max_length=500000)
+          assert decoder.eof and not decoder.unused_data, 'Invalid or oversized source patch'
+          numstat = subprocess.check_output(['git','apply','--numstat','-'], input=patch).decode()
+          paths = [line.split('\t',2)[2] for line in numstat.splitlines()]
+          assert len(paths) == len(set(paths)) and set(paths) == set(m['members']), 'Unexpected changed paths'
+          for name in paths:
+              p = pathlib.PurePosixPath(name)
+              assert re.fullmatch(r'[A-Za-z0-9_./-]+', name)
+              assert not p.is_absolute() and '..' not in p.parts and p.parts[0] not in ('.git','.github','.upgrade-v02')
+              assert not (root/name).is_symlink()
+          subprocess.run(['git','apply','--check','-'], input=patch, check=True)
+          subprocess.run(['git','apply','-'], input=patch, check=True)
+          for name, expected in m['members'].items():
+              assert hashlib.sha256((root/name).read_bytes()).hexdigest() == expected, f'Source mismatch: {name}'
+          print(f'Applied {len(paths)} checksum-verified source/document changes')
+          PY
+      - name: Engine tests, standalone build, and reproducible release experiment
+        run: |
+          set -euo pipefail
+          npm test | tee docs/node-v0.2-results.tap
+          npm run build
+          echo '59e0bfbff0a2754563165a348522df14e1e998223d86051137594158b6c80631  dist/openbumpplan.html' | sha256sum --check
+          npm run verify:release
+          node scripts/cli.mjs check examples/chiplet-demo.json
+          node scripts/cli.mjs check examples/chiplet-optimized.json --fail-on warning
+      - name: Install ordinary Chromium for actual browser-origin checks
+        run: |
+          python -m pip install playwright==1.62.0
+          python -m playwright install --with-deps chromium
+      - name: Sixteen browser workflows and native-origin persistence checks
+        run: |
+          CHROMIUM_PATH=$(python -c 'from playwright.sync_api import sync_playwright; p=sync_playwright().start(); print(p.chromium.executable_path); p.stop()')
+          python tests/browser_test.py --chromium "$CHROMIUM_PATH"
+          python tests/native_browser.py --chromium "$CHROMIUM_PATH"
+      - name: Retain verification evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: openbumpplan-v02-verification
+          path: |
+            docs/*v0.2*
+            docs/*workbench.png
+            docs/routing-demo.svg
+            dist/
+      - name: Commit only the fully verified candidate without rewriting history
+        run: |
+          rm -r .upgrade-v02
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- . ':!.github'
+          git diff --cached --check
+          git commit -m 'Implement verified planning: exact bounds, multilayer routes, SHA-256 replay and native browser tests'
+          git push origin HEAD:release/v0.2.0-verified-planning
