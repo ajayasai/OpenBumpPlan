@@ -1,0 +1,104 @@
+{
+  "base_commit": "7e87673bd63b601045c1d5a50e5448051ec759ef",
+  "build_sha256": "3ade9102a2fe1e22e8497b1e15967e9a98fa75580b41d2e628046ba64985e7aa",
+  "files": {
+    "README.md": {
+      "sha256": "a2e0d95af881fe7f6d82b604d02a8e574b6ebc084354e7cf8450e776654bbfdd",
+      "base_blob": "4e2be39a8eb0e0759750a2536622bada7a0c4103"
+    },
+    "CHANGELOG.md": {
+      "sha256": "13211d55c6970fc6cad47cf4ecb12e2636ba96542c32bd258f2ad70830406d31",
+      "base_blob": "c1ec9b04a7ebd5bbe6b8187d8052e2dfd431ec9e"
+    },
+    "SECURITY.md": {
+      "sha256": "d560727a47f5dd98bb8c919b05777325821effc89d76eb2f4b9cd90967af8910",
+      "base_blob": "a631b2fda323872e456e501fdd245d0d0b17baf9"
+    },
+    "package.json": {
+      "sha256": "e68002eab73ca617f1c87df3e476bf4001a37671a63ae8c5fb50670e52ad148f",
+      "base_blob": "5fe57887b030727c3f86429f19e9e1eec394ff55"
+    },
+    "src/app.js": {
+      "sha256": "d7389706f3f35b927c5d26877fb646c60fb4f92ed7317f291d707c9fc8f4e0a8",
+      "base_blob": "e80fb3e0ecdc33077692e1b046af65b8e907bb4c"
+    },
+    "src/styles.css": {
+      "sha256": "e3c3898210bbf2806d3ce7c14e3d6a3dfc8846d63180af7ee0f526ca59b3099b",
+      "base_blob": "87a3995d51ee6e611c8ff4e44ad7a2a4a7e55d2a"
+    },
+    "src/worker.js": {
+      "sha256": "f159897ab771af1e4c3f14e89be87762f0b24d4e224b7b4321eb8d8af3c38936",
+      "base_blob": "55a7e01c3a96969ec03c509a046f9a25f1845658"
+    },
+    "src/core/model.js": {
+      "sha256": "43e1d9438497382a7f761639e3e72badefe732611a305e3e87db4ea38c7fb76f",
+      "base_blob": "c40e6c93385a3a21f33e0892e022bbbb51f92d99"
+    },
+    "src/core/exact.js": {
+      "sha256": "65f63f33752b7ffa3bfbbc2af006090e85239774580709cd801fe9e0acd6ee3d",
+      "base_blob": null
+    },
+    "src/core/routing.js": {
+      "sha256": "43da41a7db9a6e86200e5e53a481d59f9ce132d59b828765c0e1351fe6cddd63",
+      "base_blob": null
+    },
+    "src/core/evidence.js": {
+      "sha256": "4b3e5d7b6c62bbae31bbd153ceb5888d8bfeec985291b3a073cf50fc64c33043",
+      "base_blob": null
+    },
+    "src/lab.js": {
+      "sha256": "324dcf2f3e5b691ae9212fe138daa9cca9e98c3bd0a7488383a6585a35aa2e6f",
+      "base_blob": null
+    },
+    "scripts/cli.mjs": {
+      "sha256": "a1f561d4ae9de412929871519462e4ef64f15a8ea1aba61eba2b997f8a9f441b",
+      "base_blob": "b42cd8913269c7e1857fb9691812463bbe52e6e5"
+    },
+    "scripts/engineering-benchmark.mjs": {
+      "sha256": "137715ac3f13a04e7738f735a1424cbf2c96864e2046ee8b2710bd5eec9add35",
+      "base_blob": null
+    },
+    "tests/browser_test.py": {
+      "sha256": "1bfce01f65031d179d67620cc0e44efbfa23f7b4fd99b2c59885aaa77363062f",
+      "base_blob": "5caa436abed639cea7f3136e2ddc4cdacf7bd95a"
+    },
+    "tests/browser_origin.py": {
+      "sha256": "f23e7cafb2e59bfb28fa172237b26325fa8f4b935ace18409f2cb599afc5834c",
+      "base_blob": null
+    },
+    "tests/exact.test.mjs": {
+      "sha256": "396ff1b72be4c359b75b5135ed6c56b4946cdbae1adeb06276e03949c291a59b",
+      "base_blob": null
+    },
+    "tests/routing.test.mjs": {
+      "sha256": "d60e3e56520078853bb9a34f8da890435857c3cfe55885d47fbcaa1164c01e26",
+      "base_blob": null
+    },
+    "tests/evidence.test.mjs": {
+      "sha256": "ac64fe4b4c974f88a6c07ded02dbac640188faaa8fd34e83fa32321587816c47",
+      "base_blob": null
+    },
+    "tests/engineering-cli.test.mjs": {
+      "sha256": "515f3311522f167eb2f4696c685747c2f6b072125ec4d5a5e0628d44baa2c751",
+      "base_blob": null
+    },
+    "docs/ENGINEERING.md": {
+      "sha256": "c9a004d92e68395677ac9e026975b8f7ceb6926839bbd8e386ea7ee13a218a7a",
+      "base_blob": null
+    },
+    "docs/VALIDATION-v0.2.md": {
+      "sha256": "f1f6dec1a68f6c597771e92aa499d81f0dc3e88372a06bf6b3747061dc5b3c0c",
+      "base_blob": null
+    },
+    "docs/ARCHITECTURE.md": {
+      "sha256": "b7ad7682fafa5759d68333501d2eee7df926bbba5e02d2ba898040044d44c5fc",
+      "base_blob": "63e879004893a717da70e12dbb0dec44da5a06a6"
+    },
+    "docs/COMPETITIVE_SCOPE.md": {
+      "sha256": "02a753de7d729307f95c7c3757e148af5be5ad56106189c4731b99f88b67cf94",
+      "base_blob": "d02d6be775e384d42c82372da5260657ba121de2"
+    }
+  },
+  "archive_sha256": "a19169728adbe68d2a484d391f668fc4ab199487f5c1fe0854b19074a6c276fd",
+  "parts": 9
+}

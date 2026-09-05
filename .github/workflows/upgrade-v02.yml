@@ -1,0 +1,97 @@
+name: Verify prepared engineering upgrade
+on:
+  push:
+    branches: [engineering-v0.2]
+    paths: ['.upgrade/ready.json']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: engineering-upgrade-import
+  cancel-in-progress: false
+jobs:
+  import:
+    if: github.ref == 'refs/heads/engineering-v0.2'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: engineering-v0.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify archive, per-file checksums and unchanged base before writing
+        run: |
+          python - <<'PY'
+          import base64, hashlib, io, json, lzma, pathlib, tarfile
+          root = pathlib.Path('.').resolve()
+          manifest = json.loads((root/'.upgrade/ready.json').read_text())
+          parts = sorted((root/'.upgrade').glob('part-*.b64'))
+          if len(parts) != manifest['parts'] or len(parts) != 9:
+              raise SystemExit('Unexpected transfer chunk count')
+          payload = base64.b64decode(''.join(p.read_text().strip() for p in parts), validate=True)
+          if hashlib.sha256(payload).hexdigest() != manifest['archive_sha256']:
+              raise SystemExit('Archive checksum mismatch: no files changed')
+          with tarfile.open(fileobj=io.BytesIO(lzma.decompress(payload)), mode='r:') as archive:
+              members = archive.getmembers()
+              expected = manifest['files']
+              if len(members) != len(expected) or {m.name for m in members} != set(expected):
+                  raise SystemExit('Unexpected archive members')
+              verified = []
+              for item in members:
+                  p = pathlib.PurePosixPath(item.name)
+                  if not item.isfile() or p.is_absolute() or '..' in p.parts or p.parts[0] in ('.git','.github','.upgrade') or item.size > 1000000:
+                      raise SystemExit('Unsafe archive member')
+                  target = root/item.name
+                  if target.is_symlink() or not target.resolve().is_relative_to(root):
+                      raise SystemExit('Unsafe target')
+                  spec = expected[item.name]
+                  if spec['base_blob'] is None:
+                      if target.exists():
+                          raise SystemExit('New target already exists: '+item.name)
+                  else:
+                      current = target.read_bytes()
+                      blob = hashlib.sha1(b'blob '+str(len(current)).encode()+b'\0'+current).hexdigest()
+                      if blob != spec['base_blob']:
+                          raise SystemExit('Existing source changed: '+item.name)
+                  content = archive.extractfile(item).read()
+                  if hashlib.sha256(content).hexdigest() != spec['sha256']:
+                      raise SystemExit('Source checksum mismatch: '+item.name)
+                  verified.append((target,content))
+              for target,content in verified:
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  target.write_bytes(content)
+          print('Verified and imported',len(verified),'source files')
+          PY
+      - name: Install browser-only test dependencies
+        run: |
+          python -m pip install playwright==1.62.0
+          python -m playwright install --with-deps chromium
+      - name: Execute full engineering verification
+        shell: bash
+        run: |
+          bash scripts/verify-ci.sh
+          echo '3ade9102a2fe1e22e8497b1e15967e9a98fa75580b41d2e628046ba64985e7aa  dist/openbumpplan.html' | sha256sum --check
+      - name: Commit only verified source, examples and reports to the upgrade branch
+        run: |
+          rm -r .upgrade
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- . ':!.github'
+          git diff --cached --check
+          git commit -m 'Implement v0.2.0 bounded exact planning, grid routing, revision evidence and verified browser workflows'
+          git push origin HEAD:engineering-v0.2
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: prepared-engineering-upgrade
+          path: |
+            dist/
+            docs/*v0.2*
+            docs/browser-origin-results.json
+            docs/engineering-benchmark.json
+            examples/*evidence.json

@@ -1,22 +1,40 @@
-name: Planning engine checks
+name: Engineering verification
 on:
   push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  test:
+  verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm test
-      - run: npm run build
-      - run: node scripts/cli.mjs check examples/chiplet-demo.json
-      - run: node scripts/cli.mjs check examples/chiplet-optimized.json --fail-on warning
-      - uses: actions/upload-artifact@v4
+      - uses: actions/setup-python@v5
         with:
-          name: openbumpplan-offline
-          path: dist/
+          python-version: '3.12'
+      - name: Install browser-only test dependencies
+        run: |
+          python -m pip install playwright==1.62.0
+          python -m playwright install --with-deps chromium
+      - name: Engine, exhaustive oracle, routes, evidence and real browser workflows
+        shell: bash
+        run: bash scripts/verify-ci.sh
+      - name: Standalone distribution must match checked-in source
+        run: git diff --exit-code -- dist/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: engineering-verification
+          path: |
+            dist/
+            docs/*v0.2*
+            docs/browser-origin-results.json
+            docs/engineering-benchmark.json
+            docs/engineering-screenshot.png
+            examples/*evidence.json
