@@ -1,0 +1,21 @@
+{
+  "version": "0.1.0",
+  "sourceFiles": 62,
+  "nodeTests": {
+    "passed": 151,
+    "failed": 0
+  },
+  "browserScenarios": {
+    "passed": 12,
+    "failed": 0
+  },
+  "httpChecks": {
+    "passed": 7,
+    "failed": 0
+  },
+  "examplePdfPages": 6,
+  "repositoryPublished": false,
+  "publicationBlocker": "Available connected GitHub actions do not include repository creation or visibility updates.",
+  "appSha256": "be83a745173d6af90e64ea370dc9787ffa4bedb748bf826aabf369667a2a7d75",
+  "benchmarkSource": "docs/benchmark-results.json"
+}

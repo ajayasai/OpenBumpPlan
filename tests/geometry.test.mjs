@@ -1,0 +1,17 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {manhattan,euclidean,segmentRelation,crossingAnalysis,SpatialIndex,insideRect} from '../src/core/geometry.js';import {seeded} from './helpers.mjs';
+const p=(x,y)=>({x,y});
+test('Manhattan metric',()=>assert.equal(manhattan(p(-2,4),p(3,-1)),10));
+test('Euclidean metric',()=>assert.equal(euclidean(p(0,0),p(3,4)),5));
+test('proper crossing',()=>assert.equal(segmentRelation(p(0,0),p(10,10),p(0,10),p(10,0)),'cross'));
+test('endpoint touching excluded',()=>assert.equal(segmentRelation(p(0,0),p(10,10),p(10,10),p(20,0)),null));
+test('collinear overlap separate from crossing',()=>assert.equal(segmentRelation(p(0,0),p(10,0),p(5,0),p(15,0)),'overlap'));
+test('collinear nonoverlap',()=>assert.equal(segmentRelation(p(0,0),p(1,0),p(2,0),p(3,0)),null));
+test('zero-length assignment excluded',()=>assert.equal(segmentRelation(p(1,1),p(1,1),p(0,0),p(2,2)),null));
+test('rectangle boundary inclusive',()=>assert.equal(insideRect(p(10,10),{x:0,y:0,width:10,height:10}),true));
+const segs=[{id:'a',from:'a1',to:'a2',a:p(0,0),b:p(10,10),net:'A',stage:'s'},{id:'b',from:'b1',to:'b2',a:p(0,10),b:p(10,0),net:'B',stage:'s'}];
+test('same-stage crossings counted',()=>assert.equal(crossingAnalysis(segs).crossings,1));
+test('different-stage projected crossing ignored',()=>assert.equal(crossingAnalysis([segs[0],{...segs[1],stage:'t'}]).crossings,0));
+test('same-net crossing ignored',()=>assert.equal(crossingAnalysis([segs[0],{...segs[1],net:'A'}]).crossings,0));
+test('budget exhaustion explicitly incomplete',()=>assert.equal(crossingAnalysis(segs,0).complete,false));
+test('spatial index agrees with brute force including negative coordinates',()=>{const rand=seeded(12),items=Array.from({length:200},(_,id)=>({id,x:rand()*1000-500,y:rand()*1000-500})),idx=new SpatialIndex(items,30);for(let j=0;j<30;j++){const q=p(rand()*1000-500,rand()*1000-500),r=rand()*80;assert.deepEqual(idx.near(q,r).map(n=>n.id).sort(),items.filter(n=>euclidean(q,n)<=r+1e-8).map(n=>n.id).sort());}});
+test('sweep agrees with exhaustive pair checking',()=>{const rand=seeded(3),s=Array.from({length:60},(_,i)=>({id:`e${i}`,from:`s${i}`,to:`t${i}`,a:p(rand()*100,rand()*100),b:p(rand()*100,rand()*100),stage:'s',net:`N${i}`}));let expected=0;for(let i=0;i<s.length;i++)for(let j=i+1;j<s.length;j++)if(segmentRelation(s[i].a,s[i].b,s[j].a,s[j].b)==='cross')expected++;assert.equal(crossingAnalysis(s).crossings,expected);});

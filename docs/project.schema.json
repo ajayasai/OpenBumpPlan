@@ -1,0 +1,616 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OpenBumpPlan normalized project v1",
+  "description": "Structural normalized format. Runtime checks additionally validate references, unique IDs, pair/polarity consistency, and strictly forward stage pairs.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "units": {
+      "const": "um"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 512,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]*$",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 10000
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "dies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/die"
+      },
+      "maxItems": 1000
+    },
+    "ports": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/port"
+      },
+      "maxItems": 10000
+    },
+    "connections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/connection"
+      },
+      "maxItems": 20000
+    },
+    "keepouts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/keepout"
+      },
+      "maxItems": 1000
+    },
+    "regions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/region"
+      },
+      "maxItems": 1000
+    },
+    "rules": {
+      "$ref": "#/$defs/rules"
+    },
+    "audit": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/audit"
+      },
+      "maxItems": 200
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "units",
+    "name",
+    "description",
+    "revision",
+    "dies",
+    "ports",
+    "connections",
+    "keepouts",
+    "regions",
+    "rules",
+    "audit"
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "die": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "x": {
+          "type": "number",
+          "minimum": -1000000000.0,
+          "maximum": 1000000000.0
+        },
+        "y": {
+          "type": "number",
+          "minimum": -1000000000.0,
+          "maximum": 1000000000.0
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "exclusiveMinimum": 0
+        },
+        "rotation": {
+          "enum": [
+            0,
+            90,
+            180,
+            270
+          ]
+        },
+        "mirrorX": {
+          "type": "boolean"
+        },
+        "edgeKeepout": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0
+        },
+        "cornerKeepout": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "x",
+        "y",
+        "width",
+        "height",
+        "rotation",
+        "mirrorX",
+        "edgeKeepout",
+        "cornerKeepout"
+      ],
+      "additionalProperties": true
+    },
+    "port": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "kind": {
+          "enum": [
+            "pad",
+            "bump",
+            "interposer",
+            "ball",
+            "pcb"
+          ]
+        },
+        "dieId": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "x": {
+          "type": "number",
+          "minimum": -1000000000.0,
+          "maximum": 1000000000.0
+        },
+        "y": {
+          "type": "number",
+          "minimum": -1000000000.0,
+          "maximum": 1000000000.0
+        },
+        "net": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "domain": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "role": {
+          "enum": [
+            "any",
+            "signal",
+            "clock",
+            "power",
+            "ground",
+            "reserved",
+            "nc"
+          ]
+        },
+        "pair": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "polarity": {
+          "enum": [
+            "",
+            "+",
+            "-"
+          ]
+        },
+        "locked": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "kind",
+        "dieId",
+        "x",
+        "y",
+        "net",
+        "domain",
+        "role",
+        "pair",
+        "polarity",
+        "locked",
+        "required"
+      ],
+      "additionalProperties": true
+    },
+    "connection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$",
+          "minLength": 1
+        },
+        "from": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$",
+          "minLength": 1
+        },
+        "to": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$",
+          "minLength": 1
+        },
+        "net": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "locked": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "from",
+        "to",
+        "net",
+        "locked"
+      ],
+      "additionalProperties": true
+    },
+    "keepout": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$",
+          "minLength": 1
+        },
+        "x": {
+          "type": "number",
+          "minimum": -1000000000.0,
+          "maximum": 1000000000.0
+        },
+        "y": {
+          "type": "number",
+          "minimum": -1000000000.0,
+          "maximum": 1000000000.0
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "exclusiveMinimum": 0
+        },
+        "dieId": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "kinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "pad",
+              "bump",
+              "interposer",
+              "ball",
+              "pcb"
+            ]
+          }
+        }
+      },
+      "required": [
+        "id",
+        "x",
+        "y",
+        "width",
+        "height",
+        "dieId",
+        "kinds"
+      ],
+      "additionalProperties": true
+    },
+    "region": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$",
+          "minLength": 1
+        },
+        "x": {
+          "type": "number",
+          "minimum": -1000000000.0,
+          "maximum": 1000000000.0
+        },
+        "y": {
+          "type": "number",
+          "minimum": -1000000000.0,
+          "maximum": 1000000000.0
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "exclusiveMinimum": 0
+        },
+        "kind": {
+          "enum": [
+            "pad",
+            "bump",
+            "interposer",
+            "ball",
+            "pcb"
+          ]
+        },
+        "domain": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "minGround": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minPower": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "x",
+        "y",
+        "width",
+        "height",
+        "kind",
+        "domain",
+        "minGround",
+        "minPower"
+      ],
+      "additionalProperties": true
+    },
+    "rules": {
+      "type": "object",
+      "properties": {
+        "maxLength": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "default": 4000
+        },
+        "minDomainSpacing": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "default": 0
+        },
+        "pairMaxDistance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "default": 650
+        },
+        "pairMaxSkew": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "default": 150
+        },
+        "clockShieldRadius": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "default": 750
+        },
+        "clockGroundMin": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "default": 1
+        },
+        "groundRadius": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "default": 1000
+        },
+        "powerRadius": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "default": 1400
+        },
+        "requirePowerForSignals": {
+          "type": "boolean",
+          "default": false
+        },
+        "minGroundRatio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.15
+        },
+        "crossingWeight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "default": 150
+        },
+        "maxCrossings": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000.0,
+          "default": 0
+        },
+        "geometryBudget": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 10000000,
+          "default": 1000000
+        },
+        "terminalKind": {
+          "enum": [
+            "pad",
+            "bump",
+            "interposer",
+            "ball",
+            "pcb"
+          ],
+          "default": "ball"
+        },
+        "requireCompletePaths": {
+          "type": "boolean",
+          "default": false
+        },
+        "allowedStagePairs": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "enum": [
+                  "pad",
+                  "bump",
+                  "interposer",
+                  "ball",
+                  "pcb"
+                ]
+              },
+              {
+                "enum": [
+                  "pad",
+                  "bump",
+                  "interposer",
+                  "ball",
+                  "pcb"
+                ]
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "default": [
+            [
+              "pad",
+              "bump"
+            ],
+            [
+              "pad",
+              "ball"
+            ],
+            [
+              "bump",
+              "interposer"
+            ],
+            [
+              "bump",
+              "ball"
+            ],
+            [
+              "interposer",
+              "ball"
+            ],
+            [
+              "ball",
+              "pcb"
+            ]
+          ]
+        }
+      },
+      "required": [
+        "maxLength",
+        "minDomainSpacing",
+        "pairMaxDistance",
+        "pairMaxSkew",
+        "clockShieldRadius",
+        "clockGroundMin",
+        "groundRadius",
+        "powerRadius",
+        "requirePowerForSignals",
+        "minGroundRatio",
+        "crossingWeight",
+        "maxCrossings",
+        "geometryBudget",
+        "terminalKind",
+        "requireCompletePaths",
+        "allowedStagePairs"
+      ],
+      "additionalProperties": false
+    },
+    "audit": {
+      "type": "object",
+      "required": [
+        "action",
+        "time"
+      ],
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "time": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fingerprint": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

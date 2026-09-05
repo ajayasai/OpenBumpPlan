@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Local-first die/package bump and ball-map planning. Inspect, constrain, optimize, compare, and export without uploading design data.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; font-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>OpenBumpPlan — package planning studio</title>
+  <style>
+:root{--bg:#0b111b;--surface:#111a28;--raised:#172335;--border:#263449;--text:#e5edf7;--muted:#90a1b9;--accent:#5fe1cc;--error:#f57883;--warn:#f4b56a;font:13px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:var(--bg)}*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit;color:inherit}button,select,input,textarea{border:1px solid var(--border);border-radius:7px;background:var(--raised)}button{padding:8px 12px;cursor:pointer;white-space:nowrap}button:hover{border-color:#5e7597;background:#22344c}button:disabled{opacity:.4;cursor:not-allowed}button.primary{background:var(--accent);border-color:var(--accent);color:#092724;font-weight:750}button.danger{color:var(--error)}button.quiet{background:transparent}button.active,.tabs button.active,.modes button.active{border-color:#477d7b;color:var(--accent);background:#143334}input,select{padding:7px 9px;min-width:0}textarea{padding:12px;line-height:1.5;resize:vertical;width:100%;font-family:ui-monospace,monospace;font-size:12px}input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;vertical-align:middle}label{display:block;color:var(--muted);font-size:12px}label>input:not([type=checkbox]),label>select{display:block;width:100%;margin-top:4px}input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}h1,h2,h3,p{margin:0}h2{font-size:19px}h3{font-size:13px;font-weight:650}small,.muted{color:var(--muted)}.skip{position:absolute;top:-50px;left:10px;z-index:20;background:var(--accent);padding:10px;color:#000}.skip:focus{top:5px}.brandbar{min-height:70px;display:flex;align-items:center;gap:14px;padding:12px 22px;border-bottom:1px solid var(--border)}.brandicon{width:37px;height:37px;background:linear-gradient(135deg,#5fe1cc 0 28%,transparent 28% 38%,#76b6ff 38% 66%,transparent 66% 76%,#b69af9 76%);border-radius:9px;transform:rotate(-8deg)}.brandname{font-size:19px;letter-spacing:-.6px;font-weight:730;line-height:1.1}.brandtag{font-size:10px;color:var(--muted);letter-spacing:1.3px;margin-top:5px}.version{font-size:10px;border:1px solid var(--border);border-radius:4px;padding:3px 6px;color:var(--muted)}.spacer{flex:1}.inline{display:flex;align-items:center;gap:8px}.brandbar .privacy{color:var(--accent);font-size:11px}.projectbar{min-height:54px;padding:0 22px;display:flex;align-items:center;gap:18px;border-bottom:1px solid var(--border)}.projectname{font-size:12px;max-width:400px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}.tabs{display:flex;align-self:stretch;gap:5px}.tabs button{background:transparent;border:0;border-radius:0;border-bottom:2px solid transparent;font-size:12px;padding:14px 12px}.tabs button.active{border-bottom-color:var(--accent);background:transparent}.metrics{display:grid;grid-template-columns:1.35fr repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border)}.metric{background:var(--surface);padding:15px 22px}.metric .label{font-size:10px;color:var(--muted);letter-spacing:1.1px;text-transform:uppercase}.metric .value{font-size:25px;font-weight:650;letter-spacing:-.5px;line-height:1.3}.metric .unit{font-size:11px;color:var(--muted);font-weight:400;margin-left:4px}.metric .detail{font-size:10px;color:var(--muted);margin-top:3px}.metric .value.good{color:var(--accent)}.metric .value.bad{color:var(--error)}.metric .value.warn{color:var(--warn)}.workspace{display:grid;grid-template-columns:220px minmax(350px,1fr) 315px;height:calc(100vh - 250px);min-height:580px}.panel{background:var(--surface);overflow:auto}.left{border-right:1px solid var(--border)}.right{border-left:1px solid var(--border)}.section{padding:17px 16px;border-bottom:1px solid var(--border)}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:12px}.layer{display:flex;align-items:center;gap:8px;padding:7px 0;font-size:12px;color:var(--text)}.layer .dot{width:8px;height:8px;border-radius:50%}.layer .count{margin-left:auto;color:var(--muted);font-size:11px}.diebutton{width:100%;text-align:left;margin-bottom:7px;padding:9px;font-size:11px}.diebutton small{display:block;font-size:10px}.stackform{display:grid;gap:10px}.hint{font-size:11px;color:var(--muted);line-height:1.7;margin-top:9px}.canvasarea{position:relative;display:flex;flex-direction:column;min-width:0;background:#0e1522}.canvasbar{height:50px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:8px 12px;background:#111a28c9;border-bottom:1px solid var(--border)}.modes{display:flex;gap:4px}.canvasbar button,.canvasbar select{font-size:11px;padding:6px 8px}.canvasbar input{width:58px;font-size:11px;padding:5px}.canvaswrap{flex:1;position:relative;min-height:400px;overflow:hidden;background-image:radial-gradient(#29364b .65px,transparent .65px);background-size:19px 19px}#map{width:100%;height:100%;display:block;touch-action:none;user-select:none}#map .port{cursor:pointer}#map .port:focus{outline:none}#map .port:focus circle{stroke:#fff;stroke-width:2}.canvaslegend{position:absolute;bottom:15px;left:15px;background:#111a28eb;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:10px;color:var(--muted);max-width:calc(100% - 30px);pointer-events:none}.canvaslegend b{color:var(--text);font-weight:500}.canvasfoot{padding:8px 13px;font-size:10px;color:var(--muted);border-top:1px solid var(--border);display:flex;gap:10px;align-items:center}.pill{font-size:10px;padding:3px 7px;border:1px solid var(--border);border-radius:10px;display:inline-block}.pill.good{color:var(--accent);border-color:#2a635d}.pill.bad{color:var(--error);border-color:#6e3744}.pill.warn{color:var(--warn);border-color:#715637}.issue{width:100%;white-space:normal;display:block;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--border);border-radius:0;padding:13px 16px;font-size:11px;line-height:1.6}.issue .code{color:var(--error);font-size:10px;letter-spacing:.5px}.issue.warning .code{color:var(--warn)}.issue .message{display:block;color:#b6c3d5;margin-top:3px}.empty{padding:24px 16px;color:var(--muted);font-size:12px;line-height:1.8}.empty .symbol{font-size:24px;color:var(--accent);margin-bottom:8px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.actions button{font-size:11px}.inspector-title{word-break:break-all;font-size:13px;margin:0 0 4px}.footer{min-height:31px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:7px 22px;color:var(--muted);font-size:10px}.contentpage{height:calc(100vh - 250px);min-height:580px;overflow:auto;padding:25px 30px}.pageheading{display:flex;align-items:center;gap:16px;margin-bottom:20px}.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin:14px 0}.card p{color:var(--muted);font-size:12px;margin:9px 0}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:20px}.twocol>.card{margin:0}table{width:100%;border-collapse:collapse;font-size:11px;text-align:left}th{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);padding:11px 10px;background:#162132;position:sticky;top:0}td{padding:10px;border-bottom:1px solid var(--border);overflow-wrap:anywhere;max-width:280px}tr:hover td{background:#142232}.tablewrap{border:1px solid var(--border);border-radius:8px;overflow:auto}.linkbutton{border:0;background:transparent;padding:0;color:var(--accent);white-space:normal;text-align:left;font:inherit}.rulegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.notice{padding:12px 15px;background:#213024;border:1px solid #3c644a;border-radius:7px;font-size:12px;color:#c9e6d1;margin:13px 0}.notice.warn{background:#34291b;border-color:#6b512c;color:#ecd4af}.notice.bad{background:#321e29;border-color:#733846;color:#f3c1c7}.revisionstats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.revisionstats .card{margin:0}.big{font-size:27px;line-height:1.3}.icdframe{width:100%;height:650px;border:1px solid var(--border);border-radius:10px;background:white}.mono{font-family:ui-monospace,monospace}.legend-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px}.hide{display:none!important}dialog{background:var(--surface);color:var(--text);border:1px solid #3b4b65;border-radius:12px;padding:25px;max-width:760px;width:calc(100vw - 40px);max-height:90vh;box-shadow:0 25px 100px #0009}dialog::backdrop{background:#030810ad;backdrop-filter:blur(3px)}dialog h2{margin-bottom:8px}dialog p{font-size:12px;color:var(--muted);margin-bottom:20px}dialog textarea{min-height:240px}dialog .actions{justify-content:flex-end;margin-top:20px}dialog .error{color:var(--error);white-space:pre-wrap;font-size:12px;margin-top:14px}#toast{position:fixed;bottom:45px;left:50%;transform:translate(-50%,20px);background:#e1f7ef;color:#102d25;border-radius:9px;padding:13px 19px;max-width:700px;box-shadow:0 8px 30px #0005;opacity:0;pointer-events:none;transition:.15s;z-index:100;font-size:12px}#toast.show{opacity:1;transform:translate(-50%,0)}#toast.error{background:#ffe0e4;color:#572331}.busy{display:flex;align-items:center;gap:8px;color:var(--accent);font-size:11px}.spinner{width:12px;height:12px;border:2px solid #315350;border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:1200px){.workspace{grid-template-columns:185px minmax(320px,1fr) 280px}.brandbar{gap:9px;padding:12px}.privacy,.version{display:none}.metric{padding:13px 16px}.projectname{max-width:250px}.canvasbar{flex-wrap:wrap;height:auto;min-height:50px}.section{padding:14px 12px}}@media(max-width:900px){.workspace{grid-template-columns:minmax(350px,1fr) 270px}.left{display:none}.projectname{display:none}.brandbar{flex-wrap:wrap}.brandbar .spacer{display:none}.metrics{grid-template-columns:repeat(5,1fr)}.metric .value{font-size:20px}.metric .detail{display:none}.metric{padding:10px}.twocol{grid-template-columns:1fr}.rulegrid{grid-template-columns:1fr 1fr}}@media(max-width:650px){.workspace{display:flex;flex-direction:column;height:auto}.canvasarea{height:560px}.right{border-left:0}.brandname{font-size:17px}.brandbar button{font-size:10px;padding:6px}.projectbar{padding:0 6px;overflow:auto}.tabs button{padding:12px 9px}.metrics{grid-template-columns:repeat(3,1fr)}.metrics .metric:nth-child(n+4){display:none}.contentpage{height:auto;padding:18px 12px}.revisionstats{grid-template-columns:1fr 1fr}.footer{flex-wrap:wrap}.pageheading{flex-wrap:wrap}}
+
+.canvasbar #snap{width:58px;display:inline-block;margin:0 0 0 5px}.canvasbar label{white-space:nowrap}
+
+</style>
+</head>
+<body>
+  <a class="skip" href="#workspace">Skip to workspace</a>
+  <div id="app"></div>
+  <dialog id="dialog"></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <noscript>This application requires JavaScript. No design data is uploaded to a server.</noscript>
+  <script type="module">
+globalThis.OPENBUMPPLAN_WORKER_SOURCE="\"use strict\";\nconst __mods=Object.create(null);\n__mods[\"src/core/model.js\"] = (()=>{\n/** Canonical, dependency-free model. All geometry is micrometres, right-handed XY. */\nconst VERSION = '0.1.0';\nconst KINDS = ['pad', 'bump', 'interposer', 'ball', 'pcb'];\nconst ROLES = ['any', 'signal', 'clock', 'power', 'ground', 'reserved', 'nc'];\nconst DEFAULT_RULES = Object.freeze({\n  maxLength: 4000, minDomainSpacing: 0, pairMaxDistance: 650, pairMaxSkew: 150,\n  clockShieldRadius: 750, clockGroundMin: 1, groundRadius: 1000,\n  powerRadius: 1400, requirePowerForSignals: false, minGroundRatio: 0.15,\n  crossingWeight: 150, maxCrossings: 0, geometryBudget: 1000000,\n  terminalKind: 'ball', requireCompletePaths: false,\n  allowedStagePairs: [['pad','bump'], ['pad','ball'], ['bump','interposer'],\n    ['bump','ball'], ['interposer','ball'], ['ball','pcb']]\n});\nconst clone = value => structuredClone(value);\nconst rank = kind => KINDS.indexOf(kind);\nconst emptyProject = (name = 'Untitled package') => ({\n  schemaVersion: 1, name, revision: 0, units: 'um', description: '',\n  dies: [], ports: [], connections: [], keepouts: [], regions: [],\n  rules: clone(DEFAULT_RULES), audit: []\n});\nfunction stableStringify(value) {\n  if (Array.isArray(value)) return '[' + value.map(stableStringify).join(',') + ']';\n  if (value && typeof value === 'object') return '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + stableStringify(value[k])).join(',') + '}';\n  return JSON.stringify(value);\n}\n/** Review identifier, NOT a cryptographic signature or tamper-proof audit. */\nfunction fingerprint(p) {\n  const copy = clone(p); delete copy.audit; delete copy.revision;\n  for (const key of ['dies','ports','connections','keepouts','regions']) copy[key]?.sort((a,b) => a.id.localeCompare(b.id));\n  let h = 2166136261;\n  for (const c of stableStringify(copy)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }\n  return (h >>> 0).toString(16).padStart(8, '0');\n}\nfunction normalizeProject(raw) {\n  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Project must be a JSON object.');\n  if (raw.schemaVersion !== 1) throw new Error('Unsupported schemaVersion; expected 1.');\n  const p = clone(raw);\n  p.description ??= ''; p.revision ??= 0; p.audit ??= [];\n  for (const key of ['dies','ports','connections','keepouts','regions']) p[key] ??= [];\n  p.rules = { ...clone(DEFAULT_RULES), ...p.rules };\n  p.dies = p.dies.map(d => ({name: d.id, rotation: 0, mirrorX: false, edgeKeepout: 0, cornerKeepout: 0, ...d}));\n  p.ports = p.ports.map(n => ({label: n.id, dieId: '', net: '', domain: '', role: 'any', pair: '', polarity: '', locked: false, required: false, ...n}));\n  p.connections = p.connections.map(e => ({net: '', locked: false, ...e}));\n  p.keepouts = p.keepouts.map(k => ({dieId: '', kinds: clone(KINDS), ...k}));\n  p.regions = p.regions.map(r => ({kind: 'ball', domain: '', minGround: 0, minPower: 0, ...r}));\n  assertProject(p);\n  return p;\n}\nfunction assertProject(p) {\n  const errors = [];\n  const need = (yes, text) => { if (!yes) errors.push(text); };\n  const number = n => typeof n === 'number' && Number.isFinite(n) && Math.abs(n) <= 1e9;\n  const string = s => typeof s === 'string' && s.length <= 512 && !/[\\u0000-\\u001f\\u007f]/.test(s);\n  const array = (a, name, cap) => { need(Array.isArray(a), `${name} must be an array`); if (Array.isArray(a)) need(a.length <= cap, `${name} exceeds the ${cap} item safety limit`); return Array.isArray(a) ? a : []; };\n  need(p.schemaVersion === 1, 'schemaVersion must be 1');\n  need(p.units === 'um', 'Canonical units must be um; use import conversion for mm/nm.');\n  need(string(p.name) && p.name.length > 0, 'name must be a nonempty string of at most 512 characters');\n  need(typeof p.description === 'string' && p.description.length <= 10000, 'description must be text, at most 10000 characters');\n  need(Number.isSafeInteger(p.revision) && p.revision >= 0, 'revision must be a nonnegative integer');\n  const dies = array(p.dies, 'dies', 1000), ports = array(p.ports, 'ports', 10000), edges = array(p.connections, 'connections', 20000);\n  const keepouts = array(p.keepouts, 'keepouts', 1000), regions = array(p.regions, 'regions', 1000);\n  const audit = array(p.audit, 'audit', 200);\n  for (const a of audit) need(a && typeof a === 'object' && typeof a.action === 'string' && typeof a.time === 'string', 'Audit entries need action and time strings');\n  const ids = (items, label) => { const set = new Set(); for (const item of items) {\n    if (!item || typeof item !== 'object' || Array.isArray(item)) { errors.push(`${label} item must be an object`); continue; }\n    need(string(item.id) && item.id.length > 0, `${label} id must be nonempty text`);\n    need(!set.has(item.id), `Duplicate ${label} id: ${item.id}`); set.add(item.id);\n  } return set; };\n  const dieIds = ids(dies, 'die'), portIds = ids(ports, 'port'); ids(edges, 'connection'); ids(keepouts, 'keepout'); ids(regions, 'region');\n  for (const d of dies.filter(Boolean)) {\n    for (const key of ['x','y','width','height','edgeKeepout','cornerKeepout']) need(number(d[key]), `Die ${d.id}: invalid ${key}`);\n    need(d.width > 0 && d.height > 0, `Die ${d.id}: width and height must be positive`);\n    need(d.edgeKeepout >= 0 && d.cornerKeepout >= 0, `Die ${d.id}: keep-outs cannot be negative`);\n    need([0,90,180,270].includes(d.rotation), `Die ${d.id}: rotation must be 0/90/180/270`);\n    need(typeof d.mirrorX === 'boolean', `Die ${d.id}: mirrorX must be boolean`);\n    need(string(d.name), `Die ${d.id}: invalid name`);\n  }\n  for (const n of ports.filter(Boolean)) {\n    need(KINDS.includes(n.kind), `Port ${n.id}: unknown kind ${n.kind}`);\n    need(ROLES.includes(n.role), `Port ${n.id}: unknown role ${n.role}`);\n    need(number(n.x) && number(n.y), `Port ${n.id}: coordinates must be finite numbers`);\n    need(!n.dieId || dieIds.has(n.dieId), `Port ${n.id}: unknown die ${n.dieId}`);\n    for (const key of ['label','dieId','net','domain','pair','polarity']) need(string(n[key]), `Port ${n.id}: invalid ${key}`);\n    need(['','+','-'].includes(n.polarity), `Port ${n.id}: polarity must be +, -, or empty`);\n    need(Boolean(n.pair) === Boolean(n.polarity), `Port ${n.id}: pair and polarity must be supplied together`);\n    need(typeof n.locked === 'boolean' && typeof n.required === 'boolean', `Port ${n.id}: locked/required must be boolean`);\n  }\n  for (const e of edges.filter(Boolean)) {\n    need(portIds.has(e.from) && portIds.has(e.to), `Connection ${e.id}: dangling endpoint`);\n    need(e.from !== e.to, `Connection ${e.id}: cannot connect a port to itself`);\n    need(typeof e.locked === 'boolean' && string(e.net), `Connection ${e.id}: invalid net or locked value`);\n  }\n  for (const k of [...keepouts, ...regions].filter(Boolean)) {\n    for (const key of ['x','y','width','height']) need(number(k[key]), `Region ${k.id}: invalid ${key}`);\n    need(k.width > 0 && k.height > 0, `Region ${k.id}: size must be positive`);\n  }\n  for (const k of keepouts.filter(Boolean)) {\n    need(!k.dieId || dieIds.has(k.dieId), `Keep-out ${k.id}: unknown die`);\n    need(Array.isArray(k.kinds) && k.kinds.every(v => KINDS.includes(v)), `Keep-out ${k.id}: invalid kinds`);\n  }\n  for (const r of regions.filter(Boolean)) {\n    need(KINDS.includes(r.kind) && string(r.domain), `Region ${r.id}: invalid kind/domain`);\n    need(Number.isInteger(r.minGround) && r.minGround >= 0 && Number.isInteger(r.minPower) && r.minPower >= 0, `Region ${r.id}: quotas must be nonnegative integers`);\n  }\n  const rules = p.rules || {};\n  for (const key of Object.keys(rules)) need(Object.hasOwn(DEFAULT_RULES,key), `Unknown rule ${key}; check the spelling/schema.`);\n  for (const key of ['maxLength','minDomainSpacing','pairMaxDistance','pairMaxSkew','clockShieldRadius','clockGroundMin','groundRadius','powerRadius','minGroundRatio','crossingWeight','maxCrossings','geometryBudget']) need(number(rules[key]) && rules[key] >= 0, `Rule ${key} must be a finite nonnegative number`);\n  need(rules.minGroundRatio <= 1, 'minGroundRatio must be <= 1');\n  need(Number.isInteger(rules.geometryBudget) && rules.geometryBudget >= 100 && rules.geometryBudget <= 10000000, 'geometryBudget must be an integer from 100 to 10000000');\n  need(Number.isInteger(rules.clockGroundMin) && Number.isInteger(rules.maxCrossings), 'clockGroundMin/maxCrossings must be integers');\n  need(KINDS.includes(rules.terminalKind), 'Unknown terminalKind');\n  need(typeof rules.requirePowerForSignals === 'boolean' && typeof rules.requireCompletePaths === 'boolean', 'Boolean rules must be true/false');\n  need(Array.isArray(rules.allowedStagePairs) && rules.allowedStagePairs.every(v => Array.isArray(v) && v.length === 2 && KINDS.includes(v[0]) && KINDS.includes(v[1]) && rank(v[0]) < rank(v[1])), 'allowedStagePairs must contain strictly forward layer pairs');\n  if (errors.length) throw new Error(errors.slice(0, 30).join('\\n') + (errors.length > 30 ? `\\n... ${errors.length - 30} additional errors` : ''));\n  return p;\n}\nfunction indexProject(p) {\n  return {ports: new Map(p.ports.map(n => [n.id,n])), dies: new Map(p.dies.map(d => [d.id,d])), connections: new Map(p.connections.map(e => [e.id,e]))};\n}\nfunction transformPoint(point, die) {\n  if (!die) return {x:point.x, y:point.y};\n  const x = die.mirrorX ? die.width - point.x : point.x, y = point.y;\n  const [rx, ry] = die.rotation === 90 ? [-y,x] : die.rotation === 180 ? [-x,-y] : die.rotation === 270 ? [y,-x] : [x,y];\n  return {x: die.x + rx, y: die.y + ry};\n}\nfunction inversePoint(point, die) {\n  if (!die) return {x: point.x, y: point.y};\n  const dx = point.x - die.x, dy = point.y - die.y;\n  const [x,y] = die.rotation === 90 ? [dy,-dx] : die.rotation === 180 ? [-dx,-dy] : die.rotation === 270 ? [-dy,dx] : [dx,dy];\n  return {x: die.mirrorX ? die.width - x : x, y};\n}\nfunction worldPoint(n, index) { return transformPoint(n, index.dies.get(n.dieId)); }\nfunction effectiveSignals(p) {\n  const index = indexProject(p), incoming = new Map(), outgoing = new Map();\n  for (const e of p.connections) {\n    if (!incoming.has(e.to)) incoming.set(e.to, []); incoming.get(e.to).push(e);\n    if (!outgoing.has(e.from)) outgoing.set(e.from, []); outgoing.get(e.from).push(e);\n  }\n  const signals = new Map();\n  for (const n of [...p.ports].sort((a,b) => rank(a.kind)-rank(b.kind) || a.id.localeCompare(b.id))) {\n    const e = incoming.get(n.id)?.[0], parent = e && signals.get(e.from);\n    signals.set(n.id, {net: n.net || parent?.net || e?.net || '', domain: n.domain || parent?.domain || '',\n      role: n.role === 'any' ? (parent?.role || 'any') : n.role,\n      pair: n.pair || parent?.pair || '', polarity: n.polarity || parent?.polarity || ''});\n  }\n  return {...index, incoming, outgoing, signals};\n}\nfunction tracePath(p, start) {\n  const ctx = effectiveSignals(p), seen = new Set(), path = []; let id = start;\n  while (id && !seen.has(id)) { seen.add(id); path.push(id); id = ctx.outgoing.get(id)?.[0]?.to; }\n  return path;\n}\nfunction portAt(p, id) {\n  const port = p.ports.find(n => n.id === id); if (!port) throw new Error(`Unknown port ${id}`); return port;\n}\nfunction connect(p, from, to, {replace = false} = {}) {\n  const a = portAt(p,from), b = portAt(p,to);\n  if (a.locked || b.locked) throw new Error('Unlock the affected ports before changing their mappings.');\n  const previous = p.connections.filter(e => e.from === from || e.to === to);\n  if (previous.some(e => e.locked || portAt(p,e.from).locked || portAt(p,e.to).locked)) throw new Error('A locked mapping cannot be replaced.');\n  if (previous.length && !replace) throw new Error('Source or target is occupied. Enable Replace mapping to reassign.');\n  if (rank(a.kind) >= rank(b.kind)) throw new Error('Connections must point forward through the stack.');\n  if (!p.rules.allowedStagePairs.some(([s,t]) => s === a.kind && t === b.kind)) throw new Error(`Stage ${a.kind} -> ${b.kind} is not allowed by the rules.`);\n  p.connections = p.connections.filter(e => !previous.includes(e));\n  let id = `link:${from}`, serial = 1;\n  while (p.connections.some(e => e.id === id)) id = `link:${from}:${serial++}`;\n  p.connections.push({id, from, to, net:'', locked:false});\n}\nfunction disconnect(p, id) {\n  const n = portAt(p,id), linked = p.connections.filter(e => e.from === id || e.to === id);\n  if (n.locked || linked.some(e => e.locked || portAt(p,e.from).locked || portAt(p,e.to).locked)) throw new Error('Unlock the affected ports/mappings first.');\n  p.connections = p.connections.filter(e => e.from !== id && e.to !== id);\n}\n\nreturn {VERSION,KINDS,ROLES,DEFAULT_RULES,clone,rank,emptyProject,stableStringify,fingerprint,normalizeProject,assertProject,indexProject,transformPoint,inversePoint,worldPoint,effectiveSignals,tracePath,portAt,connect,disconnect};\n})();\n__mods[\"src/core/geometry.js\"] = (()=>{\nconst EPS = 1e-8;\nconst manhattan = (a,b) => Math.abs(a.x-b.x) + Math.abs(a.y-b.y);\nconst euclidean = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);\nconst insideRect = (p,r) => p.x >= r.x-EPS && p.x <= r.x+r.width+EPS && p.y >= r.y-EPS && p.y <= r.y+r.height+EPS;\nconst orient = (a,b,c) => (b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x);\n/** Proper straight-ratsnest crossings; endpoint contacts are not crossings. */\nfunction segmentRelation(a,b,c,d) {\n  if (manhattan(a,b) < EPS || manhattan(c,d) < EPS) return null;\n  const o1 = orient(a,b,c), o2 = orient(a,b,d), o3 = orient(c,d,a), o4 = orient(c,d,b);\n  const tol = EPS * Math.max(1, manhattan(a,b), manhattan(c,d));\n  if ((o1 > tol && o2 < -tol || o1 < -tol && o2 > tol) && (o3 > tol && o4 < -tol || o3 < -tol && o4 > tol)) return 'cross';\n  if ([o1,o2,o3,o4].every(v => Math.abs(v) <= tol)) {\n    const k = Math.abs(a.x-b.x) >= Math.abs(a.y-b.y) ? 'x' : 'y';\n    const overlap = Math.min(Math.max(a[k],b[k]), Math.max(c[k],d[k])) - Math.max(Math.min(a[k],b[k]), Math.min(c[k],d[k]));\n    return overlap > EPS ? 'overlap' : null;\n  }\n  return null;\n}\n/** Bounding-box sweep. Budget exhaustion is explicit: no false \"all clear\". */\nfunction crossingAnalysis(segments, budget = 1000000) {\n  const sorted = segments.map(s => ({...s, minX:Math.min(s.a.x,s.b.x), maxX:Math.max(s.a.x,s.b.x), minY:Math.min(s.a.y,s.b.y), maxY:Math.max(s.a.y,s.b.y)}))\n    .sort((a,b) => a.minX-b.minX || a.id.localeCompare(b.id));\n  let active = [], comparisons = 0, crossings = 0, overlaps = 0; const examples = [];\n  for (const s of sorted) {\n    active = active.filter(t => t.maxX >= s.minX-EPS);\n    for (const t of active) {\n      if (++comparisons > budget) return {crossings, overlaps, comparisons:budget, complete:false, examples};\n      if (s.stage !== t.stage || s.minY > t.maxY+EPS || t.minY > s.maxY+EPS || s.net && s.net === t.net || s.from === t.from || s.from === t.to || s.to === t.from || s.to === t.to) continue;\n      const relation = segmentRelation(s.a,s.b,t.a,t.b);\n      if (relation === 'cross') crossings++;\n      if (relation === 'overlap') overlaps++;\n      if (relation && examples.length < 100) examples.push({a:s.id,b:t.id,type:relation});\n    }\n    active.push(s);\n  }\n  return {crossings, overlaps, comparisons, complete:true, examples};\n}\nclass SpatialIndex {\n  constructor(items, radius) {\n    this.cell = Math.max(radius, 1); this.cells = new Map();\n    for (const item of items) {\n      const k = this.key(Math.floor(item.x/this.cell),Math.floor(item.y/this.cell));\n      if (!this.cells.has(k)) this.cells.set(k,[]); this.cells.get(k).push(item);\n    }\n  }\n  key(x,y) { return `${x},${y}`; }\n  near(point, radius) {\n    const found = [], loX=Math.floor((point.x-radius)/this.cell), hiX=Math.floor((point.x+radius)/this.cell), loY=Math.floor((point.y-radius)/this.cell), hiY=Math.floor((point.y+radius)/this.cell);\n    for (let x=loX;x<=hiX;x++) for(let y=loY;y<=hiY;y++) for(const item of this.cells.get(this.key(x,y)) || []) if(euclidean(point,item) <= radius+EPS) found.push(item);\n    return found;\n  }\n}\n\nreturn {EPS,manhattan,euclidean,insideRect,segmentRelation,crossingAnalysis,SpatialIndex};\n})();\n__mods[\"src/core/rules.js\"] = (()=>{\nconst { assertProject, effectiveSignals, worldPoint, inversePoint, rank } = __mods[\"src/core/model.js\"];\nconst { EPS, manhattan, euclidean, insideRect, crossingAnalysis, SpatialIndex } = __mods[\"src/core/geometry.js\"];\nconst DRAFT_CODES = new Set(['EMPTY_DESIGN','NO_ASSIGNMENTS','UNASSIGNED','PATH_INCOMPLETE','PAIR_INCOMPLETE','DOMAIN_UNSPECIFIED','NET_UNSPECIFIED']);\nconst issueKey = issue => `${issue.code}|${[...(issue.ports || [])].sort().join('|')}|${issue.ref || ''}`;\nfunction blockedPosition(n, p, ctx) {\n  const d = ctx.dies.get(n.dieId), result = [], w = worldPoint(n,ctx);\n  if (d) {\n    if (n.x < -EPS || n.y < -EPS || n.x > d.width+EPS || n.y > d.height+EPS) result.push('OUTSIDE_DIE');\n    if (d.edgeKeepout > 0 && Math.min(n.x,n.y,d.width-n.x,d.height-n.y) < d.edgeKeepout-EPS) result.push('EDGE_KEEPOUT');\n    if (d.cornerKeepout > 0 && [[0,0],[d.width,0],[0,d.height],[d.width,d.height]].some(([x,y]) => Math.hypot(n.x-x,n.y-y) < d.cornerKeepout-EPS)) result.push('CORNER_KEEPOUT');\n  }\n  for (const k of p.keepouts) if (k.kinds.includes(n.kind)) {\n    if (k.dieId && n.dieId !== k.dieId) continue;\n    const q = k.dieId ? inversePoint(w,ctx.dies.get(k.dieId)) : w;\n    if (insideRect(q,k)) result.push(`KEEPOUT:${k.id}`);\n  }\n  return result;\n}\n/** A separable hard-compatibility predicate. Coupled rules need analyze(). */\nfunction compatible(source, target, p, ctx = effectiveSignals(p)) {\n  if (['reserved','nc'].includes(target.role) || ['reserved','nc'].includes(source.role)) return false;\n  const s = ctx.signals.get(source.id) || source;\n  if (target.net && s.net && target.net !== s.net) return false;\n  if (target.domain && s.domain && target.domain !== s.domain) return false;\n  if (target.role !== 'any' && target.role !== s.role) return false;\n  if (target.pair && target.pair !== s.pair || target.polarity && target.polarity !== s.polarity) return false;\n  if (blockedPosition(target,p,ctx).length) return false;\n  if (manhattan(worldPoint(source,ctx),worldPoint(target,ctx)) > p.rules.maxLength+EPS) return false;\n  return true;\n}\nfunction analyze(p) {\n  assertProject(p);\n  const ctx = effectiveSignals(p), r = p.rules, issues = [];\n  let totalIssues=0, errors=0, warnings=0, geometryOps=0, complete=true;\n  const add = (code,severity,message,ports=[],ref='') => {\n    totalIssues++; if (severity === 'error') errors++; else if (severity === 'warning') warnings++;\n    if (issues.length < 5000) issues.push({code,severity,message,ports,ref,category:DRAFT_CODES.has(code)?'incomplete':'constraint'});\n  };\n  const spend = () => { geometryOps++; if (geometryOps > r.geometryBudget) complete=false; return complete; };\n  if(!p.ports.length)add('EMPTY_DESIGN','error','The project contains no interface sites.');\n  else if(!p.connections.length)add('NO_ASSIGNMENTS','error','The project contains no assignments.');\n  const positions = new Map(p.ports.map(n => [n.id,worldPoint(n,ctx)]));\n  const active = n => Boolean(ctx.incoming.get(n.id)?.length || ctx.outgoing.get(n.id)?.length);\n  let unassigned=0;\n  for (const n of p.ports) {\n    const used=active(n), ins=ctx.incoming.get(n.id) || [], outs=ctx.outgoing.get(n.id) || [], s=ctx.signals.get(n.id);\n    if (ins.length > 1) add('MULTIPLE_DRIVERS','error',`${n.id} has ${ins.length} incoming assignments. Each physical site has capacity one.`,[n.id]);\n    if (outs.length > 1) add('FANOUT','error',`${n.id} has ${outs.length} outgoing assignments. Model a branch with separate physical sites.`,[n.id]);\n    if (n.required && !used) {unassigned++; add('UNASSIGNED','error',`Required port ${n.id} is unassigned.`,[n.id]);}\n    if (used && ['reserved','nc'].includes(n.role)) add('FORBIDDEN_SITE','error',`${n.id} is ${n.role} and cannot carry an assignment.`,[n.id]);\n    // Keep-outs describe forbidden occupied sites, not forbidden empty candidate grid points.\n    if (used) for (const reason of blockedPosition(n,p,ctx)) add(reason.split(':')[0],'error',`${n.id} violates ${reason.toLowerCase().replaceAll('_',' ')}.`,[n.id],reason.split(':')[1] || '');\n    if (used && !s.net) add('NET_UNSPECIFIED','error',`Active port ${n.id} has no logical net.`,[n.id]);\n    if (used && ['signal','clock','power'].includes(s.role) && !s.domain) add('DOMAIN_UNSPECIFIED','error',`Active port ${n.id} has no voltage-domain identifier.`,[n.id]);\n    if (used && s.role === 'any') add('ROLE_UNSPECIFIED','warning',`Active port ${n.id} has no electrical role; coverage checks cannot classify it.`,[n.id]);\n    if (r.requireCompletePaths && used && rank(n.kind) < rank(r.terminalKind) && !outs.length) add('PATH_INCOMPLETE','error',`The path stops at ${n.id} before the declared terminal layer ${r.terminalKind}.`,[n.id]);\n  }\n  const segments=[], lengths=Object.create(null), stageTotals=Object.create(null); let totalLength=0,maxLength=0;\n  const pairEdges = new Map();\n  for (const e of p.connections) {\n    const a=ctx.ports.get(e.from), b=ctx.ports.get(e.to), s=ctx.signals.get(a.id), t=ctx.signals.get(b.id);\n    if (!r.allowedStagePairs.some(([x,y]) => x===a.kind && y===b.kind) || rank(a.kind)>=rank(b.kind)) add('STAGE_ORDER','error',`Connection ${e.id} is not an allowed forward stage.`,[a.id,b.id],e.id);\n    if (b.net && s.net && b.net!==s.net || e.net && s.net && e.net!==s.net || e.net && b.net && e.net!==b.net) add('NET_CONFLICT','error',`Connection ${e.id} joins incompatible logical nets.`,[a.id,b.id],e.id);\n    if (b.domain && s.domain && b.domain!==s.domain) add('DOMAIN_CONFLICT','error',`Connection ${e.id} joins ${s.domain} to ${b.domain}.`,[a.id,b.id],e.id);\n    if (b.role!=='any' && s.role!=='any' && b.role!==s.role) add('ROLE_CONFLICT','error',`Connection ${e.id} joins ${s.role} to a ${b.role} site.`,[a.id,b.id],e.id);\n    if (b.pair && s.pair && b.pair!==s.pair || b.polarity && s.polarity && b.polarity!==s.polarity) add('PAIR_POLARITY','error',`Connection ${e.id} changes differential-pair identity/polarity.`,[a.id,b.id],e.id);\n    const length=manhattan(positions.get(a.id),positions.get(b.id)), stage=`${a.kind} -> ${b.kind}`;\n    lengths[e.id]=length; totalLength+=length; maxLength=Math.max(maxLength,length); stageTotals[stage]=(stageTotals[stage] || 0)+length;\n    if (length>r.maxLength+EPS) add('MAX_LENGTH','error',`${e.id}: L1 ${length.toFixed(2)} um exceeds ${r.maxLength} um.`,[a.id,b.id],e.id);\n    segments.push({id:e.id,from:a.id,to:b.id,a:positions.get(a.id),b:positions.get(b.id),net:s.net || t.net,stage});\n    if(s.pair) { const k=`${stage}:${s.pair}`; if(!pairEdges.has(k)) pairEdges.set(k,[]); pairEdges.get(k).push({e,s,length}); }\n  }\n  // Detect same-coordinate occupied sites within the same physical layer.\n  const occupied=p.ports.filter(active).map(n => ({...n,...positions.get(n.id),signal:ctx.signals.get(n.id)}));\n  const layerGroups = new Map();\n  for(const n of occupied) {if(!layerGroups.has(n.kind)) layerGroups.set(n.kind,[]); layerGroups.get(n.kind).push(n);}\n  for(const [kind,group] of layerGroups) {\n    const duplicates=new Map();\n    for(const n of group) {\n      const key=`${n.x.toFixed(8)},${n.y.toFixed(8)}`;\n      if(duplicates.has(key)) add('SITE_COLLISION','error',`Two occupied ${kind} sites share the same physical coordinate.`,[duplicates.get(key),n.id]);\n      else duplicates.set(key,n.id);\n    }\n    if(r.minDomainSpacing>0 && complete) {\n      const spatial=new SpatialIndex(group,r.minDomainSpacing);\n      outer: for(const n of group) for(const m of spatial.near(n,r.minDomainSpacing)) {\n        if(!spend()) break outer;\n        if(n.id>=m.id || !n.signal.domain || !m.signal.domain || n.signal.domain===m.signal.domain || n.signal.role==='ground' || m.signal.role==='ground') continue;\n        if(euclidean(n,m)<r.minDomainSpacing-EPS) add('DOMAIN_SPACING','error',`Different voltage domains at ${n.id}/${m.id} are closer than ${r.minDomainSpacing} um.`,[n.id,m.id]);\n      }\n    }\n    const ground=group.filter(n => n.signal.role==='ground' && n.signal.net), power=group.filter(n => n.signal.role==='power' && n.signal.net);\n    const radius=Math.max(r.groundRadius,r.clockShieldRadius,r.powerRadius,1), groundIndex=new SpatialIndex(ground,radius), powerIndex=new SpatialIndex(power,radius);\n    for(const n of group) {\n      if(!complete) break;\n      if(!['signal','clock'].includes(n.signal.role)) continue;\n      const nearby=groundIndex.near(n,radius); geometryOps+=nearby.length+1; if(geometryOps>r.geometryBudget){complete=false;break;}\n      if(r.groundRadius>0 && !nearby.some(g => euclidean(n,g)<=r.groundRadius+EPS)) add('GROUND_COVERAGE','error',`No connected ground ${kind} lies within ${r.groundRadius} um of ${n.id}.`,[n.id]);\n      if(n.signal.role==='clock') {\n        const count=nearby.filter(g => euclidean(n,g)<=r.clockShieldRadius+EPS).length;\n        if(count<r.clockGroundMin) add('CLOCK_SHIELD','error',`${n.id} needs ${r.clockGroundMin} connected ground neighbour(s) within ${r.clockShieldRadius} um; found ${count}.`,[n.id]);\n      }\n      if(r.requirePowerForSignals && r.powerRadius>0) {\n        const supplies=powerIndex.near(n,r.powerRadius); geometryOps+=supplies.length+1; if(geometryOps>r.geometryBudget){complete=false;break;}\n        if(!supplies.some(g => g.signal.domain===n.signal.domain)) add('POWER_COVERAGE','error',`No connected ${n.signal.domain || '(unspecified)'} power ${kind} within ${r.powerRadius} um of ${n.id}.`,[n.id]);\n      }\n    }\n    const ratio=group.length ? ground.length/group.length : 0;\n    if(r.minGroundRatio>0 && ratio+EPS<r.minGroundRatio) add('GROUND_RATIO','error',`${kind}: connected ground ratio ${(100*ratio).toFixed(1)}% is below ${(100*r.minGroundRatio).toFixed(1)}%.`,[],kind);\n  }\n  const pairGroups=new Map();\n  for(const n of occupied) if(n.signal.pair) {const key=`${n.kind}:${n.signal.pair}`;if(!pairGroups.has(key))pairGroups.set(key,[]);pairGroups.get(key).push(n);}\n  for(const [key,nodes] of pairGroups) {\n    if(nodes.length!==2 || new Set(nodes.map(n=>n.signal.polarity)).size!==2) add('PAIR_INCOMPLETE','error',`${key} needs exactly one + and one - endpoint on this layer.`,nodes.map(n=>n.id),key);\n    else if(manhattan(nodes[0],nodes[1])>r.pairMaxDistance+EPS) add('PAIR_ADJACENCY','error',`${key}: pair separation exceeds ${r.pairMaxDistance} um (L1).`,nodes.map(n=>n.id),key);\n  }\n  for(const [key,items] of pairEdges) if(items.length===2 && items[0].s.polarity!==items[1].s.polarity) {\n    if(Math.abs(items[0].length-items[1].length)>r.pairMaxSkew+EPS) add('PAIR_SKEW','error',`${key}: L1 length mismatch exceeds ${r.pairMaxSkew} um.`,items.flatMap(v=>[v.e.from,v.e.to]),key);\n  }\n  for(const region of p.regions) {\n    const group=occupied.filter(n=>n.kind===region.kind && insideRect(n,region));\n    const ground=group.filter(n=>n.signal.role==='ground').length;\n    const power=group.filter(n=>n.signal.role==='power' && (!region.domain || n.signal.domain===region.domain)).length;\n    if(ground<region.minGround) add('REGION_GROUND','error',`Region ${region.id}: requires ${region.minGround} connected grounds; found ${ground}.`,[],region.id);\n    if(power<region.minPower) add('REGION_POWER','error',`Region ${region.id}: requires ${region.minPower} connected power sites; found ${power}.`,[],region.id);\n  }\n  const crossing=crossingAnalysis(segments,Math.max(0,r.geometryBudget-geometryOps));\n  complete=complete && crossing.complete;\n  if(crossing.crossings>r.maxCrossings) add('RATSNEST_CROSSING','warning',`${crossing.crossings} same-stage straight-line crossing(s), above budget ${r.maxCrossings}. This is not routed-layer DRC.`,[]);\n  if(crossing.overlaps) add('RATSNEST_OVERLAP','warning',`${crossing.overlaps} same-stage collinear overlap(s). Layered routing may resolve these.`,[]);\n  if(!complete) add('ANALYSIS_INCOMPLETE','error','Geometry budget exhausted. Counts are lower bounds; the design must not be treated as checked.',[]);\n  issues.sort((a,b) => (a.severity==='error'?0:1)-(b.severity==='error'?0:1) || a.code.localeCompare(b.code));\n  return {complete, ready:complete && errors===0 && warnings===0, errors,warnings,totalIssues, detailsTruncated:totalIssues>issues.length,issues,\n    metrics:{ports:p.ports.length,connections:p.connections.length,unassigned,totalLength,maxLength,meanLength:p.connections.length?totalLength/p.connections.length:0,\n      crossings:crossing.crossings,overlaps:crossing.overlaps,score:totalLength+r.crossingWeight*crossing.crossings,scoreExact:complete,stageTotals},\n    lengths, crossingExamples:crossing.examples, geometryComparisons:geometryOps+crossing.comparisons};\n}\n/** Draft incompleteness is allowed while editing; new hard violations are not. */\nfunction regressionCheck(before,after,{draft=true}={}) {\n  if(!after.complete || after.detailsTruncated) return {ok:false,reason:'The candidate was not fully checked.'};\n  const hard = a => a.issues.filter(i=>i.severity==='error' && (!draft || !DRAFT_CODES.has(i.code)));\n  const oldKeys=new Set(hard(before).map(issueKey)), introduced=hard(after).filter(i=>!oldKeys.has(issueKey(i)));\n  return {ok:introduced.length===0,introduced,reason:introduced[0]?.message || ''};\n}\n\nreturn {DRAFT_CODES,issueKey,blockedPosition,compatible,analyze,regressionCheck};\n})();\n__mods[\"src/core/optimizer.js\"] = (()=>{\nconst { clone, effectiveSignals, worldPoint, assertProject, rank } = __mods[\"src/core/model.js\"];\nconst { analyze, compatible, regressionCheck } = __mods[\"src/core/rules.js\"];\nconst { manhattan } = __mods[\"src/core/geometry.js\"];\n/** Rectangular Hungarian algorithm; null means no full finite assignment exists. */\nfunction hungarian(cost) {\n  const n=cost.length;if(!n)return [];\n  const m=cost[0].length;if(m<n || !m || cost.some(row=>row.length!==m))return null;\n  if(cost.some(row=>row.some(v=>typeof v!=='number' || Number.isNaN(v) || v===-Infinity)))throw new Error('Cost matrix contains invalid values.');\n  const u=new Float64Array(n+1),v=new Float64Array(m+1),p=new Int32Array(m+1),way=new Int32Array(m+1);\n  for(let i=1;i<=n;i++) {\n    p[0]=i;let j0=0;const minv=new Float64Array(m+1).fill(Infinity),used=new Uint8Array(m+1);\n    do {\n      used[j0]=1;const i0=p[j0];let delta=Infinity,j1=0;\n      for(let j=1;j<=m;j++)if(!used[j]) {const cur=cost[i0-1][j-1]-u[i0]-v[j];if(cur<minv[j]){minv[j]=cur;way[j]=j0;}if(minv[j]<delta){delta=minv[j];j1=j;}}\n      if(!Number.isFinite(delta))return null;\n      for(let j=0;j<=m;j++)if(used[j]){u[p[j]]+=delta;v[j]-=delta;}else minv[j]-=delta;\n      j0=j1;\n    }while(p[j0]!==0);\n    do {const j1=way[j0];p[j0]=p[j1];j0=j1;}while(j0);\n  }\n  const assignment=new Array(n).fill(-1);for(let j=1;j<=m;j++)if(p[j])assignment[p[j]-1]=j-1;\n  return assignment.some((j,i)=>j<0 || !Number.isFinite(cost[i][j]))?null:assignment;\n}\n/** Stage-level heuristic: pair placement + exact linear subproblem + guarded swaps.\n * Full coupled constraints are validated before acceptance. No global-optimality claim.\n */\nfunction optimizeStage(project,fromKind='pad',toKind='ball',options={}) {\n  assertProject(project);\n  if(!project.rules.allowedStagePairs.some(([a,b])=>a===fromKind&&b===toKind) || rank(fromKind)>=rank(toKind))throw new Error('Select an allowed forward stage.');\n  const maxSources=options.maxSources??256,maxTargets=options.maxTargets??512,maxTrials=options.maxTrials??1500;\n  if(!Number.isInteger(maxSources)||maxSources<1||maxSources>512||!Number.isInteger(maxTargets)||maxTargets<1||maxTargets>1024||!Number.isInteger(maxTrials)||maxTrials<0||maxTrials>20000)throw new Error('Invalid optimizer safety limits.');\n  const ctx=effectiveSignals(project),before=analyze(project);\n  if(!before.complete || before.detailsTruncated)return {project:clone(project),before,after:before,changed:false,status:'unchecked',message:'Input is not fully checked; increase the geometry budget or reduce the design.',trials:0};\n  const stageEdges=project.connections.filter(e=>ctx.ports.get(e.from).kind===fromKind&&ctx.ports.get(e.to).kind===toKind);\n  const fixed=new Set(stageEdges.filter(e=>e.locked||ctx.ports.get(e.from).locked||ctx.ports.get(e.to).locked).flatMap(e=>[e.from,e.to]));\n  const sources=project.ports.filter(n=>n.kind===fromKind&&!n.locked&&!fixed.has(n.id)&&!['reserved','nc'].includes(n.role)&&ctx.signals.get(n.id).net&&\n    !(ctx.outgoing.get(n.id)||[]).some(e=>ctx.ports.get(e.to).kind!==toKind)).sort((a,b)=>a.id.localeCompare(b.id));\n  const sourceIds=new Set(sources.map(n=>n.id));\n  const targets=project.ports.filter(n=>n.kind===toKind&&!n.locked&&!fixed.has(n.id)&&!['reserved','nc'].includes(n.role)&&\n    !(ctx.incoming.get(n.id)||[]).some(e=>!sourceIds.has(e.from))).sort((a,b)=>a.id.localeCompare(b.id));\n  if(sources.length>maxSources||targets.length>maxTargets)throw new Error(`Optimizer limit: ${maxSources} sources / ${maxTargets} targets. Selected ${sources.length}/${targets.length}. Split the stage or use smaller data.`);\n  if(!sources.length)return {project:clone(project),before,after:before,changed:false,status:'no-op',message:'No unlocked, named sources in this stage.',trials:0};\n  const cost=sources.map(s=>targets.map(t=>compatible(s,t,project,ctx)?manhattan(worldPoint(s,ctx),worldPoint(t,ctx)):Infinity));\n  const assignment=new Map(),usedTargets=new Set(),pairMap=new Map();\n  sources.forEach((s,i)=>{const signal=ctx.signals.get(s.id);if(signal.pair){if(!pairMap.has(signal.pair))pairMap.set(signal.pair,[]);pairMap.get(signal.pair).push(i);}});\n  let constructionFailed=targets.length<sources.length;\n  for(const [,indices]of [...pairMap].sort(([a],[b])=>a.localeCompare(b))) {\n    // A locked mate is handled by full validation, not moved implicitly.\n    if(indices.length!==2)continue;\n    const [a,b]=indices;let best=null;\n    for(let j=0;j<targets.length;j++)if(!usedTargets.has(j)&&Number.isFinite(cost[a][j]))for(let k=0;k<targets.length;k++) {\n      if(j===k||usedTargets.has(k)||!Number.isFinite(cost[b][k]))continue;\n      if(manhattan(worldPoint(targets[j],ctx),worldPoint(targets[k],ctx))>project.rules.pairMaxDistance+1e-8||Math.abs(cost[a][j]-cost[b][k])>project.rules.pairMaxSkew+1e-8)continue;\n      const value=cost[a][j]+cost[b][k];if(!best||value<best.value)best={j,k,value};\n    }\n    if(!best){constructionFailed=true;break;}\n    assignment.set(a,best.j);assignment.set(b,best.k);usedTargets.add(best.j);usedTargets.add(best.k);\n  }\n  const remaining=sources.map((_,i)=>i).filter(i=>!assignment.has(i)),free=targets.map((_,i)=>i).filter(i=>!usedTargets.has(i));\n  if(!constructionFailed) {\n    const result=hungarian(remaining.map(i=>free.map(j=>cost[i][j])));\n    if(!result)constructionFailed=true;else result.forEach((j,k)=>assignment.set(remaining[k],free[j]));\n  }\n  let best=clone(project),bestAnalysis=before,reason='';\n  const better = a => a.errors<bestAnalysis.errors || a.errors===bestAnalysis.errors && a.metrics.unassigned<bestAnalysis.metrics.unassigned || a.errors===bestAnalysis.errors && a.metrics.unassigned===bestAnalysis.metrics.unassigned && a.metrics.score<bestAnalysis.metrics.score-1e-8;\n  if(!constructionFailed) {\n    const candidate=clone(project);candidate.connections=candidate.connections.filter(e=>!sourceIds.has(e.from));\n    for(const [i,j]of assignment) {\n      const previous=stageEdges.find(e=>e.from===sources[i].id);\n      let id=previous?.id || `auto:${sources[i].id}`,suffix=1;while(candidate.connections.some(e=>e.id===id))id=`auto:${sources[i].id}:${suffix++}`;\n      candidate.connections.push({id,from:sources[i].id,to:targets[j].id,net:previous?.net || '',locked:false});\n    }\n    const candidateAnalysis=analyze(candidate),gate=regressionCheck(before,candidateAnalysis,{draft:false});\n    if(gate.ok&&better(candidateAnalysis)){best=candidate;bestAnalysis=candidateAnalysis;}else reason=gate.ok?'Linear assignment did not improve the checked objective.':`Linear candidate rejected: ${gate.reason}`;\n  }else reason='Pair/linear construction found no full assignment. This is not a proof of global infeasibility.';\n  // Guarded pairwise exchanges; bounded and deterministic. Fixed sites are never touched.\n  let trials=0,acceptedSwaps=0,changed=true;\n  while(changed&&trials<maxTrials) {\n    changed=false;\n    const movable=best.connections.filter(e=>sourceIds.has(e.from)&&!e.locked&&!ctx.ports.get(e.to).locked&&!fixed.has(e.to));\n    outer:for(let i=0;i<movable.length;i++)for(let j=i+1;j<movable.length;j++) {\n      if(trials>=maxTrials)break outer;trials++;\n      const a=movable[i],b=movable[j],aSource=ctx.ports.get(a.from),bSource=ctx.ports.get(b.from),aTarget=ctx.ports.get(a.to),bTarget=ctx.ports.get(b.to);\n      if(!compatible(aSource,bTarget,best,ctx)||!compatible(bSource,aTarget,best,ctx))continue;\n      const candidate=clone(best),ca=candidate.connections.find(e=>e.id===a.id),cb=candidate.connections.find(e=>e.id===b.id);[ca.to,cb.to]=[cb.to,ca.to];\n      const score=analyze(candidate);\n      if(!better(score)||!regressionCheck(bestAnalysis,score,{draft:false}).ok)continue;\n      best=candidate;bestAnalysis=score;acceptedSwaps++;changed=true;break outer;\n    }\n  }\n  const actualChanged=JSON.stringify(best.connections)!==JSON.stringify(project.connections);\n  return {project:best,before,after:bestAnalysis,changed:actualChanged,status:actualChanged?'improved':'unchanged',trials,acceptedSwaps,\n    message:actualChanged?`Accepted a fully checked stage mapping; ${acceptedSwaps} guarded swap(s). Heuristic, not a global optimum.`:(reason || 'No improving legal exchange found within the search budget.')};\n}\n\nreturn {hungarian,optimizeStage};\n})();\n__mods[\"src/worker.js\"] = (()=>{\nconst { optimizeStage } = __mods[\"src/core/optimizer.js\"];\nself.onmessage = event => {\n  try { const {project,from,to,options}=event.data; self.postMessage({ok:true,result:optimizeStage(project,from,to,options)}); }\n  catch(error) { self.postMessage({ok:false,error:error.message}); }\n};\n\nreturn {};\n})();";
+"use strict";
+const __mods=Object.create(null);
+__mods["src/core/model.js"] = (()=>{
+/** Canonical, dependency-free model. All geometry is micrometres, right-handed XY. */
+const VERSION = '0.1.0';
+const KINDS = ['pad', 'bump', 'interposer', 'ball', 'pcb'];
+const ROLES = ['any', 'signal', 'clock', 'power', 'ground', 'reserved', 'nc'];
+const DEFAULT_RULES = Object.freeze({
+  maxLength: 4000, minDomainSpacing: 0, pairMaxDistance: 650, pairMaxSkew: 150,
+  clockShieldRadius: 750, clockGroundMin: 1, groundRadius: 1000,
+  powerRadius: 1400, requirePowerForSignals: false, minGroundRatio: 0.15,
+  crossingWeight: 150, maxCrossings: 0, geometryBudget: 1000000,
+  terminalKind: 'ball', requireCompletePaths: false,
+  allowedStagePairs: [['pad','bump'], ['pad','ball'], ['bump','interposer'],
+    ['bump','ball'], ['interposer','ball'], ['ball','pcb']]
+});
+const clone = value => structuredClone(value);
+const rank = kind => KINDS.indexOf(kind);
+const emptyProject = (name = 'Untitled package') => ({
+  schemaVersion: 1, name, revision: 0, units: 'um', description: '',
+  dies: [], ports: [], connections: [], keepouts: [], regions: [],
+  rules: clone(DEFAULT_RULES), audit: []
+});
+function stableStringify(value) {
+  if (Array.isArray(value)) return '[' + value.map(stableStringify).join(',') + ']';
+  if (value && typeof value === 'object') return '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + stableStringify(value[k])).join(',') + '}';
+  return JSON.stringify(value);
+}
+/** Review identifier, NOT a cryptographic signature or tamper-proof audit. */
+function fingerprint(p) {
+  const copy = clone(p); delete copy.audit; delete copy.revision;
+  for (const key of ['dies','ports','connections','keepouts','regions']) copy[key]?.sort((a,b) => a.id.localeCompare(b.id));
+  let h = 2166136261;
+  for (const c of stableStringify(copy)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
+  return (h >>> 0).toString(16).padStart(8, '0');
+}
+function normalizeProject(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Project must be a JSON object.');
+  if (raw.schemaVersion !== 1) throw new Error('Unsupported schemaVersion; expected 1.');
+  const p = clone(raw);
+  p.description ??= ''; p.revision ??= 0; p.audit ??= [];
+  for (const key of ['dies','ports','connections','keepouts','regions']) p[key] ??= [];
+  p.rules = { ...clone(DEFAULT_RULES), ...p.rules };
+  p.dies = p.dies.map(d => ({name: d.id, rotation: 0, mirrorX: false, edgeKeepout: 0, cornerKeepout: 0, ...d}));
+  p.ports = p.ports.map(n => ({label: n.id, dieId: '', net: '', domain: '', role: 'any', pair: '', polarity: '', locked: false, required: false, ...n}));
+  p.connections = p.connections.map(e => ({net: '', locked: false, ...e}));
+  p.keepouts = p.keepouts.map(k => ({dieId: '', kinds: clone(KINDS), ...k}));
+  p.regions = p.regions.map(r => ({kind: 'ball', domain: '', minGround: 0, minPower: 0, ...r}));
+  assertProject(p);
+  return p;
+}
+function assertProject(p) {
+  const errors = [];
+  const need = (yes, text) => { if (!yes) errors.push(text); };
+  const number = n => typeof n === 'number' && Number.isFinite(n) && Math.abs(n) <= 1e9;
+  const string = s => typeof s === 'string' && s.length <= 512 && !/[\u0000-\u001f\u007f]/.test(s);
+  const array = (a, name, cap) => { need(Array.isArray(a), `${name} must be an array`); if (Array.isArray(a)) need(a.length <= cap, `${name} exceeds the ${cap} item safety limit`); return Array.isArray(a) ? a : []; };
+  need(p.schemaVersion === 1, 'schemaVersion must be 1');
+  need(p.units === 'um', 'Canonical units must be um; use import conversion for mm/nm.');
+  need(string(p.name) && p.name.length > 0, 'name must be a nonempty string of at most 512 characters');
+  need(typeof p.description === 'string' && p.description.length <= 10000, 'description must be text, at most 10000 characters');
+  need(Number.isSafeInteger(p.revision) && p.revision >= 0, 'revision must be a nonnegative integer');
+  const dies = array(p.dies, 'dies', 1000), ports = array(p.ports, 'ports', 10000), edges = array(p.connections, 'connections', 20000);
+  const keepouts = array(p.keepouts, 'keepouts', 1000), regions = array(p.regions, 'regions', 1000);
+  const audit = array(p.audit, 'audit', 200);
+  for (const a of audit) need(a && typeof a === 'object' && typeof a.action === 'string' && typeof a.time === 'string', 'Audit entries need action and time strings');
+  const ids = (items, label) => { const set = new Set(); for (const item of items) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) { errors.push(`${label} item must be an object`); continue; }
+    need(string(item.id) && item.id.length > 0, `${label} id must be nonempty text`);
+    need(!set.has(item.id), `Duplicate ${label} id: ${item.id}`); set.add(item.id);
+  } return set; };
+  const dieIds = ids(dies, 'die'), portIds = ids(ports, 'port'); ids(edges, 'connection'); ids(keepouts, 'keepout'); ids(regions, 'region');
+  for (const d of dies.filter(Boolean)) {
+    for (const key of ['x','y','width','height','edgeKeepout','cornerKeepout']) need(number(d[key]), `Die ${d.id}: invalid ${key}`);
+    need(d.width > 0 && d.height > 0, `Die ${d.id}: width and height must be positive`);
+    need(d.edgeKeepout >= 0 && d.cornerKeepout >= 0, `Die ${d.id}: keep-outs cannot be negative`);
+    need([0,90,180,270].includes(d.rotation), `Die ${d.id}: rotation must be 0/90/180/270`);
+    need(typeof d.mirrorX === 'boolean', `Die ${d.id}: mirrorX must be boolean`);
+    need(string(d.name), `Die ${d.id}: invalid name`);
+  }
+  for (const n of ports.filter(Boolean)) {
+    need(KINDS.includes(n.kind), `Port ${n.id}: unknown kind ${n.kind}`);
+    need(ROLES.includes(n.role), `Port ${n.id}: unknown role ${n.role}`);
+    need(number(n.x) && number(n.y), `Port ${n.id}: coordinates must be finite numbers`);
+    need(!n.dieId || dieIds.has(n.dieId), `Port ${n.id}: unknown die ${n.dieId}`);
+    for (const key of ['label','dieId','net','domain','pair','polarity']) need(string(n[key]), `Port ${n.id}: invalid ${key}`);
+    need(['','+','-'].includes(n.polarity), `Port ${n.id}: polarity must be +, -, or empty`);
+    need(Boolean(n.pair) === Boolean(n.polarity), `Port ${n.id}: pair and polarity must be supplied together`);
+    need(typeof n.locked === 'boolean' && typeof n.required === 'boolean', `Port ${n.id}: locked/required must be boolean`);
+  }
+  for (const e of edges.filter(Boolean)) {
+    need(portIds.has(e.from) && portIds.has(e.to), `Connection ${e.id}: dangling endpoint`);
+    need(e.from !== e.to, `Connection ${e.id}: cannot connect a port to itself`);
+    need(typeof e.locked === 'boolean' && string(e.net), `Connection ${e.id}: invalid net or locked value`);
+  }
+  for (const k of [...keepouts, ...regions].filter(Boolean)) {
+    for (const key of ['x','y','width','height']) need(number(k[key]), `Region ${k.id}: invalid ${key}`);
+    need(k.width > 0 && k.height > 0, `Region ${k.id}: size must be positive`);
+  }
+  for (const k of keepouts.filter(Boolean)) {
+    need(!k.dieId || dieIds.has(k.dieId), `Keep-out ${k.id}: unknown die`);
+    need(Array.isArray(k.kinds) && k.kinds.every(v => KINDS.includes(v)), `Keep-out ${k.id}: invalid kinds`);
+  }
+  for (const r of regions.filter(Boolean)) {
+    need(KINDS.includes(r.kind) && string(r.domain), `Region ${r.id}: invalid kind/domain`);
+    need(Number.isInteger(r.minGround) && r.minGround >= 0 && Number.isInteger(r.minPower) && r.minPower >= 0, `Region ${r.id}: quotas must be nonnegative integers`);
+  }
+  const rules = p.rules || {};
+  for (const key of Object.keys(rules)) need(Object.hasOwn(DEFAULT_RULES,key), `Unknown rule ${key}; check the spelling/schema.`);
+  for (const key of ['maxLength','minDomainSpacing','pairMaxDistance','pairMaxSkew','clockShieldRadius','clockGroundMin','groundRadius','powerRadius','minGroundRatio','crossingWeight','maxCrossings','geometryBudget']) need(number(rules[key]) && rules[key] >= 0, `Rule ${key} must be a finite nonnegative number`);
+  need(rules.minGroundRatio <= 1, 'minGroundRatio must be <= 1');
+  need(Number.isInteger(rules.geometryBudget) && rules.geometryBudget >= 100 && rules.geometryBudget <= 10000000, 'geometryBudget must be an integer from 100 to 10000000');
+  need(Number.isInteger(rules.clockGroundMin) && Number.isInteger(rules.maxCrossings), 'clockGroundMin/maxCrossings must be integers');
+  need(KINDS.includes(rules.terminalKind), 'Unknown terminalKind');
+  need(typeof rules.requirePowerForSignals === 'boolean' && typeof rules.requireCompletePaths === 'boolean', 'Boolean rules must be true/false');
+  need(Array.isArray(rules.allowedStagePairs) && rules.allowedStagePairs.every(v => Array.isArray(v) && v.length === 2 && KINDS.includes(v[0]) && KINDS.includes(v[1]) && rank(v[0]) < rank(v[1])), 'allowedStagePairs must contain strictly forward layer pairs');
+  if (errors.length) throw new Error(errors.slice(0, 30).join('\n') + (errors.length > 30 ? `\n... ${errors.length - 30} additional errors` : ''));
+  return p;
+}
+function indexProject(p) {
+  return {ports: new Map(p.ports.map(n => [n.id,n])), dies: new Map(p.dies.map(d => [d.id,d])), connections: new Map(p.connections.map(e => [e.id,e]))};
+}
+function transformPoint(point, die) {
+  if (!die) return {x:point.x, y:point.y};
+  const x = die.mirrorX ? die.width - point.x : point.x, y = point.y;
+  const [rx, ry] = die.rotation === 90 ? [-y,x] : die.rotation === 180 ? [-x,-y] : die.rotation === 270 ? [y,-x] : [x,y];
+  return {x: die.x + rx, y: die.y + ry};
+}
+function inversePoint(point, die) {
+  if (!die) return {x: point.x, y: point.y};
+  const dx = point.x - die.x, dy = point.y - die.y;
+  const [x,y] = die.rotation === 90 ? [dy,-dx] : die.rotation === 180 ? [-dx,-dy] : die.rotation === 270 ? [-dy,dx] : [dx,dy];
+  return {x: die.mirrorX ? die.width - x : x, y};
+}
+function worldPoint(n, index) { return transformPoint(n, index.dies.get(n.dieId)); }
+function effectiveSignals(p) {
+  const index = indexProject(p), incoming = new Map(), outgoing = new Map();
+  for (const e of p.connections) {
+    if (!incoming.has(e.to)) incoming.set(e.to, []); incoming.get(e.to).push(e);
+    if (!outgoing.has(e.from)) outgoing.set(e.from, []); outgoing.get(e.from).push(e);
+  }
+  const signals = new Map();
+  for (const n of [...p.ports].sort((a,b) => rank(a.kind)-rank(b.kind) || a.id.localeCompare(b.id))) {
+    const e = incoming.get(n.id)?.[0], parent = e && signals.get(e.from);
+    signals.set(n.id, {net: n.net || parent?.net || e?.net || '', domain: n.domain || parent?.domain || '',
+      role: n.role === 'any' ? (parent?.role || 'any') : n.role,
+      pair: n.pair || parent?.pair || '', polarity: n.polarity || parent?.polarity || ''});
+  }
+  return {...index, incoming, outgoing, signals};
+}
+function tracePath(p, start) {
+  const ctx = effectiveSignals(p), seen = new Set(), path = []; let id = start;
+  while (id && !seen.has(id)) { seen.add(id); path.push(id); id = ctx.outgoing.get(id)?.[0]?.to; }
+  return path;
+}
+function portAt(p, id) {
+  const port = p.ports.find(n => n.id === id); if (!port) throw new Error(`Unknown port ${id}`); return port;
+}
+function connect(p, from, to, {replace = false} = {}) {
+  const a = portAt(p,from), b = portAt(p,to);
+  if (a.locked || b.locked) throw new Error('Unlock the affected ports before changing their mappings.');
+  const previous = p.connections.filter(e => e.from === from || e.to === to);
+  if (previous.some(e => e.locked || portAt(p,e.from).locked || portAt(p,e.to).locked)) throw new Error('A locked mapping cannot be replaced.');
+  if (previous.length && !replace) throw new Error('Source or target is occupied. Enable Replace mapping to reassign.');
+  if (rank(a.kind) >= rank(b.kind)) throw new Error('Connections must point forward through the stack.');
+  if (!p.rules.allowedStagePairs.some(([s,t]) => s === a.kind && t === b.kind)) throw new Error(`Stage ${a.kind} -> ${b.kind} is not allowed by the rules.`);
+  p.connections = p.connections.filter(e => !previous.includes(e));
+  let id = `link:${from}`, serial = 1;
+  while (p.connections.some(e => e.id === id)) id = `link:${from}:${serial++}`;
+  p.connections.push({id, from, to, net:'', locked:false});
+}
+function disconnect(p, id) {
+  const n = portAt(p,id), linked = p.connections.filter(e => e.from === id || e.to === id);
+  if (n.locked || linked.some(e => e.locked || portAt(p,e.from).locked || portAt(p,e.to).locked)) throw new Error('Unlock the affected ports/mappings first.');
+  p.connections = p.connections.filter(e => e.from !== id && e.to !== id);
+}
+
+return {VERSION,KINDS,ROLES,DEFAULT_RULES,clone,rank,emptyProject,stableStringify,fingerprint,normalizeProject,assertProject,indexProject,transformPoint,inversePoint,worldPoint,effectiveSignals,tracePath,portAt,connect,disconnect};
+})();
+__mods["src/core/geometry.js"] = (()=>{
+const EPS = 1e-8;
+const manhattan = (a,b) => Math.abs(a.x-b.x) + Math.abs(a.y-b.y);
+const euclidean = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
+const insideRect = (p,r) => p.x >= r.x-EPS && p.x <= r.x+r.width+EPS && p.y >= r.y-EPS && p.y <= r.y+r.height+EPS;
+const orient = (a,b,c) => (b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x);
+/** Proper straight-ratsnest crossings; endpoint contacts are not crossings. */
+function segmentRelation(a,b,c,d) {
+  if (manhattan(a,b) < EPS || manhattan(c,d) < EPS) return null;
+  const o1 = orient(a,b,c), o2 = orient(a,b,d), o3 = orient(c,d,a), o4 = orient(c,d,b);
+  const tol = EPS * Math.max(1, manhattan(a,b), manhattan(c,d));
+  if ((o1 > tol && o2 < -tol || o1 < -tol && o2 > tol) && (o3 > tol && o4 < -tol || o3 < -tol && o4 > tol)) return 'cross';
+  if ([o1,o2,o3,o4].every(v => Math.abs(v) <= tol)) {
+    const k = Math.abs(a.x-b.x) >= Math.abs(a.y-b.y) ? 'x' : 'y';
+    const overlap = Math.min(Math.max(a[k],b[k]), Math.max(c[k],d[k])) - Math.max(Math.min(a[k],b[k]), Math.min(c[k],d[k]));
+    return overlap > EPS ? 'overlap' : null;
+  }
+  return null;
+}
+/** Bounding-box sweep. Budget exhaustion is explicit: no false "all clear". */
+function crossingAnalysis(segments, budget = 1000000) {
+  const sorted = segments.map(s => ({...s, minX:Math.min(s.a.x,s.b.x), maxX:Math.max(s.a.x,s.b.x), minY:Math.min(s.a.y,s.b.y), maxY:Math.max(s.a.y,s.b.y)}))
+    .sort((a,b) => a.minX-b.minX || a.id.localeCompare(b.id));
+  let active = [], comparisons = 0, crossings = 0, overlaps = 0; const examples = [];
+  for (const s of sorted) {
+    active = active.filter(t => t.maxX >= s.minX-EPS);
+    for (const t of active) {
+      if (++comparisons > budget) return {crossings, overlaps, comparisons:budget, complete:false, examples};
+      if (s.stage !== t.stage || s.minY > t.maxY+EPS || t.minY > s.maxY+EPS || s.net && s.net === t.net || s.from === t.from || s.from === t.to || s.to === t.from || s.to === t.to) continue;
+      const relation = segmentRelation(s.a,s.b,t.a,t.b);
+      if (relation === 'cross') crossings++;
+      if (relation === 'overlap') overlaps++;
+      if (relation && examples.length < 100) examples.push({a:s.id,b:t.id,type:relation});
+    }
+    active.push(s);
+  }
+  return {crossings, overlaps, comparisons, complete:true, examples};
+}
+class SpatialIndex {
+  constructor(items, radius) {
+    this.cell = Math.max(radius, 1); this.cells = new Map();
+    for (const item of items) {
+      const k = this.key(Math.floor(item.x/this.cell),Math.floor(item.y/this.cell));
+      if (!this.cells.has(k)) this.cells.set(k,[]); this.cells.get(k).push(item);
+    }
+  }
+  key(x,y) { return `${x},${y}`; }
+  near(point, radius) {
+    const found = [], loX=Math.floor((point.x-radius)/this.cell), hiX=Math.floor((point.x+radius)/this.cell), loY=Math.floor((point.y-radius)/this.cell), hiY=Math.floor((point.y+radius)/this.cell);
+    for (let x=loX;x<=hiX;x++) for(let y=loY;y<=hiY;y++) for(const item of this.cells.get(this.key(x,y)) || []) if(euclidean(point,item) <= radius+EPS) found.push(item);
+    return found;
+  }
+}
+
+return {EPS,manhattan,euclidean,insideRect,segmentRelation,crossingAnalysis,SpatialIndex};
+})();
+__mods["src/core/rules.js"] = (()=>{
+const { assertProject, effectiveSignals, worldPoint, inversePoint, rank } = __mods["src/core/model.js"];
+const { EPS, manhattan, euclidean, insideRect, crossingAnalysis, SpatialIndex } = __mods["src/core/geometry.js"];
+const DRAFT_CODES = new Set(['EMPTY_DESIGN','NO_ASSIGNMENTS','UNASSIGNED','PATH_INCOMPLETE','PAIR_INCOMPLETE','DOMAIN_UNSPECIFIED','NET_UNSPECIFIED']);
+const issueKey = issue => `${issue.code}|${[...(issue.ports || [])].sort().join('|')}|${issue.ref || ''}`;
+function blockedPosition(n, p, ctx) {
+  const d = ctx.dies.get(n.dieId), result = [], w = worldPoint(n,ctx);
+  if (d) {
+    if (n.x < -EPS || n.y < -EPS || n.x > d.width+EPS || n.y > d.height+EPS) result.push('OUTSIDE_DIE');
+    if (d.edgeKeepout > 0 && Math.min(n.x,n.y,d.width-n.x,d.height-n.y) < d.edgeKeepout-EPS) result.push('EDGE_KEEPOUT');
+    if (d.cornerKeepout > 0 && [[0,0],[d.width,0],[0,d.height],[d.width,d.height]].some(([x,y]) => Math.hypot(n.x-x,n.y-y) < d.cornerKeepout-EPS)) result.push('CORNER_KEEPOUT');
+  }
+  for (const k of p.keepouts) if (k.kinds.includes(n.kind)) {
+    if (k.dieId && n.dieId !== k.dieId) continue;
+    const q = k.dieId ? inversePoint(w,ctx.dies.get(k.dieId)) : w;
+    if (insideRect(q,k)) result.push(`KEEPOUT:${k.id}`);
+  }
+  return result;
+}
+/** A separable hard-compatibility predicate. Coupled rules need analyze(). */
+function compatible(source, target, p, ctx = effectiveSignals(p)) {
+  if (['reserved','nc'].includes(target.role) || ['reserved','nc'].includes(source.role)) return false;
+  const s = ctx.signals.get(source.id) || source;
+  if (target.net && s.net && target.net !== s.net) return false;
+  if (target.domain && s.domain && target.domain !== s.domain) return false;
+  if (target.role !== 'any' && target.role !== s.role) return false;
+  if (target.pair && target.pair !== s.pair || target.polarity && target.polarity !== s.polarity) return false;
+  if (blockedPosition(target,p,ctx).length) return false;
+  if (manhattan(worldPoint(source,ctx),worldPoint(target,ctx)) > p.rules.maxLength+EPS) return false;
+  return true;
+}
+function analyze(p) {
+  assertProject(p);
+  const ctx = effectiveSignals(p), r = p.rules, issues = [];
+  let totalIssues=0, errors=0, warnings=0, geometryOps=0, complete=true;
+  const add = (code,severity,message,ports=[],ref='') => {
+    totalIssues++; if (severity === 'error') errors++; else if (severity === 'warning') warnings++;
+    if (issues.length < 5000) issues.push({code,severity,message,ports,ref,category:DRAFT_CODES.has(code)?'incomplete':'constraint'});
+  };
+  const spend = () => { geometryOps++; if (geometryOps > r.geometryBudget) complete=false; return complete; };
+  if(!p.ports.length)add('EMPTY_DESIGN','error','The project contains no interface sites.');
+  else if(!p.connections.length)add('NO_ASSIGNMENTS','error','The project contains no assignments.');
+  const positions = new Map(p.ports.map(n => [n.id,worldPoint(n,ctx)]));
+  const active = n => Boolean(ctx.incoming.get(n.id)?.length || ctx.outgoing.get(n.id)?.length);
+  let unassigned=0;
+  for (const n of p.ports) {
+    const used=active(n), ins=ctx.incoming.get(n.id) || [], outs=ctx.outgoing.get(n.id) || [], s=ctx.signals.get(n.id);
+    if (ins.length > 1) add('MULTIPLE_DRIVERS','error',`${n.id} has ${ins.length} incoming assignments. Each physical site has capacity one.`,[n.id]);
+    if (outs.length > 1) add('FANOUT','error',`${n.id} has ${outs.length} outgoing assignments. Model a branch with separate physical sites.`,[n.id]);
+    if (n.required && !used) {unassigned++; add('UNASSIGNED','error',`Required port ${n.id} is unassigned.`,[n.id]);}
+    if (used && ['reserved','nc'].includes(n.role)) add('FORBIDDEN_SITE','error',`${n.id} is ${n.role} and cannot carry an assignment.`,[n.id]);
+    // Keep-outs describe forbidden occupied sites, not forbidden empty candidate grid points.
+    if (used) for (const reason of blockedPosition(n,p,ctx)) add(reason.split(':')[0],'error',`${n.id} violates ${reason.toLowerCase().replaceAll('_',' ')}.`,[n.id],reason.split(':')[1] || '');
+    if (used && !s.net) add('NET_UNSPECIFIED','error',`Active port ${n.id} has no logical net.`,[n.id]);
+    if (used && ['signal','clock','power'].includes(s.role) && !s.domain) add('DOMAIN_UNSPECIFIED','error',`Active port ${n.id} has no voltage-domain identifier.`,[n.id]);
+    if (used && s.role === 'any') add('ROLE_UNSPECIFIED','warning',`Active port ${n.id} has no electrical role; coverage checks cannot classify it.`,[n.id]);
+    if (r.requireCompletePaths && used && rank(n.kind) < rank(r.terminalKind) && !outs.length) add('PATH_INCOMPLETE','error',`The path stops at ${n.id} before the declared terminal layer ${r.terminalKind}.`,[n.id]);
+  }
+  const segments=[], lengths=Object.create(null), stageTotals=Object.create(null); let totalLength=0,maxLength=0;
+  const pairEdges = new Map();
+  for (const e of p.connections) {
+    const a=ctx.ports.get(e.from), b=ctx.ports.get(e.to), s=ctx.signals.get(a.id), t=ctx.signals.get(b.id);
+    if (!r.allowedStagePairs.some(([x,y]) => x===a.kind && y===b.kind) || rank(a.kind)>=rank(b.kind)) add('STAGE_ORDER','error',`Connection ${e.id} is not an allowed forward stage.`,[a.id,b.id],e.id);
+    if (b.net && s.net && b.net!==s.net || e.net && s.net && e.net!==s.net || e.net && b.net && e.net!==b.net) add('NET_CONFLICT','error',`Connection ${e.id} joins incompatible logical nets.`,[a.id,b.id],e.id);
+    if (b.domain && s.domain && b.domain!==s.domain) add('DOMAIN_CONFLICT','error',`Connection ${e.id} joins ${s.domain} to ${b.domain}.`,[a.id,b.id],e.id);
+    if (b.role!=='any' && s.role!=='any' && b.role!==s.role) add('ROLE_CONFLICT','error',`Connection ${e.id} joins ${s.role} to a ${b.role} site.`,[a.id,b.id],e.id);
+    if (b.pair && s.pair && b.pair!==s.pair || b.polarity && s.polarity && b.polarity!==s.polarity) add('PAIR_POLARITY','error',`Connection ${e.id} changes differential-pair identity/polarity.`,[a.id,b.id],e.id);
+    const length=manhattan(positions.get(a.id),positions.get(b.id)), stage=`${a.kind} -> ${b.kind}`;
+    lengths[e.id]=length; totalLength+=length; maxLength=Math.max(maxLength,length); stageTotals[stage]=(stageTotals[stage] || 0)+length;
+    if (length>r.maxLength+EPS) add('MAX_LENGTH','error',`${e.id}: L1 ${length.toFixed(2)} um exceeds ${r.maxLength} um.`,[a.id,b.id],e.id);
+    segments.push({id:e.id,from:a.id,to:b.id,a:positions.get(a.id),b:positions.get(b.id),net:s.net || t.net,stage});
+    if(s.pair) { const k=`${stage}:${s.pair}`; if(!pairEdges.has(k)) pairEdges.set(k,[]); pairEdges.get(k).push({e,s,length}); }
+  }
+  // Detect same-coordinate occupied sites within the same physical layer.
+  const occupied=p.ports.filter(active).map(n => ({...n,...positions.get(n.id),signal:ctx.signals.get(n.id)}));
+  const layerGroups = new Map();
+  for(const n of occupied) {if(!layerGroups.has(n.kind)) layerGroups.set(n.kind,[]); layerGroups.get(n.kind).push(n);}
+  for(const [kind,group] of layerGroups) {
+    const duplicates=new Map();
+    for(const n of group) {
+      const key=`${n.x.toFixed(8)},${n.y.toFixed(8)}`;
+      if(duplicates.has(key)) add('SITE_COLLISION','error',`Two occupied ${kind} sites share the same physical coordinate.`,[duplicates.get(key),n.id]);
+      else duplicates.set(key,n.id);
+    }
+    if(r.minDomainSpacing>0 && complete) {
+      const spatial=new SpatialIndex(group,r.minDomainSpacing);
+      outer: for(const n of group) for(const m of spatial.near(n,r.minDomainSpacing)) {
+        if(!spend()) break outer;
+        if(n.id>=m.id || !n.signal.domain || !m.signal.domain || n.signal.domain===m.signal.domain || n.signal.role==='ground' || m.signal.role==='ground') continue;
+        if(euclidean(n,m)<r.minDomainSpacing-EPS) add('DOMAIN_SPACING','error',`Different voltage domains at ${n.id}/${m.id} are closer than ${r.minDomainSpacing} um.`,[n.id,m.id]);
+      }
+    }
+    const ground=group.filter(n => n.signal.role==='ground' && n.signal.net), power=group.filter(n => n.signal.role==='power' && n.signal.net);
+    const radius=Math.max(r.groundRadius,r.clockShieldRadius,r.powerRadius,1), groundIndex=new SpatialIndex(ground,radius), powerIndex=new SpatialIndex(power,radius);
+    for(const n of group) {
+      if(!complete) break;
+      if(!['signal','clock'].includes(n.signal.role)) continue;
+      const nearby=groundIndex.near(n,radius); geometryOps+=nearby.length+1; if(geometryOps>r.geometryBudget){complete=false;break;}
+      if(r.groundRadius>0 && !nearby.some(g => euclidean(n,g)<=r.groundRadius+EPS)) add('GROUND_COVERAGE','error',`No connected ground ${kind} lies within ${r.groundRadius} um of ${n.id}.`,[n.id]);
+      if(n.signal.role==='clock') {
+        const count=nearby.filter(g => euclidean(n,g)<=r.clockShieldRadius+EPS).length;
+        if(count<r.clockGroundMin) add('CLOCK_SHIELD','error',`${n.id} needs ${r.clockGroundMin} connected ground neighbour(s) within ${r.clockShieldRadius} um; found ${count}.`,[n.id]);
+      }
+      if(r.requirePowerForSignals && r.powerRadius>0) {
+        const supplies=powerIndex.near(n,r.powerRadius); geometryOps+=supplies.length+1; if(geometryOps>r.geometryBudget){complete=false;break;}
+        if(!supplies.some(g => g.signal.domain===n.signal.domain)) add('POWER_COVERAGE','error',`No connected ${n.signal.domain || '(unspecified)'} power ${kind} within ${r.powerRadius} um of ${n.id}.`,[n.id]);
+      }
+    }
+    const ratio=group.length ? ground.length/group.length : 0;
+    if(r.minGroundRatio>0 && ratio+EPS<r.minGroundRatio) add('GROUND_RATIO','error',`${kind}: connected ground ratio ${(100*ratio).toFixed(1)}% is below ${(100*r.minGroundRatio).toFixed(1)}%.`,[],kind);
+  }
+  const pairGroups=new Map();
+  for(const n of occupied) if(n.signal.pair) {const key=`${n.kind}:${n.signal.pair}`;if(!pairGroups.has(key))pairGroups.set(key,[]);pairGroups.get(key).push(n);}
+  for(const [key,nodes] of pairGroups) {
+    if(nodes.length!==2 || new Set(nodes.map(n=>n.signal.polarity)).size!==2) add('PAIR_INCOMPLETE','error',`${key} needs exactly one + and one - endpoint on this layer.`,nodes.map(n=>n.id),key);
+    else if(manhattan(nodes[0],nodes[1])>r.pairMaxDistance+EPS) add('PAIR_ADJACENCY','error',`${key}: pair separation exceeds ${r.pairMaxDistance} um (L1).`,nodes.map(n=>n.id),key);
+  }
+  for(const [key,items] of pairEdges) if(items.length===2 && items[0].s.polarity!==items[1].s.polarity) {
+    if(Math.abs(items[0].length-items[1].length)>r.pairMaxSkew+EPS) add('PAIR_SKEW','error',`${key}: L1 length mismatch exceeds ${r.pairMaxSkew} um.`,items.flatMap(v=>[v.e.from,v.e.to]),key);
+  }
+  for(const region of p.regions) {
+    const group=occupied.filter(n=>n.kind===region.kind && insideRect(n,region));
+    const ground=group.filter(n=>n.signal.role==='ground').length;
+    const power=group.filter(n=>n.signal.role==='power' && (!region.domain || n.signal.domain===region.domain)).length;
+    if(ground<region.minGround) add('REGION_GROUND','error',`Region ${region.id}: requires ${region.minGround} connected grounds; found ${ground}.`,[],region.id);
+    if(power<region.minPower) add('REGION_POWER','error',`Region ${region.id}: requires ${region.minPower} connected power sites; found ${power}.`,[],region.id);
+  }
+  const crossing=crossingAnalysis(segments,Math.max(0,r.geometryBudget-geometryOps));
+  complete=complete && crossing.complete;
+  if(crossing.crossings>r.maxCrossings) add('RATSNEST_CROSSING','warning',`${crossing.crossings} same-stage straight-line crossing(s), above budget ${r.maxCrossings}. This is not routed-layer DRC.`,[]);
+  if(crossing.overlaps) add('RATSNEST_OVERLAP','warning',`${crossing.overlaps} same-stage collinear overlap(s). Layered routing may resolve these.`,[]);
+  if(!complete) add('ANALYSIS_INCOMPLETE','error','Geometry budget exhausted. Counts are lower bounds; the design must not be treated as checked.',[]);
+  issues.sort((a,b) => (a.severity==='error'?0:1)-(b.severity==='error'?0:1) || a.code.localeCompare(b.code));
+  return {complete, ready:complete && errors===0 && warnings===0, errors,warnings,totalIssues, detailsTruncated:totalIssues>issues.length,issues,
+    metrics:{ports:p.ports.length,connections:p.connections.length,unassigned,totalLength,maxLength,meanLength:p.connections.length?totalLength/p.connections.length:0,
+      crossings:crossing.crossings,overlaps:crossing.overlaps,score:totalLength+r.crossingWeight*crossing.crossings,scoreExact:complete,stageTotals},
+    lengths, crossingExamples:crossing.examples, geometryComparisons:geometryOps+crossing.comparisons};
+}
+/** Draft incompleteness is allowed while editing; new hard violations are not. */
+function regressionCheck(before,after,{draft=true}={}) {
+  if(!after.complete || after.detailsTruncated) return {ok:false,reason:'The candidate was not fully checked.'};
+  const hard = a => a.issues.filter(i=>i.severity==='error' && (!draft || !DRAFT_CODES.has(i.code)));
+  const oldKeys=new Set(hard(before).map(issueKey)), introduced=hard(after).filter(i=>!oldKeys.has(issueKey(i)));
+  return {ok:introduced.length===0,introduced,reason:introduced[0]?.message || ''};
+}
+
+return {DRAFT_CODES,issueKey,blockedPosition,compatible,analyze,regressionCheck};
+})();
+__mods["src/core/revisions.js"] = (()=>{
+const { clone, stableStringify, fingerprint, assertProject, effectiveSignals, worldPoint } = __mods["src/core/model.js"];
+const { analyze, regressionCheck } = __mods["src/core/rules.js"];
+const { manhattan } = __mods["src/core/geometry.js"];
+function compareProjects(before,after) {
+  assertProject(before); assertProject(after);
+  const changes=[], aCtx=effectiveSignals(before), bCtx=effectiveSignals(after);
+  for(const category of ['dies','ports','connections','keepouts','regions']) {
+    const a=new Map(before[category].map(x=>[x.id,x])), b=new Map(after[category].map(x=>[x.id,x]));
+    for(const id of [...new Set([...a.keys(),...b.keys()])].sort()) {
+      if(!a.has(id)) changes.push({category,id,type:'added',after:b.get(id)});
+      else if(!b.has(id)) changes.push({category,id,type:'removed',before:a.get(id)});
+      else if(stableStringify(a.get(id))!==stableStringify(b.get(id))) {
+        const fields=[...new Set([...Object.keys(a.get(id)),...Object.keys(b.get(id))])].filter(k=>stableStringify(a.get(id)[k])!==stableStringify(b.get(id)[k]));
+        changes.push({category,id,type:'changed',fields,before:a.get(id),after:b.get(id)});
+      }
+    }
+  }
+  if(stableStringify(before.rules)!==stableStringify(after.rules)) changes.push({category:'rules',id:'rules',type:'changed',before:before.rules,after:after.rules});
+  const propagated=[];
+  for(const n of after.ports) if(aCtx.ports.has(n.id)) {
+    const from=worldPoint(aCtx.ports.get(n.id),aCtx),to=worldPoint(n,bCtx);
+    const signalBefore=aCtx.signals.get(n.id),signalAfter=bCtx.signals.get(n.id);
+    if(manhattan(from,to)>1e-8 || stableStringify(signalBefore)!==stableStringify(signalAfter)) propagated.push({id:n.id,movement:manhattan(from,to),from,to,signalBefore,signalAfter});
+  }
+  const beforeAnalysis=analyze(before),afterAnalysis=analyze(after);
+  return {beforeFingerprint:fingerprint(before),afterFingerprint:fingerprint(after),changes,propagated,
+    summary:{added:changes.filter(c=>c.type==='added').length,removed:changes.filter(c=>c.type==='removed').length,changed:changes.filter(c=>c.type==='changed').length,
+      errorsDelta:afterAnalysis.errors-beforeAnalysis.errors,lengthDelta:afterAnalysis.metrics.totalLength-beforeAnalysis.metrics.totalLength,
+      crossingDelta:afterAnalysis.metrics.crossings-beforeAnalysis.metrics.crossings,scoreDelta:afterAnalysis.metrics.score-beforeAnalysis.metrics.score},
+    beforeAnalysis,afterAnalysis,gate:regressionCheck(beforeAnalysis,afterAnalysis,{draft:false})};
+}
+class ProjectStore {
+  constructor(project) {assertProject(project);this.project=clone(project);this.undoStack=[];this.redoStack=[];this.analysis=analyze(project);}
+  transact(action,mutate,{strict=true}={}) {
+    const next=clone(this.project); mutate(next); assertProject(next); const analysis=analyze(next);
+    if(strict) {const gate=regressionCheck(this.analysis,analysis);if(!gate.ok) throw new Error(`Change blocked: ${gate.reason}`);}
+    next.revision=this.project.revision+1;
+    next.audit=[...next.audit,{revision:next.revision,action,time:new Date().toISOString(),fingerprint:fingerprint(next)}].slice(-200);
+    this.undoStack.push(clone(this.project));if(this.undoStack.length>50)this.undoStack.shift();this.redoStack=[];
+    this.project=next;this.analysis=analysis;return next;
+  }
+  undo() {if(!this.undoStack.length)return false;this.redoStack.push(this.project);this.project=this.undoStack.pop();this.analysis=analyze(this.project);return true;}
+  redo() {if(!this.redoStack.length)return false;this.undoStack.push(this.project);this.project=this.redoStack.pop();this.analysis=analyze(this.project);return true;}
+}
+
+return {compareProjects,ProjectStore};
+})();
+__mods["src/core/demo.js"] = (()=>{
+const { emptyProject, normalizeProject, transformPoint } = __mods["src/core/model.js"];
+function demoProject({crossed=true}={}) {
+  const p=emptyProject('Dual-chiplet package / synthetic demonstrator');
+  p.description='Public synthetic data: two dies, five physical stages, differential links, clocks, power/ground, and reserved sites. No customer design data.';
+  p.dies=[{id:'CORE',name:'Compute chiplet',x:200,y:300,width:2300,height:2500,rotation:0,mirrorX:false,edgeKeepout:100,cornerKeepout:150},
+    {id:'IO',name:'I/O chiplet',x:6200,y:300,width:2300,height:2500,rotation:90,mirrorX:false,edgeKeepout:100,cornerKeepout:150}];
+  p.rules={...p.rules,maxLength:2600,minDomainSpacing:250,pairMaxDistance:650,pairMaxSkew:150,
+    clockShieldRadius:750,clockGroundMin:2,groundRadius:1500,powerRadius:1700,requirePowerForSignals:true,minGroundRatio:0.2,
+    terminalKind:'pcb',requireCompletePaths:true};
+  const roles=['ground','clock','ground','power','signal','signal','ground','power','signal','signal','ground','power'];
+  for(const die of p.dies)for(let i=0;i<12;i++) {
+    const col=i%4,row=Math.floor(i/4),base={x:350+col*500,y:350+row*700},world=transformPoint(base,die),role=roles[i],domain=role==='ground'?'GND':die.id;
+    const net=role==='ground'?'GND':role==='power'?`VDD_${die.id}`:i===4?`${die.id}_TX_P`:i===5?`${die.id}_TX_N`:`${die.id}_${role==='clock'?'CLK':`DATA${i-8}`}`;
+    const kinds=['pad','bump','interposer','ball','pcb'];
+    for(let stage=0;stage<kinds.length;stage++) {
+      const id=`${die.id}:${kinds[stage]}:${i+1}`;
+      const n={id,label:stage===0?net:`${die.id[0]}${i+1}`,kind:kinds[stage],dieId:stage<2?die.id:'',
+        x:stage===0?base.x:stage===1?base.x+60:world.x+(stage-1)*160,
+        y:stage===0?base.y:stage===1?base.y+60:world.y+(stage-1)*180,
+        net:stage===0||role==='ground'?net:'',domain,role,pair:stage===0&&[4,5].includes(i)?`${die.id}_TX`:'',polarity:stage===0&&i===4?'+':stage===0&&i===5?'-':'',locked:false,required:stage===0||stage===4};
+      p.ports.push(n);
+      if(stage>0) p.connections.push({id:`${die.id}:s${stage}:${i+1}`,from:`${die.id}:${kinds[stage-1]}:${i+1}`,to:id,net:'',locked:false});
+    }
+    if(crossed&&i===9) {
+      const a=p.connections.find(e=>e.id===`${die.id}:s3:9`),b=p.connections.find(e=>e.id===`${die.id}:s3:10`);
+      [a.to,b.to]=[b.to,a.to];
+    }
+  }
+  p.ports.push({id:'PKG:RESERVED',label:'RSVD',kind:'ball',x:7000,y:500,role:'reserved'}, {id:'PKG:NC',label:'NC',kind:'ball',x:7000,y:1000,role:'nc'});
+  p.keepouts=[{id:'core-corner',dieId:'CORE',x:0,y:0,width:120,height:120,kinds:['pad','bump']}];
+  p.regions=[{id:'package-power-grid',kind:'ball',x:0,y:0,width:7600,height:5000,domain:'',minGround:8,minPower:6}];
+  return normalizeProject(p);
+}
+
+return {demoProject};
+})();
+__mods["src/core/importers.js"] = (()=>{
+const { KINDS, ROLES, normalizeProject } = __mods["src/core/model.js"];
+const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
+const UNIT_SCALE = {um:1, mm:1000, nm:0.001};
+function guardText(text) {
+  if(typeof text!=='string' || new TextEncoder().encode(text).length>MAX_IMPORT_BYTES)throw new Error('Import must be text and no larger than 5 MiB.');
+  if(text.includes('\0'))throw new Error('Binary/NUL data is not supported.');
+  return text.replace(/^\uFEFF/,'');
+}
+/** Strict RFC-4180-style parser: quoted commas, quotes, and embedded newlines. */
+function parseCSV(raw) {
+  const text=guardText(raw);const rows=[];let row=[],field='',inQuote=false,afterQuote=false,atStart=true;
+  const endField=()=>{row.push(field);field='';afterQuote=false;atStart=true;};
+  const endRow=()=>{endField();if(row.some(v=>v!==''))rows.push(row);row=[];};
+  for(let i=0;i<text.length;i++) {
+    const c=text[i];
+    if(inQuote) {if(c==='"'){if(text[i+1]==='"'){field+='"';i++;}else{inQuote=false;afterQuote=true;}}else field+=c;continue;}
+    if(c==='"'){if(!atStart)throw new Error(`Unexpected quote at CSV character ${i+1}.`);inQuote=true;atStart=false;continue;}
+    if(c===','){endField();continue;}
+    if(c==='\r'||c==='\n'){if(c==='\r'&&text[i+1]==='\n')i++;endRow();continue;}
+    if(afterQuote)throw new Error(`Unexpected character after closing CSV quote at ${i+1}.`);
+    field+=c;atStart=false;
+  }
+  if(inQuote)throw new Error('CSV contains an unterminated quoted field.');
+  if(row.length||field||afterQuote)endRow();
+  if(rows.length<1)throw new Error('CSV is empty.');
+  const headers=rows.shift().map(h=>h.trim());
+  if(headers.some(h=>!h)||new Set(headers).size!==headers.length)throw new Error('CSV has empty or duplicate column headers.');
+  return rows.map((values,i)=>{if(values.length!==headers.length)throw new Error(`CSV row ${i+2}: expected ${headers.length} columns, received ${values.length}.`);return Object.fromEntries(headers.map((h,j)=>[h,values[j]]));});
+}
+const decodeSafeRow = row => {
+  if(row._text_encoding && row._text_encoding!=='apostrophe-v1')throw new Error('Unknown CSV text encoding.');
+  if(row._text_encoding==='apostrophe-v1')for(const key of Object.keys(row))if(row[key].startsWith("'"))row[key]=row[key].slice(1);
+  return row;
+};
+const parseBool = (value,fallback=false) => {
+  if(value===undefined||value==='')return fallback;
+  const v=value.trim().toLowerCase();if(['true','1'].includes(v))return true;if(['false','0'].includes(v))return false;
+  throw new Error(`Invalid boolean ${JSON.stringify(value)}; use true/false or 1/0.`);
+};
+const parseNumber = (value,name) => {
+  if(value===undefined||!value.trim()||!Number.isFinite(Number(value)))throw new Error(`${name} must contain a finite numeric value.`);
+  return Number(value);
+};
+function importPortsCSV(text,{kind='pad',dieId='',units='um'}={}) {
+  if(!UNIT_SCALE[units])throw new Error('CSV units must be um, mm, or nm.');
+  const rows=parseCSV(text),allowed=new Set(['id','label','x','y','kind','dieId','net','domain','role','pair','polarity','locked','required','units','_text_encoding']);
+  const seen=new Set();
+  const ports=rows.map((r,i)=>{
+    r=decodeSafeRow(r);
+    for(const key of Object.keys(r))if(!allowed.has(key))throw new Error(`Unknown CSV column ${key}; use the documented headers.`);
+    if(!r.id?.trim())throw new Error(`CSV row ${i+2}: id is required.`);
+    const id=r.id.trim();if(seen.has(id))throw new Error(`Duplicate port id ${id}.`);seen.add(id);
+    const scale=UNIT_SCALE[r.units?.trim()||units];if(!scale)throw new Error(`CSV row ${i+2}: unsupported units.`);
+    const n={id,label:r.label?.trim()||id,kind:r.kind?.trim()||kind,dieId:r.dieId?.trim()||dieId,
+      x:parseNumber(r.x,`row ${i+2} x`)*scale,y:parseNumber(r.y,`row ${i+2} y`)*scale,
+      net:r.net?.trim()||'',domain:r.domain?.trim()||'',role:r.role?.trim()||'any',pair:r.pair?.trim()||'',polarity:r.polarity?.trim()||'',
+      locked:parseBool(r.locked),required:parseBool(r.required)};
+    if(!KINDS.includes(n.kind)||!ROLES.includes(n.role))throw new Error(`CSV row ${i+2}: invalid kind or role.`);
+    if(!['','+','-'].includes(n.polarity)||Boolean(n.pair)!==Boolean(n.polarity))throw new Error(`CSV row ${i+2}: provide both pair and +/- polarity.`);
+    return n;
+  });
+  if(!ports.length)throw new Error('CSV contains no port rows.');
+  return {ports,warnings:ports.some(n=>!n.domain&&['signal','clock','power'].includes(n.role))?['Some ports have no voltage domain. Fill it in before electrical review.']:[]};
+}
+function importConnectionsCSV(text) {
+  const rows=parseCSV(text),allowed=new Set(['id','from','to','net','locked','signal','length_um','_text_encoding']),seen=new Set();
+  return rows.map((r,i)=>{
+    r=decodeSafeRow(r);
+    for(const k of Object.keys(r))if(!allowed.has(k))throw new Error(`Unknown connection CSV column ${k}.`);
+    if(!r.from?.trim()||!r.to?.trim())throw new Error(`Row ${i+2}: from and to are required.`);
+    const id=r.id?.trim()||`link:${r.from.trim()}`;if(seen.has(id))throw new Error(`Duplicate connection id ${id}.`);seen.add(id);
+    return {id,from:r.from.trim(),to:r.to.trim(),net:r.net?.trim()||'',locked:parseBool(r.locked)};
+  });
+}
+function importJSON(text) {return normalizeProject(JSON.parse(guardText(text)));}
+/** Deliberately limited LEF geometry importer, NOT a complete LEF parser.
+ * Coordinates in LEF geometry are micrometres, not DATABASE MICRONS integers.
+ * Nonzero ORIGIN, polygons, paths, vias, masks, and iterated shapes are rejected.
+ */
+function importLEF(raw,{macroName='',dieId='DIE',x=0,y=0}={}) {
+  const text=guardText(raw),tokens=(text.match(/#[^\n]*|"(?:\\.|[^"\\])*"|;|[^\s;]+/g)||[]).filter(t=>!t.startsWith('#'));
+  const macros=[];
+  for(let i=0;i<tokens.length;i++)if(tokens[i].toUpperCase()==='MACRO') {
+    const name=tokens[++i],start=i+1;let end=-1;
+    for(let j=start;j<tokens.length-1;j++)if(tokens[j].toUpperCase()==='END'&&tokens[j+1]===name){end=j;break;}
+    if(end<0)throw new Error(`LEF MACRO ${name} has no matching END.`);
+    macros.push({name,tokens:tokens.slice(start,end)});i=end+1;
+  }
+  if(!macros.length)throw new Error('No LEF MACRO found.');
+  if(macros.length>1&&!macroName)throw new Error(`Multiple macros found (${macros.map(m=>m.name).join(', ')}). Select a macro explicitly.`);
+  const macro=macroName?macros.find(m=>m.name===macroName):macros[0];if(!macro)throw new Error(`LEF macro ${macroName} not found.`);
+  const t=macro.tokens,upper=t.map(v=>v.toUpperCase()),size=upper.indexOf('SIZE'),origin=upper.indexOf('ORIGIN');
+  if(size<0||upper[size+2]!=='BY')throw new Error('LEF macro must declare SIZE width BY height.');
+  const width=Number(t[size+1]),height=Number(t[size+3]);if(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0)throw new Error('Invalid LEF macro dimensions.');
+  if(origin>=0&&(Number(t[origin+1])!==0||Number(t[origin+2])!==0))throw new Error('Nonzero LEF ORIGIN is not supported. Export normalized coordinates to CSV instead.');
+  const ports=[],warnings=[];
+  for(let i=0;i<t.length;i++)if(upper[i]==='PIN') {
+    const name=t[++i],start=i+1;let end=-1;
+    for(let j=start;j<t.length-1;j++)if(upper[j]==='END'&&t[j+1]===name){end=j;break;}
+    if(end<0)throw new Error(`LEF PIN ${name} has no matching END.`);
+    const body=t.slice(start,end),u=body.map(v=>v.toUpperCase());
+    if(['POLYGON','PATH','VIA','ITERATE','MASK'].some(word=>u.includes(word)))throw new Error(`PIN ${name} contains unsupported geometry. Only non-iterated, unmasked RECT pin shapes are supported.`);
+    const rects=[];
+    for(let j=0;j<body.length;j++)if(u[j]==='RECT') {
+      const r=body.slice(j+1,j+5).map(Number);if(r.length!==4||r.some(v=>!Number.isFinite(v))||body[j+5]!==';'||r[2]<=r[0]||r[3]<=r[1])throw new Error(`PIN ${name} has an invalid RECT.`);rects.push(r);
+    }
+    if(!rects.length)throw new Error(`PIN ${name} has no supported RECT. No pin will be silently dropped.`);
+    const use=u.indexOf('USE'),role=use<0?'signal':({POWER:'power',GROUND:'ground',CLOCK:'clock'}[u[use+1]]||'signal');
+    const left=Math.min(...rects.map(r=>r[0])),bottom=Math.min(...rects.map(r=>r[1])),right=Math.max(...rects.map(r=>r[2])),top=Math.max(...rects.map(r=>r[3]));
+    ports.push({id:`${dieId}:${name}`,label:name,kind:'pad',dieId,x:(left+right)/2,y:(bottom+top)/2,net:name,domain:'',role,pair:'',polarity:'',locked:false,required:true});
+    if(rects.length>1)warnings.push(`${name}: using the bounding-box centre of ${rects.length} rectangles; review the representative point.`);
+    i=end+1;
+  }
+  if(!ports.length)throw new Error('LEF macro contains no supported PINs.');
+  return {die:{id:dieId,name:macro.name,x,y,width,height,rotation:0,mirrorX:false,edgeKeepout:0,cornerKeepout:0},ports,
+    warnings:[...warnings,'LEF import is a rectangular-pin planning subset. Assign voltage domains and review electrical metadata.']};
+}
+function rowLabel(index) {
+  const alphabet='ABCDEFGHJKLMNPRTUVWY';let label='';
+  do {label=alphabet[index%alphabet.length]+label;index=Math.floor(index/alphabet.length)-1;}while(index>=0);
+  return label;
+}
+function generateArray({rows=8,columns=8,pitch=500,x=0,y=0,kind='ball',prefix='BGA',dieId='',role='any',domain='',reserved=[]}={}) {
+  if(!Number.isInteger(rows)||!Number.isInteger(columns)||rows<1||columns<1||rows*columns>10000)throw new Error('Array dimensions must be positive integers with at most 10000 sites.');
+  if(!Number.isFinite(pitch)||pitch<=0||![x,y].every(Number.isFinite)||!KINDS.includes(kind)||!ROLES.includes(role))throw new Error('Invalid array geometry, kind, or role.');
+  const ports=[];
+  for(let row=0;row<rows;row++)for(let col=0;col<columns;col++) {
+    const label=`${rowLabel(row)}${col+1}`;
+    ports.push({id:`${prefix}:${label}`,label,kind,dieId,x:x+col*pitch,y:y+row*pitch,role:reserved.includes(label)?'reserved':role,domain,net:'',pair:'',polarity:'',locked:false,required:false});
+  }
+  return ports;
+}
+
+return {MAX_IMPORT_BYTES,guardText,parseCSV,importPortsCSV,importConnectionsCSV,importJSON,importLEF,rowLabel,generateArray};
+})();
+__mods["src/core/exporters.js"] = (()=>{
+const { VERSION, KINDS, effectiveSignals, worldPoint, transformPoint, fingerprint } = __mods["src/core/model.js"];
+const { analyze } = __mods["src/core/rules.js"];
+const escapeHTML = value => String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LAYER_COLORS = {pad:'#f4b56a',bump:'#5fe1cc',interposer:'#b69af9',ball:'#76b6ff',pcb:'#ed9dcc'};
+const ROLE_COLORS = {any:'#8494a9',signal:'#76b6ff',clock:'#e6a4f9',power:'#f4b56a',ground:'#5fe1cc',reserved:'#f57883',nc:'#596a7e'};
+const csvEncode = value => {
+  let s=String(value??'');
+  if(typeof value==='string' && /^[\s]*[=+\-@']/.test(s))s="'"+s;
+  return /[",\r\n]/.test(s)?'"'+s.replaceAll('"','""')+'"':s;
+};
+const csvTable = (headers,rows) => [headers.join(','),...rows.map(row=>row.map(csvEncode).join(','))].join('\r\n')+'\r\n';
+function exportPortsCSV(p) {
+  const headers=['id','label','kind','dieId','x','y','net','domain','role','pair','polarity','locked','required','units','_text_encoding'];
+  return csvTable(headers,p.ports.map(n=>headers.map(k=>k==='units'?'um':k==='_text_encoding'?'apostrophe-v1':n[k])));
+}
+function exportConnectionsCSV(p) {
+  const ctx=effectiveSignals(p),a=analyze(p);
+  return csvTable(['id','from','to','net','locked','signal','length_um','_text_encoding'],p.connections.map(e=>[e.id,e.from,e.to,e.net,e.locked,ctx.signals.get(e.from).net,a.lengths[e.id],'apostrophe-v1']));
+}
+const exportJSON = p => JSON.stringify(p,null,2)+'\n';
+function layoutProject(p,{view='physical',layers=KINDS}={}) {
+  const ctx=effectiveSignals(p),physical=p.ports.map(n=>worldPoint(n,ctx));
+  const xs=physical.map(n=>n.x),ys=physical.map(n=>n.y);
+  const xmin=Math.min(0,...xs),xmax=Math.max(1000,...xs),ymin=Math.min(0,...ys),ymax=Math.max(1000,...ys),span=xmax-xmin+1200;
+  const offsets=Object.fromEntries(KINDS.map((k,i)=>[k,view==='exploded'?i*span:0]));
+  const nodes=p.ports.filter(n=>layers.includes(n.kind)).map(n=>{const q=worldPoint(n,ctx);return {...n,sx:q.x+offsets[n.kind],sy:-q.y,signal:ctx.signals.get(n.id)};});
+  const corners=[];
+  for(const d of p.dies)for(const q of [{x:0,y:0},{x:d.width,y:0},{x:d.width,y:d.height},{x:0,y:d.height}]){const w=transformPoint(q,d);corners.push({sx:w.x,sy:-w.y});}
+  const all=[...nodes,...corners],bx=Math.min(xmin,...all.map(n=>n.sx))-350,by=Math.min(-ymax,...all.map(n=>n.sy))-400;
+  const bw=Math.max(xmax,...all.map(n=>n.sx))-bx+450,bh=Math.max(-ymin,...all.map(n=>n.sy))-by+350;
+  return {ctx,nodes,offsets,bounds:{x:bx,y:by,width:bw,height:bh},span};
+}
+function diagram(p,{view='physical',layers=KINDS,selected='',showLabels=true,baseline=null}={}) {
+  const layout=layoutProject(p,{view,layers}),{ctx,nodes,offsets,bounds}=layout;
+  const ids=new Map(nodes.map(n=>[n.id,n])),selectedSignal=ctx.signals.get(selected)?.net;
+  let body='';
+  if(view==='exploded')for(const kind of layers) body+=`<text x="${bounds.x+offsets[kind]+500}" y="${bounds.y+160}" fill="${LAYER_COLORS[kind]}" font-size="140" font-family="sans-serif">${kind.toUpperCase()}</text>`;
+  for(const d of p.dies)for(const layer of view==='exploded'?layers.filter(k=>['pad','bump'].includes(k)):['pad']) {
+    const corners=[{x:0,y:0},{x:d.width,y:0},{x:d.width,y:d.height},{x:0,y:d.height}].map(q=>transformPoint(q,d));
+    body+=`<polygon points="${corners.map(q=>`${q.x+offsets[layer]},${-q.y}`).join(' ')}" fill="#172233" fill-opacity="0.55" stroke="#52637b" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    const label=corners[0];body+=`<text x="${label.x+offsets[layer]+30}" y="${-label.y+140}" fill="#94a6bc" font-size="90" font-family="sans-serif">${escapeHTML(d.name)} / R${d.rotation}${d.mirrorX?' MX':''}</text>`;
+  }
+  for(const k of p.keepouts) {
+    const d=ctx.dies.get(k.dieId),points=[{x:k.x,y:k.y},{x:k.x+k.width,y:k.y},{x:k.x+k.width,y:k.y+k.height},{x:k.x,y:k.y+k.height}].map(q=>transformPoint(q,d));
+    for(const kind of view==='exploded'?k.kinds.filter(v=>layers.includes(v)):['pad'])body+=`<polygon points="${points.map(q=>`${q.x+offsets[kind]},${-q.y}`).join(' ')}" fill="#f57883" fill-opacity="0.2" stroke="#f57883" stroke-dasharray="5 4" stroke-width="1" vector-effect="non-scaling-stroke"><title>Keep-out: ${escapeHTML(k.id)}</title></polygon>`;
+  }
+  if(baseline) {
+    const old=layoutProject(baseline,{view,layers}),oldIds=new Map(old.nodes.map(n=>[n.id,n]));
+    for(const e of baseline.connections){const a=oldIds.get(e.from),b=oldIds.get(e.to);if(a&&b)body+=`<line x1="${a.sx}" y1="${a.sy}" x2="${b.sx}" y2="${b.sy}" stroke="#f57883" stroke-opacity="0.35" stroke-dasharray="4 5" stroke-width="1" vector-effect="non-scaling-stroke"/>`;}
+  }
+  for(const e of p.connections) {
+    const a=ids.get(e.from),b=ids.get(e.to);if(!a||!b)continue;
+    const hot=selected&&(e.from===selected||e.to===selected||selectedSignal&&a.signal.net===selectedSignal);
+    body+=`<line data-edge="${escapeHTML(e.id)}" x1="${a.sx}" y1="${a.sy}" x2="${b.sx}" y2="${b.sy}" stroke="${ROLE_COLORS[a.signal.role]}" stroke-opacity="${hot?0.95:selected?0.12:0.36}" stroke-width="${hot?2:0.9}" vector-effect="non-scaling-stroke"><title>${escapeHTML(a.signal.net || '(unnamed)')}: ${escapeHTML(e.from)} to ${escapeHTML(e.to)}</title></line>`;
+  }
+  for(const n of nodes) {
+    const hot=n.id===selected,fill=ROLE_COLORS[n.signal.role],radius=n.kind==='ball'?48:32;
+    body+=`<g data-port="${escapeHTML(n.id)}" class="port" tabindex="0" role="button" aria-label="${escapeHTML(`${n.id}, ${n.signal.net||'unassigned'}, ${n.signal.role}`)}">`;
+    if(hot)body+=`<circle cx="${n.sx}" cy="${n.sy}" r="${radius+35}" fill="none" stroke="#ffffff" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+    body+=`<circle cx="${n.sx}" cy="${n.sy}" r="${radius}" fill="${fill}" fill-opacity="${n.role==='nc'?0.35:0.95}" stroke="${n.locked?'#ffffff':LAYER_COLORS[n.kind]}" stroke-width="${n.locked?2:0.7}" vector-effect="non-scaling-stroke"/><title>${escapeHTML(n.id)} | ${escapeHTML(n.signal.net || '(unassigned)')} | ${escapeHTML(n.signal.domain)}${n.locked?' | LOCKED':''}</title>`;
+    if(['reserved','nc'].includes(n.role))body+=`<path d="M ${n.sx-radius} ${n.sy-radius} L ${n.sx+radius} ${n.sy+radius}" stroke="#ffffff" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    if(showLabels&&(nodes.length<=350||hot))body+=`<text x="${n.sx+radius+20}" y="${n.sy-30}" fill="${hot?'#ffffff':'#acbad0'}" font-size="70" font-family="sans-serif" pointer-events="none">${escapeHTML(n.label)}</text>`;
+    body+='</g>';
+  }
+  return {...layout,body};
+}
+function exportSVG(p,options={}) {
+  const d=diagram(p,options),b=d.bounds;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="${b.x} ${b.y} ${b.width} ${b.height}" role="img" aria-label="${escapeHTML(p.name)}"><title>${escapeHTML(p.name)} - OpenBumpPlan planning view</title><rect x="${b.x}" y="${b.y}" width="${b.width}" height="${b.height}" fill="#0e1522"/>${d.body}</svg>`;
+}
+const fmt = n => Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
+const statusText = a => !a.complete?'NOT FULLY CHECKED':a.errors?'REVIEW REQUIRED':a.warnings?'PLANNING WARNINGS':'PLANNING CHECKS PASS - NOT SIGNOFF';
+const markdownCell = s => String(s??'').replaceAll('|','\\|').replaceAll('\n',' ');
+function exportICDMarkdown(p) {
+  const a=analyze(p),ctx=effectiveSignals(p);
+  let text=`# ${p.name}\n\nInterface-control document | OpenBumpPlan ${VERSION}\n\nRevision: ${p.revision} | Review ID: ${fingerprint(p)} | Units: um\n\n**${statusText(a)}**\n\n${p.description}\n\n## Coordinate convention\n\nAll canonical coordinates are micrometres. Positive Y is up. Die ports use local coordinates; die transforms mirror local X first, rotate counter-clockwise about the local origin, then translate to package XY. Other ports use package XY. Screen exploded offsets are never used for scoring.\n\n## Planning metrics\n\n${a.metrics.ports} sites; ${a.metrics.connections} assignments; ${fmt(a.metrics.totalLength)} um total L1; ${a.metrics.crossings} straight-line crossings; ${a.errors} errors; ${a.warnings} warnings. Score: ${fmt(a.metrics.score)}${a.complete?'':' (lower bound: analysis incomplete)'}.\n\n## Mechanical interfaces\n\n| Die | Origin X | Origin Y | Width | Height | Rotation | Mirror X |\n|---|---:|---:|---:|---:|---:|---|\n`;
+  for(const d of p.dies)text+=`| ${markdownCell(d.id)} | ${d.x} | ${d.y} | ${d.width} | ${d.height} | ${d.rotation} | ${d.mirrorX} |\n`;
+  text+='\n## Interface assignments\n\n| Source | Destination | Effective net | Domain | Role | L1 (um) | Locked |\n|---|---|---|---|---|---:|---|\n';
+  for(const e of p.connections){const s=ctx.signals.get(e.from);text+=`| ${[e.from,e.to,s.net,s.domain,s.role,fmt(a.lengths[e.id]),e.locked].map(markdownCell).join(' | ')} |\n`;}
+  text+='\n## Constraints\n\n```json\n'+JSON.stringify({rules:p.rules,keepouts:p.keepouts,regions:p.regions},null,2)+'\n```\n\n## Findings\n\n';
+  text+=a.issues.length?a.issues.map(i=>`- ${i.severity.toUpperCase()} / ${i.code}: ${i.message}`).join('\n'):'No configured-rule findings.';
+  text+='\n\n## Review and limitations\n\nPlanning only. Crossings are same-stage straight-ratsnest crossings; overlaps are reported separately. L1 is not routed electrical length. Ground proximity and power quotas are geometric proxies, not SI/PI/EM/thermal results. No foundry/package signoff is implied. Unknown domains/nets and incomplete analysis block readiness. The review identifier and local audit are not cryptographic signatures.\n\nEngineering owner: __________  Reviewer: __________  Approval date: __________\n';
+  return text;
+}
+function exportICDHTML(p) {
+  const a=analyze(p),ctx=effectiveSignals(p),table=(headers,rows)=>`<table><thead><tr>${headers.map(h=>`<th>${escapeHTML(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(c=>`<td>${escapeHTML(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>${escapeHTML(p.name)} - ICD</title><style>body{font:14px/1.6 system-ui,sans-serif;max-width:1120px;margin:40px auto;padding:0 28px;color:#142138}h1{font-size:32px;line-height:1.2}h2{margin-top:32px;border-bottom:1px solid #ccd5e3;padding-bottom:8px}table{border-collapse:collapse;width:100%;font-size:12px}td,th{padding:7px;text-align:left;border-bottom:1px solid #d9e0eb;overflow-wrap:anywhere}th{background:#eef3f9}.status{background:#eef3f9;padding:18px;font-weight:700}pre{background:#f3f6fa;white-space:pre-wrap;padding:16px;font:12px/1.5 monospace}svg{width:100%;height:auto;max-height:500px}footer{margin:40px 0;color:#5b6a7e}@media print{body{margin:0;font-size:10px}h2{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}svg{max-height:360px}}</style></head><body><p>OPENBUMPPLAN / INTERFACE CONTROL</p><h1>${escapeHTML(p.name)}</h1><p>Revision ${p.revision} &middot; Review ID ${fingerprint(p)} &middot; Canonical units: micrometres</p><p>${escapeHTML(p.description)}</p><p class="status">${statusText(a)}</p><h2>Planning summary</h2>${table(['Sites','Assignments','Total L1 (um)','Crossings','Errors','Warnings'],[[a.metrics.ports,a.metrics.connections,fmt(a.metrics.totalLength),a.metrics.crossings,a.errors,a.warnings]])}${exportSVG(p).replace(/<\?xml[^>]*\?>/,'')}<h2>Coordinate convention</h2><p>Positive Y is up. Die-local X is mirrored first (when enabled), then rotated counter-clockwise about the die origin and translated into package coordinates. Bumps may be die-local; package/interposer/PCB sites can use package XY. Exploded display offsets never change physical scores.</p><h2>Mechanical interfaces</h2>${table(['Die','X','Y','Width','Height','Rotation','Mirror X'],p.dies.map(d=>[d.id,d.x,d.y,d.width,d.height,d.rotation,d.mirrorX]))}<h2>Assignments</h2>${table(['Source','Destination','Effective net','Domain','Role','L1 (um)','Locked'],p.connections.map(e=>{const s=ctx.signals.get(e.from);return[e.from,e.to,s.net,s.domain,s.role,fmt(a.lengths[e.id]),e.locked];}))}<h2>Configured constraints</h2><pre>${escapeHTML(JSON.stringify({rules:p.rules,keepouts:p.keepouts,regions:p.regions},null,2))}</pre><h2>Findings</h2>${a.issues.length?table(['Severity','Rule','Explanation'],a.issues.map(i=>[i.severity,i.code,i.message])):'<p>No configured-rule findings.</p>'}<h2>Review boundaries</h2><p>This is a planning document, not fabrication approval. Straight-line crossings do not establish a routed-layer short. L1 length is not routed electrical length. Ground proximity and power quotas are geometric proxies; no signal-integrity, power-integrity, electromigration, thermal, or manufacturing signoff has been performed. Local audit/review IDs are not tamper-proof signatures.</p><p>Engineering owner: __________________ Reviewer: __________________ Approval date: __________________</p><footer>Generated by OpenBumpPlan ${VERSION}. Data remains local unless you explicitly export or share it.</footer></body></html>`;
+}
+/** Small, vector/text PDF writer. Base14 Helvetica, printable ASCII transliteration.
+ * HTML/JSON/CSV/SVG retain full Unicode; PDF text outside ASCII is transliterated.
+ */
+function exportPDF(p) {
+  const a=analyze(p),ctx=effectiveSignals(p),pages=[];let commands=[],y=0;
+  const ascii = s => String(s).normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^\x20-\x7E]/g,'?');
+  const pdfText = s => ascii(s).replace(/[\\()]/g,c=>'\\'+c);
+  const drawText=(text,x,yy,size=10,bold=false)=>commands.push(`BT /${bold?'F2':'F1'} ${size} Tf 0.10 0.16 0.24 rg 1 0 0 1 ${x} ${yy} Tm (${pdfText(text)}) Tj ET`);
+  const newPage=()=>{if(commands.length)pages.push(commands.join('\n'));commands=[];drawText('OPENBUMPPLAN / INTERFACE CONTROL',44,806,9,true);commands.push('0.78 0.83 0.88 RG 44 796 m 551 796 l S');drawText(`Revision ${p.revision} | ${fingerprint(p)} | planning only`,44,28,8);drawText(`Page ${pages.length+1}`,510,28,8);y=773;};
+  const line=(text,size=10,bold=false)=>{
+    const max=Math.floor(505/(size*0.59)),words=ascii(text).split(/\s+/);let current='';const lines=[];
+    for(const word of words){if(word.length>max){if(current){lines.push(current);current='';}for(let i=0;i<word.length;i+=max)lines.push(word.slice(i,i+max));}else if((current+' '+word).trim().length>max){lines.push(current);current=word;}else current=(current+' '+word).trim();}
+    if(current||!lines.length)lines.push(current);
+    for(const textLine of lines){if(y<55)newPage();drawText(textLine,44,y,size,bold);y-=size*1.55;}
+  };
+  const heading=text=>{if(y<100)newPage();y-=12;line(text,14,true);y-=3;};
+  newPage();line(p.name,21,true);line(`Status: ${statusText(a)}`,10,true);line(`${a.metrics.ports} sites | ${a.metrics.connections} assignments | ${fmt(a.metrics.totalLength)} um total L1 | ${a.metrics.crossings} crossings`,9);
+  line(`${a.errors} errors | ${a.warnings} warnings | Score ${fmt(a.metrics.score)}${a.complete?'':' (INCOMPLETE / lower bound)'}`,9);
+  y-=12;
+  const layout=layoutProject(p),b=layout.bounds,mapHeight=240,scale=Math.min(505/b.width,mapHeight/b.height),mapBottom=y-mapHeight;
+  commands.push(`0.96 0.97 0.99 rg 44 ${mapBottom} 507 ${mapHeight} re f`);
+  const xy=n=>({x:44+(n.x-b.x)*scale,y:mapBottom+mapHeight-(-n.y-b.y)*scale});
+  for(const e of p.connections){const s=xy(worldPoint(ctx.ports.get(e.from),ctx)),t=xy(worldPoint(ctx.ports.get(e.to),ctx));commands.push(`0.55 0.63 0.72 RG 0.4 w ${s.x.toFixed(3)} ${s.y.toFixed(3)} m ${t.x.toFixed(3)} ${t.y.toFixed(3)} l S`);}
+  for(const n of p.ports){const q=xy(worldPoint(n,ctx));const role=ctx.signals.get(n.id).role;const rgb=role==='ground'?'0.08 0.55 0.42':role==='power'?'0.75 0.38 0.12':'0.19 0.40 0.68';commands.push(`${rgb} rg ${(q.x-1.5).toFixed(3)} ${(q.y-1.5).toFixed(3)} 3 3 re f`);}
+  y=mapBottom-20;line('Physical XY projection; assignments are planning lines, not routed conductors.',8);
+  heading('Coordinate convention');line('Canonical unit: micrometre (um). Positive Y is up. Die ports use local coordinates: mirror local X, rotate counter-clockwise around the local origin, then translate to package XY. Display separation never affects scoring.',9);
+  heading('Review boundary');line('Not signoff. Manhattan length and straight-line crossings are proxies, not physical routing or electrical simulation. Ground proximity and power quotas do not certify SI, PI, EM, thermal, or manufacturability. The local review ID is not a cryptographic signature.',9);
+  newPage();heading('Mechanical interfaces');
+  for(const d of p.dies)line(`${d.id}: origin (${d.x}, ${d.y}) um; size ${d.width} x ${d.height} um; R${d.rotation}; mirror X ${d.mirrorX}`,9);
+  heading('Interface assignments');
+  for(const e of p.connections){if(y<95)newPage();const s=ctx.signals.get(e.from);line(`${e.from} -> ${e.to}`,9,true);line(`Net ${s.net||'(unnamed)'} | ${s.domain||'(no domain)'} | ${s.role} | L1 ${fmt(a.lengths[e.id])} um${e.locked?' | LOCKED':''}`,8);y-=4;}
+  heading('Configured rules');for(const [k,v]of Object.entries(p.rules))line(`${k}: ${typeof v==='object'?JSON.stringify(v):v}`,9);
+  heading('Keep-outs and P/G regions');for(const k of [...p.keepouts,...p.regions])line(JSON.stringify(k),8);if(!p.keepouts.length&&!p.regions.length)line('None configured.',9);
+  heading('Findings');if(!a.issues.length)line('No configured-rule findings.',9);for(const issue of a.issues)line(`${issue.severity.toUpperCase()} / ${issue.code}: ${issue.message}`,9);
+  if(a.detailsTruncated)line('Finding detail limit reached. Consult JSON validation output and split the design.',9,true);
+  heading('Review and approval');line('Engineering owner: ____________________',10);line('Reviewer: ____________________   Approval date: ____________________',10);line('PDF text uses printable ASCII transliteration. Use HTML or JSON for full Unicode labels.',8);
+  pages.push(commands.join('\n'));
+  const objects=['','<< /Type /Catalog /Pages 2 0 R >>','', '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>'];
+  const kids=[];
+  for(const content of pages){const pageId=objects.length,streamId=pageId+1;kids.push(`${pageId} 0 R`);objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${streamId} 0 R >>`);objects.push(`<< /Length ${content.length} >>\nstream\n${content}\nendstream`);}
+  objects[2]=`<< /Type /Pages /Kids [${kids.join(' ')}] /Count ${pages.length} >>`;
+  let output='%PDF-1.4\n%OpenBumpPlan\n';const offsets=[0];
+  for(let i=1;i<objects.length;i++){offsets.push(output.length);output+=`${i} 0 obj\n${objects[i]}\nendobj\n`;}
+  const xref=output.length;output+=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;
+  for(let i=1;i<objects.length;i++)output+=`${String(offsets[i]).padStart(10,'0')} 00000 n \n`;
+  output+=`trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`;
+  return new TextEncoder().encode(output);
+}
+
+return {escapeHTML,LAYER_COLORS,ROLE_COLORS,csvTable,exportPortsCSV,exportConnectionsCSV,exportJSON,layoutProject,diagram,exportSVG,exportICDMarkdown,exportICDHTML,exportPDF};
+})();
+__mods["src/app.js"] = (()=>{
+const { VERSION, KINDS, ROLES, clone, emptyProject, normalizeProject, effectiveSignals, worldPoint, inversePoint, rank, connect, disconnect, portAt, fingerprint } = __mods["src/core/model.js"];
+const { analyze, compatible } = __mods["src/core/rules.js"];
+const { ProjectStore, compareProjects } = __mods["src/core/revisions.js"];
+const { demoProject } = __mods["src/core/demo.js"];
+const { importJSON, importPortsCSV, importConnectionsCSV, importLEF, generateArray } = __mods["src/core/importers.js"];
+const { escapeHTML, LAYER_COLORS, ROLE_COLORS, diagram, exportJSON, exportPortsCSV, exportConnectionsCSV, exportSVG, exportPDF, exportICDHTML, exportICDMarkdown } = __mods["src/core/exporters.js"];
+const $ = id => document.getElementById(id), esc=escapeHTML;
+const storageKey='openbumpplan.project.v1';
+let saveStatus='Not yet saved — export JSON';
+let initial=demoProject(),restoreError='';
+try {const saved=localStorage.getItem(storageKey);if(saved)initial=importJSON(saved);}catch(e){restoreError=`Local restore failed: ${e.message}. Synthetic demo loaded.`;}
+let store=new ProjectStore(initial),baseline=clone(initial),tab='plan',selected='',mode='inspect',view='physical',layers=[...KINDS],strict=true,labels=true,overlay=false,viewBox=null,mapLayout=null,drag=null,search='',tablePage=0,issueFilter='all',worker=null,workerURL=null,pendingImport=null,toastTimer=null,fromStage='interposer',toStage='ball',snapStep=10;
+function toast(message,error=false) {$('toast').textContent=message;$('toast').className=`show${error?' error':''}`;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),6500);}
+function persist() {try{localStorage.setItem(storageKey,exportJSON(store.project));saveStatus='Saved on this device';$('saveState').textContent=saveStatus;}catch{saveStatus='Local save unavailable — export JSON';$('saveState').textContent=saveStatus;toast('Local storage is unavailable/full. Export JSON to keep your work.',true);}}
+function mutate(action,fn,options={}) {try{store.transact(action,fn,{strict,...options});render();persist();return true;}catch(e){toast(e.message,true);return false;}}
+function metricNumber(n) {return Number(n).toLocaleString('en-US',{maximumFractionDigits:1});}
+function option(value,label=value,current='',disabled=false){return `<option value="${esc(value)}" ${value===current?'selected':''} ${disabled?'disabled':''}>${esc(label)}</option>`;}
+function field(label,name,value,type='text',extra=''){return `<label>${esc(label)}<input name="${esc(name)}" type="${type}" value="${esc(value)}" ${extra}></label>`;}
+function selectField(label,name,values,value){return `<label>${esc(label)}<select name="${esc(name)}">${values.map(v=>Array.isArray(v)?option(v[0],v[1],value):option(v,v,value)).join('')}</select></label>`;}
+function controls(){return `<button data-action="new" title="Create an empty project">New</button><button data-action="demo">Demo</button><button data-action="import">Import</button><button data-action="export-json" class="primary">Save JSON</button><select id="exportSelect" aria-label="Export format"><option value="">Export…</option><option value="ports">Ports CSV</option><option value="connections">Assignments CSV</option><option value="svg">Map SVG</option><option value="pdf">ICD PDF</option><option value="html">ICD HTML</option><option value="md">ICD Markdown</option><option value="validation">Validation JSON</option><option value="diff">Revision diff JSON</option></select><button data-action="help" aria-label="Help and keyboard shortcuts">?</button>`;}
+function render(){
+  const p=store.project,a=store.analysis,m=a.metrics;
+  $('app').innerHTML=`<header class="brandbar"><div class="brandicon" aria-hidden="true"></div><div><div class="brandname">OpenBumpPlan</div><div class="brandtag">DIE → PACKAGE → BOARD</div></div><span class="version">v${VERSION} · ALPHA</span><div class="spacer"></div><span class="privacy">● Local-only design data</span>${controls()}</header>
+  <div class="projectbar"><span class="projectname" title="${esc(p.name)}">${esc(p.name)}</span><nav class="tabs" aria-label="Workspace views">${[['plan','Plan'],['connections','Connectivity'],['rules','Rules'],['revisions','Revisions'],['icd','Interface document']].map(([id,label])=>`<button data-tab="${id}" class="${tab===id?'active':''}" aria-current="${tab===id?'page':'false'}">${label}</button>`).join('')}</nav><div class="spacer"></div><span class="pill">r${p.revision}</span></div>
+  <section class="metrics" aria-label="Planning metrics"><div class="metric"><div class="label">Configured-rule review</div><div class="value ${a.errors?'bad':a.warnings?'warn':'good'}">${!a.complete?'Incomplete':a.errors?`${a.errors} errors`:a.warnings?'Review warnings':'Checks pass'}</div><div class="detail">${a.warnings} warnings · planning only, not signoff</div></div><div class="metric"><div class="label">Manhattan length</div><div class="value">${metricNumber(m.totalLength/1000)}<span class="unit">mm total</span></div><div class="detail">Longest ${metricNumber(m.maxLength)} um · physical XY</div></div><div class="metric"><div class="label">Ratsnest crossings</div><div class="value ${m.crossings?'warn':''}">${m.crossings}${!a.complete?'+':''}<span class="unit">same stage</span></div><div class="detail">${m.overlaps} collinear overlaps, separate from score</div></div><div class="metric"><div class="label">Assigned paths</div><div class="value">${m.connections}<span class="unit">links / ${m.ports} sites</span></div><div class="detail">${m.unassigned} required sites unassigned</div></div><div class="metric"><div class="label">Planning objective</div><div class="value">${metricNumber(m.score)}${!a.complete?'+':''}</div><div class="detail">L1 + ${p.rules.crossingWeight} × crossings · lower is better</div></div></section>
+  <main id="workspace">${tab==='plan'?planPage():tab==='connections'?connectionsPage():tab==='rules'?rulesPage():tab==='revisions'?revisionsPage():icdPage()}</main>
+  <footer class="footer"><span id="saveState">${esc(saveStatus)}</span><span>Review ID ${fingerprint(p)}</span><span class="spacer"></span><span>Geometric planning ≠ SI / PI / routing / signoff</span><button class="quiet" data-action="advanced" style="font-size:10px;padding:2px 6px">Project JSON</button></footer>`;
+  $('exportSelect').addEventListener('change',e=>{if(e.target.value)downloadExport(e.target.value);e.target.value='';});
+  if(tab==='plan')renderMap();
+  if(tab==='connections'){$('connectionSearch').addEventListener('input',e=>{search=e.target.value;tablePage=0;renderConnectionRows();});renderConnectionRows();}
+  if(tab==='icd')$('icdFrame').srcdoc=exportICDHTML(p);
+}
+function planPage(){const p=store.project;return `<div class="workspace"><aside class="panel left"><div class="section"><div class="eyebrow">Physical stack</div>${KINDS.map(k=>`<label class="layer"><input type="checkbox" data-layer="${k}" ${layers.includes(k)?'checked':''}><span class="dot" style="background:${LAYER_COLORS[k]}"></span>${k[0].toUpperCase()+k.slice(1)}<span class="count">${p.ports.filter(n=>n.kind===k).length}</span></label>`).join('')}</div><div class="section"><div class="eyebrow">Die placement</div>${p.dies.map(d=>`<button class="diebutton" data-die="${esc(d.id)}">${esc(d.name)}<small>${d.width} × ${d.height} um · R${d.rotation}${d.mirrorX?' · mirror X':''}</small></button>`).join('')||'<p class="hint">Import a LEF macro or add a die in Project JSON.</p>'}</div><div class="section"><div class="eyebrow">Assignment optimizer</div><div class="stackform">${selectField('From layer','fromStage',KINDS,fromStage)}${selectField('To layer','toStage',KINDS,toStage)}<button data-action="optimize" class="primary" ${worker?'disabled':''}>Optimize stage</button>${worker?'<div class="busy"><span class="spinner"></span>Checking candidate mappings…</div><button data-action="cancel-optimize">Cancel</button>':''}</div><p class="hint">Pair-aware placement + minimum-cost assignment + checked swaps. Locked mappings are preserved.</p></div><div class="section"><button data-action="array" style="width:100%">Generate bump / ball array</button><p class="hint">Use explicit units and voltage domains. Imports are previewed before application.</p></div></aside>
+  <section class="canvasarea" aria-label="Interactive planning canvas"><div class="canvasbar"><div class="modes">${['inspect','move','connect'].map(m=>`<button data-mode="${m}" class="${mode===m?'active':''}">${m[0].toUpperCase()+m.slice(1)}</button>`).join('')}</div><select id="viewSelect" aria-label="Physical or exploded view">${option('physical','Physical XY',view)}${option('exploded','Exploded stack',view)}</select><button data-action="fit">Fit</button><button data-action="undo" title="Ctrl/Cmd+Z" ${store.undoStack.length?'':'disabled'}>↶</button><button data-action="redo" title="Ctrl/Cmd+Shift+Z" ${store.redoStack.length?'':'disabled'}>↷</button><div class="spacer"></div><label title="Local coordinate snap step in micrometres">Snap <input id="snap" type="number" min="0" value="${snapStep}" aria-label="Snap step in micrometres"></label></div><div class="canvaswrap"><svg id="map" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Interactive die and package map"><g id="mapBody"></g></svg><div class="canvaslegend">${Object.entries(ROLE_COLORS).filter(([k])=>k!=='any').map(([k,c])=>`<span style="margin-right:10px"><i class="legend-dot" style="background:${c}"></i>${k}</span>`).join('')}<br><b>${mode==='connect'?'Drag source to destination, or select a source and click its destination.':mode==='move'?'Drag a site to move it. Locked sites cannot move.':'Select a site to inspect its net and assignments.'}</b> Scroll to zoom · drag background to pan</div></div><div class="canvasfoot"><label><input id="strictToggle" type="checkbox" ${strict?'checked':''}> Block new hard-rule violations</label><label><input id="labelToggle" type="checkbox" ${labels?'checked':''}> Labels</label><label><input id="overlayToggle" type="checkbox" ${overlay?'checked':''}> Baseline overlay</label><span class="spacer"></span><span>${view==='exploded'?'Display offsets only; scores use physical XY':'Package coordinates · um · Y↑'}</span></div></section>
+  <aside class="panel right">${inspector()}<div class="section inline"><h3>Rule findings</h3><span class="spacer"></span><select id="issueFilter" aria-label="Filter findings">${option('all','All',issueFilter)}${option('error','Errors',issueFilter)}${option('warning','Warnings',issueFilter)}</select></div>${issueList()}</aside></div>`;}
+function inspector(){const n=store.project.ports.find(p=>p.id===selected);if(!n)return `<div class="section"><div class="eyebrow">Inspector</div><h3>Every assignment, explained.</h3><p class="hint">Select a pad, bump, ball, or PCB site. Review inherited nets, move sites, and reassign connections without losing revision history.</p></div>`;
+  const p=store.project,ctx=effectiveSignals(p),s=ctx.signals.get(n.id),targets=p.ports.filter(t=>rank(t.kind)>rank(n.kind)&&p.rules.allowedStagePairs.some(([a,b])=>a===n.kind&&b===t.kind));
+  return `<div class="section"><div class="eyebrow">Selected ${esc(n.kind)} ${n.locked?'· locked':''}</div><h3 class="inspector-title">${esc(n.id)}</h3><p class="hint" style="margin-bottom:12px">Effective: <strong>${esc(s.net||'(unassigned)')}</strong> / ${esc(s.domain||'no domain')} / ${esc(s.role)}</p><form data-form="port" class="formgrid">${field('Local / package X (um)','x',n.x,'number','step="any" '+(n.locked?'disabled':''))}${field('Local / package Y (um)','y',n.y,'number','step="any" '+(n.locked?'disabled':''))}${field('Declared net (blank = inherit)','net',n.net)}${field('Voltage domain','domain',n.domain)}${selectField('Site role','role',ROLES,n.role)}${field('Display label','label',n.label)}${field('Differential-pair ID','pair',n.pair)}${selectField('Polarity','polarity',[['','None'],['+','+'],['-','-']],n.polarity)}<label class="full"><input type="checkbox" name="required" ${n.required?'checked':''}> Required interface site</label><button class="full" type="submit">Apply site edits</button></form><div class="actions"><button data-action="lock">${n.locked?'Unlock':'Lock site'}</button><button data-action="disconnect" class="danger">Disconnect</button></div>${targets.length?`<form data-form="assign" style="margin-top:16px"><label>Assign to destination<select name="target"><option value="">Select a target…</option>${targets.map(t=>option(t.id,`${t.id}${ctx.incoming.has(t.id)?' · occupied':''}${compatible(n,t,p,ctx)?'':' · incompatible'}`,'',t.locked||strict&&!compatible(n,t,p,ctx))).join('')}</select></label><label style="margin-top:8px"><input name="replace" type="checkbox"> Replace occupied source / target mapping</label><button type="submit" class="primary" style="width:100%;margin-top:9px" ${n.locked?'disabled':''}>Assign connection</button></form>`:''}</div>`;}
+function issueList(){const a=store.analysis,items=a.issues.filter(i=>issueFilter==='all'||i.severity===issueFilter);if(!items.length)return `<div class="empty"><div class="symbol">✓</div>No ${issueFilter==='all'?'configured-rule':issueFilter} findings.<br>Planning checks do not replace engineering signoff.</div>`;
+  return items.slice(0,150).map((i,index)=>`<button class="issue ${i.severity}" data-issue="${a.issues.indexOf(i)}"><span class="code">${esc(i.code)}</span><span class="message">${esc(i.message)}</span></button>`).join('')+(items.length>150?`<div class="empty">Showing 150 of ${items.length} findings. Export validation JSON for all retained details.</div>`:'');}
+function renderMap(){const p=store.project;mapLayout=diagram(p,{view,layers,selected,showLabels:labels,baseline:overlay?baseline:null});$('mapBody').innerHTML=mapLayout.body;if(!viewBox){const b=mapLayout.bounds;viewBox=[b.x,b.y,b.width,b.height];}setViewBox();const svg=$('map');svg.removeEventListener('wheel',zoom);svg.addEventListener('wheel',zoom,{passive:false});svg.onpointerdown=pointerDown;svg.onpointermove=pointerMove;svg.onpointerup=pointerUp;svg.onpointercancel=()=>{drag=null;renderMap();};}
+function setViewBox(){if($('map')&&viewBox)$('map').setAttribute('viewBox',viewBox.join(' '));}
+function svgPoint(event){const svg=$('map'),point=svg.createSVGPoint();point.x=event.clientX;point.y=event.clientY;return point.matrixTransform(svg.getScreenCTM().inverse());}
+function zoom(e){e.preventDefault();const q=svgPoint(e),factor=Math.exp(Math.max(-600,Math.min(600,e.deltaY))*.0015),width=viewBox[2]*factor;if(width<100||width>2000000)return;viewBox=[q.x+(viewBox[0]-q.x)*factor,q.y+(viewBox[1]-q.y)*factor,width,viewBox[3]*factor];setViewBox();}
+function pointerDown(e){if(e.button!==0)return;const el=e.target.closest('[data-port]'),id=el?.dataset.port;
+  if(id&&mode==='move'){const n=portAt(store.project,id);if(n.locked){toast('This site is locked.',true);return;}drag={type:'move',id,element:el,start:svgPoint(e),node:clone(n),origin:mapLayout.nodes.find(x=>x.id===id),moved:false};$('map').setPointerCapture(e.pointerId);}
+  else if(id){drag={type:mode==='connect'?'connect':'select',id,clientX:e.clientX,clientY:e.clientY,moved:false};}
+  else{const matrix=$('map').getScreenCTM();drag={type:'pan',clientX:e.clientX,clientY:e.clientY,box:[...viewBox],scaleX:matrix.a,scaleY:matrix.d};$('map').setPointerCapture(e.pointerId);}}
+function pointerMove(e){if(!drag)return;
+  if(drag.type==='pan'){viewBox=[drag.box[0]-(e.clientX-drag.clientX)/drag.scaleX,drag.box[1]-(e.clientY-drag.clientY)/drag.scaleY,drag.box[2],drag.box[3]];setViewBox();}
+  else if(drag.type==='move'){const q=svgPoint(e),dx=q.x-drag.start.x,dy=q.y-drag.start.y;drag.moved=Math.abs(dx)+Math.abs(dy)>1;drag.q={x:drag.origin.sx+dx,y:drag.origin.sy+dy};drag.element.setAttribute('transform',`translate(${dx} ${dy})`);for(const line of $('map').querySelectorAll('[data-edge]')){const edge=store.project.connections.find(x=>x.id===line.dataset.edge);if(edge.from===drag.id){line.setAttribute('x1',drag.q.x);line.setAttribute('y1',drag.q.y);}if(edge.to===drag.id){line.setAttribute('x2',drag.q.x);line.setAttribute('y2',drag.q.y);}}}
+  else if(Math.abs(e.clientX-drag.clientX)+Math.abs(e.clientY-drag.clientY)>5)drag.moved=true;
+}
+function pointerUp(e){if(!drag)return;const d=drag;drag=null;
+  if(d.type==='move'){selected=d.id;if(d.moved&&d.q){const world={x:d.q.x-mapLayout.offsets[d.node.kind],y:-d.q.y},local=inversePoint(world,mapLayout.ctx.dies.get(d.node.dieId)),snap=Math.max(0,Number($('snap').value)||0);mutate(`Move ${d.id}`,p=>{const n=portAt(p,d.id);n.x=snap?Math.round(local.x/snap)*snap:local.x;n.y=snap?Math.round(local.y/snap)*snap:local.y;});}render();}
+  else if(d.type==='select')selectPort(d.id);
+  else if(d.type==='connect'){const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-port]')?.dataset.port;if(d.moved&&hit&&hit!==d.id){selected=d.id;assign(d.id,hit,false);}else if(selected&&selected!==d.id&&rank(portAt(store.project,selected).kind)<rank(portAt(store.project,d.id).kind))assign(selected,d.id,false);else selectPort(d.id);}}
+function selectPort(id){selected=id;render();}
+function assign(from,to,replace){if(!to){toast('Choose a destination.',true);return;}if(mutate(`Assign ${from} to ${to}`,p=>connect(p,from,to,{replace})))toast('Assignment updated. Undo is available.');}
+function connectionsPage(){return `<section class="contentpage"><div class="pageheading"><div><h2>Connectivity, across the stack</h2><p class="hint">Logical nets propagate through every assignment. Declared constraints never silently change.</p></div><span class="spacer"></span><input id="connectionSearch" placeholder="Search a net, domain, or endpoint" aria-label="Search connections" value="${esc(search)}" style="width:280px"><button data-action="export-connections">Export CSV</button></div><div class="tablewrap"><table><thead><tr><th>Source</th><th>Destination</th><th>Net / pair</th><th>Domain</th><th>Role</th><th>L1 · um</th><th>Locked</th></tr></thead><tbody id="connectionRows"></tbody></table></div><div class="actions"><button data-action="previous-page">Previous</button><span id="tableCount" class="hint"></span><button data-action="next-page">Next</button></div></section>`;}
+function filteredConnections(){const ctx=effectiveSignals(store.project),q=search.toLowerCase();return store.project.connections.filter(e=>[e.from,e.to,ctx.signals.get(e.from).net,ctx.signals.get(e.from).domain].some(s=>s.toLowerCase().includes(q)));}
+function renderConnectionRows(){const p=store.project,ctx=effectiveSignals(p),rows=filteredConnections(),pages=Math.max(1,Math.ceil(rows.length/100));tablePage=Math.max(0,Math.min(tablePage,pages-1));$('connectionRows').innerHTML=rows.slice(tablePage*100,(tablePage+1)*100).map(e=>{const s=ctx.signals.get(e.from);return `<tr><td><button class="linkbutton" data-select="${esc(e.from)}">${esc(e.from)}</button></td><td><button class="linkbutton" data-select="${esc(e.to)}">${esc(e.to)}</button></td><td>${esc(s.net||'(unnamed)')}${s.pair?`<br><small>${esc(s.pair)} ${esc(s.polarity)}</small>`:''}</td><td>${esc(s.domain||'—')}</td><td>${esc(s.role)}</td><td>${metricNumber(store.analysis.lengths[e.id])}</td><td><button class="quiet" data-edge-lock="${esc(e.id)}" style="padding:3px 6px;font-size:10px">${e.locked?'Locked':'Unlocked'}</button></td></tr>`;}).join('')||'<tr><td colspan="7">No matching assignments.</td></tr>';$('tableCount').textContent=`Page ${tablePage+1}/${pages} · ${rows.length} matching assignments`;}
+const ruleLabels={maxLength:'Maximum assignment L1 (um)',minDomainSpacing:'Different-domain Euclidean spacing (um)',pairMaxDistance:'Pair adjacency, L1 (um)',pairMaxSkew:'Pair L1 skew limit (um)',clockShieldRadius:'Clock ground-neighbour radius (um)',clockGroundMin:'Minimum clock ground neighbours',groundRadius:'Signal ground coverage radius (um)',powerRadius:'Signal power coverage radius (um)',minGroundRatio:'Minimum connected ground fraction (0–1)',crossingWeight:'Crossing cost, um-equivalent',maxCrossings:'Crossing warning threshold',geometryBudget:'Geometry comparison safety budget'};
+function rulesPage(){const p=store.project,r=p.rules;return `<section class="contentpage"><div class="pageheading"><div><h2>Explicit constraints. Reproducible checks.</h2><p class="hint">Editing rules re-evaluates the design; it does not automatically repair or approve mappings.</p></div><span class="spacer"></span><button data-action="export-validation">Export findings</button></div><form data-form="rules"><div class="card"><div class="rulegrid">${Object.entries(ruleLabels).map(([key,label])=>field(label,key,r[key],'number','min="0" step="any" required')).join('')}${selectField('Terminal interface layer','terminalKind',KINDS,r.terminalKind)}<label style="padding-top:20px"><input name="requirePowerForSignals" type="checkbox" ${r.requirePowerForSignals?'checked':''}> Enforce domain-matched power coverage</label><label style="padding-top:20px"><input name="requireCompletePaths" type="checkbox" ${r.requireCompletePaths?'checked':''}> Require paths to the terminal layer</label></div><div class="actions"><button type="submit" class="primary">Apply rules and recheck</button></div></div></form><div class="twocol"><div class="card"><h3>Geometric proxies, not electrical signoff</h3><p>Distances use physical package XY. Signal and clock ground neighbours must be connected ground sites on the same layer. A power neighbour must also match the signal’s voltage domain.</p><p>Differential adjacency is L1 distance; ground proximity and voltage-domain spacing are Euclidean. Skew is the difference of L1 assignment lengths within each stage, not measured electrical delay.</p></div><div class="card"><h3>Draft editing and strict checks</h3><p>Strict mapping edits block newly introduced hard-rule violations. Missing assignments, nets, domains, and incomplete pairs/paths may remain while building a draft; they still prevent review readiness.</p><p>Budget exhaustion is an error. Crossings are same-stage straight-ratsnest intersections, not routing shorts. Collinear overlaps are reported separately.</p></div></div><div class="card"><h3>Keep-outs, P/G quotas, and stage topology</h3><p>Edit rectangle keep-outs, die edge/corner distances, per-region power/ground quotas, and allowed forward stages in the complete project JSON. All inputs are validated before use.</p><button data-action="advanced">Edit complete project JSON</button><pre class="mono" style="font-size:11px;white-space:pre-wrap;margin-top:15px">${esc(JSON.stringify({keepouts:p.keepouts,regions:p.regions,allowedStagePairs:r.allowedStagePairs},null,2))}</pre></div></section>`;}
+function revisionsPage(){const d=compareProjects(baseline,store.project),s=d.summary;return `<section class="contentpage"><div class="pageheading"><div><h2>Revision review</h2><p class="hint">Baseline ${d.beforeFingerprint} → current ${d.afterFingerprint}. Includes propagated net changes and transformed physical movements.</p></div><span class="spacer"></span><button data-action="baseline-current">Set current as baseline</button><button data-action="baseline-import">Load baseline JSON</button><button data-action="export-diff">Export diff</button></div><div class="revisionstats">${[['Added',s.added],['Removed',s.removed],['Changed',s.changed],['Score delta',metricNumber(s.scoreDelta)]].map(([k,v])=>`<div class="card"><div class="eyebrow">${k}</div><div class="big">${v}</div></div>`).join('')}</div><div class="notice ${d.gate.ok?'':'bad'}">${d.gate.ok?'Regression gate: no newly introduced hard or incomplete-interface errors.':'Regression gate blocked: '+esc(d.gate.reason)} This gate is not a manufacturing approval.</div><div class="tablewrap"><table><thead><tr><th>Change</th><th>Object</th><th>Identifier</th><th>Changed fields</th></tr></thead><tbody>${d.changes.slice(0,500).map(c=>`<tr><td>${c.type}</td><td>${c.category}</td><td>${esc(c.id)}</td><td>${esc(c.fields?.join(', ')||'—')}</td></tr>`).join('')||'<tr><td colspan="4">No structural differences from the baseline.</td></tr>'}</tbody></table></div><div class="card"><h3>Downstream effects · ${d.propagated.length} sites</h3><p>These may change even when a port’s own record does not — for example, after a die rotation or an upstream reassignment.</p><div class="tablewrap"><table><thead><tr><th>Site</th><th>Physical movement, L1 (um)</th><th>Previous net</th><th>Current net</th></tr></thead><tbody>${d.propagated.slice(0,500).map(v=>`<tr><td>${esc(v.id)}</td><td>${metricNumber(v.movement)}</td><td>${esc(v.signalBefore.net)}</td><td>${esc(v.signalAfter.net)}</td></tr>`).join('')||'<tr><td colspan="4">No propagated changes.</td></tr>'}</tbody></table></div></div><p class="hint">Tables show up to 500 entries each; exported diff contains all changes. Local undo/audit records are convenient review aids, not signed approvals.</p></section>`;}
+function icdPage(){return `<section class="contentpage"><div class="pageheading"><div><h2>Interface-control document</h2><p class="hint">Mechanical transforms, connectivity, rules, metrics, findings, and approval fields — generated from the current revision.</p></div><span class="spacer"></span><button data-action="export-md">Markdown</button><button data-action="export-html">HTML</button><button class="primary" data-action="export-pdf">Download PDF</button></div><iframe id="icdFrame" class="icdframe" title="Interface-control document preview" sandbox=""></iframe></section>`;}
+function openDialog(title,description,body,buttons=''){pendingImport=null;$('dialog').innerHTML=`<h2>${esc(title)}</h2><p>${esc(description)}</p>${body}<div id="dialogError" class="error" role="alert"></div><div class="actions"><button type="button" data-action="close-dialog">Cancel</button>${buttons}</div>`;$('dialog').showModal();}
+function closeDialog(){$('dialog').close();pendingImport=null;}
+function importDialog(){openDialog('Import interface data','Imports are local. Preview first; no existing object is silently overwritten.',`<div class="formgrid">${selectField('Input format','importType',[['json','Complete project JSON'],['ports','Ports CSV'],['connections','Assignments CSV'],['lef','LEF macro (RECT subset)']],'json')}${selectField('CSV site layer','importKind',KINDS,'pad')}${selectField('CSV coordinate units','importUnits',['um','mm','nm'],'um')}${field('Die ID (blank = package XY)','importDie','')}${field('LEF macro name (required for multi-macro LEF)','macroName','')}<label>Choose file<input id="importFile" type="file" accept=".json,.csv,.lef,.txt"></label><label class="full">Or paste text<textarea id="importText" spellcheck="false" style="min-height:130px" placeholder="Paste JSON, CSV, or LEF here"></textarea></label></div><div id="importPreview"></div>`,`<button data-action="preview-import">Preview and validate</button><button id="applyImport" data-action="apply-import" class="primary" disabled>Apply import</button>`);}
+async function previewImport(){try{const dialog=$('dialog'),value=name=>dialog.querySelector(`[name="${name}"]`).value;const text=$('importText').value||await $('importFile').files[0]?.text();if(!text)throw new Error('Choose a file or paste text.');const type=value('importType'),candidate=clone(store.project);let notes=[];
+  if(type==='json')Object.assign(candidate,importJSON(text));
+  else if(type==='ports'){const result=importPortsCSV(text,{kind:value('importKind'),dieId:value('importDie'),units:value('importUnits')});candidate.ports.push(...result.ports);notes=result.warnings;}
+  else if(type==='connections')candidate.connections.push(...importConnectionsCSV(text));
+  else{const result=importLEF(text,{macroName:value('macroName'),dieId:value('importDie')||'DIE'});candidate.dies.push(result.die);candidate.ports.push(...result.ports);notes=result.warnings;}
+  const normalized=normalizeProject(candidate),a=analyze(normalized);pendingImport={candidate:normalized,type};$('importPreview').innerHTML=`<div class="notice ${a.errors?'warn':''}">Preview: ${normalized.dies.length} dies, ${normalized.ports.length} sites, ${normalized.connections.length} assignments. ${a.errors} rule errors and ${a.warnings} warnings.${notes.map(n=>`<br>${esc(n)}`).join('')}</div><p class="hint">Import may introduce a draft with rule violations. They remain visible and prevent readiness; no data is automatically repaired.</p>`;$('applyImport').disabled=false;$('dialogError').textContent='';
+  }catch(e){pendingImport=null;$('applyImport').disabled=true;$('dialogError').textContent=e.message;}}
+function arrayDialog(){openDialog('Generate an array','Creates candidate sites only; it never invents electrical connectivity. Coordinates are micrometres.',`<form id="arrayForm" class="formgrid">${field('Rows','rows',8,'number','min="1"')}${field('Columns','columns',8,'number','min="1"')}${field('Pitch (um)','pitch',500,'number','min="0.001" step="any"')}${selectField('Layer','kind',KINDS,'ball')}${field('Origin X (um)','x',0,'number','step="any"')}${field('Origin Y (um)','y',0,'number','step="any"')}${field('Unique ID prefix','prefix','BGA')}${field('Die ID (blank = package XY)','dieId','')}${selectField('Site role','role',ROLES,'any')}${field('Voltage domain (optional)','domain','')}</form>`,`<button data-action="create-array" class="primary">Create sites</button>`);}
+function dieDialog(id){const d=store.project.dies.find(x=>x.id===id);openDialog(`Place ${d.name}`,'Mirror local X first, then rotate counter-clockwise about the local origin, then translate into package XY.',`<form id="dieForm" data-id="${esc(id)}" class="formgrid">${field('Name','name',d.name)}${selectField('Rotation','rotation',['0','90','180','270'],String(d.rotation))}${field('Origin X (um)','x',d.x,'number','step="any"')}${field('Origin Y (um)','y',d.y,'number','step="any"')}${field('Width (um)','width',d.width,'number','step="any"')}${field('Height (um)','height',d.height,'number','step="any"')}${field('Edge keep-out (um)','edgeKeepout',d.edgeKeepout,'number','step="any"')}${field('Corner keep-out radius (um)','cornerKeepout',d.cornerKeepout,'number','step="any"')}<label class="full"><input name="mirrorX" type="checkbox" ${d.mirrorX?'checked':''}> Mirror local X before rotation</label></form>`,`<button data-action="apply-die" class="primary">Apply transform</button>`);}
+function advancedDialog(){openDialog('Complete project JSON','A versioned, open data model. Applying edits may create a draft with violations; all geometry and references are validated first.',`<textarea id="projectJSON" style="min-height:430px" spellcheck="false">${esc(exportJSON(store.project))}</textarea>`,`<button data-action="apply-json" class="primary">Validate and apply</button>`);}
+function helpDialog(){openDialog('Planning workflow','This is an alpha planning application, not a fabrication or signoff tool.',`<div class="card"><h3>1. Load and inspect</h3><p>Start with the synthetic demo, or import CSV/LEF/JSON. CSV requires id,x,y. LEF supports rectangular PIN geometry only. All units are converted to micrometres.</p><h3>2. Assign and constrain</h3><p>Inspect selects sites. Move drags geometry. Connect drags or clicks a source then its target. Use the inspector’s Replace checkbox for occupied mappings. Strict mode blocks new hard violations, but permits explicitly reported incomplete drafts.</p><h3>3. Optimize and review</h3><p>The left panel optimizes one forward stage in a worker. Pair placement and a Hungarian subproblem produce candidates, then full rules validate them. This is a bounded heuristic, not a global coupled optimum.</p><h3>4. Compare and deliver</h3><p>Set a baseline before editing, compare propagated changes, and export the interface document. Save JSON for a lossless checkpoint. CSV formula-leading text is reversibly escaped.</p></div><p>Ctrl/Cmd+Z: undo · Ctrl/Cmd+Shift+Z: redo · F: fit canvas · Escape: cancel dialog · Enter on a focused site: inspect.</p><p>No accounts, telemetry, CDNs, or network uploads. A browser may restrict local storage; export JSON regularly. This tool has no SI/PI/thermal engine and no foundry-qualified signoff.</p>`,`<button data-action="close-dialog" class="primary">Start planning</button>`);}
+function download(data,name,type){const blob=new Blob([data],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);}
+function downloadExport(format){try{const p=store.project,prefix=`openbumpplan-r${p.revision}`;const outputs={json:()=>[exportJSON(p),`${prefix}.json`,'application/json'],ports:()=>[exportPortsCSV(p),`${prefix}-ports.csv`,'text/csv'],connections:()=>[exportConnectionsCSV(p),`${prefix}-assignments.csv`,'text/csv'],svg:()=>[exportSVG(p,{view,layers}),`${prefix}-map.svg`,'image/svg+xml'],pdf:()=>[exportPDF(p),`${prefix}-ICD.pdf`,'application/pdf'],html:()=>[exportICDHTML(p),`${prefix}-ICD.html`,'text/html'],md:()=>[exportICDMarkdown(p),`${prefix}-ICD.md`,'text/markdown'],validation:()=>[JSON.stringify(store.analysis,null,2),`${prefix}-validation.json`,'application/json'],diff:()=>[JSON.stringify(compareProjects(baseline,p),null,2),`${prefix}-diff.json`,'application/json']};if(!outputs[format])throw new Error('Unknown export format.');download(...outputs[format]());toast('Export created from the current revision.');}catch(e){toast(e.message,true);}}
+function cancelWorker(){if(worker)worker.terminate();worker=null;if(workerURL)URL.revokeObjectURL(workerURL);workerURL=null;}
+function optimize(){if(worker)return;const from=document.querySelector('[name="fromStage"]').value,to=document.querySelector('[name="toStage"]').value,revision=store.project.revision,inputFingerprint=fingerprint(store.project);try{
+  if(globalThis.OPENBUMPPLAN_WORKER_SOURCE){workerURL=URL.createObjectURL(new Blob([globalThis.OPENBUMPPLAN_WORKER_SOURCE],{type:'text/javascript'}));worker=new Worker(workerURL);}else worker=new Worker(new URL('./worker.js',import.meta.url),{type:'module'});
+  worker.onmessage=event=>{cancelWorker();if(store.project.revision!==revision||fingerprint(store.project)!==inputFingerprint){render();toast('The design changed during optimization. Stale results were discarded.',true);return;}if(!event.data.ok){render();toast(event.data.error,true);return;}const result=event.data.result;if(result.changed){mutate(`Optimize ${from} -> ${to}`,p=>{p.connections=result.project.connections;},{strict:true});toast(`Checked optimization: score ${metricNumber(result.before.metrics.score)} → ${metricNumber(result.after.metrics.score)}; crossings ${result.before.metrics.crossings} → ${result.after.metrics.crossings}.`);}else{render();toast(result.message);}};
+  worker.onerror=event=>{cancelWorker();render();toast(`Optimization worker failed: ${event.message}. No design changes were applied.`,true);};
+  worker.postMessage({project:clone(store.project),from,to,options:{maxTrials:700}});render();
+  }catch(e){cancelWorker();toast(e.message,true);}}
+// Delegated handlers survive workspace re-rendering without accumulating listeners.
+document.addEventListener('click',async e=>{
+  const target=e.target.closest('button');if(!target)return;
+  if(target.dataset.tab){tab=target.dataset.tab;render();return;}
+  if(target.dataset.mode){mode=target.dataset.mode;render();return;}
+  if(target.dataset.die){dieDialog(target.dataset.die);return;}
+  if(target.dataset.select){tab='plan';selected=target.dataset.select;render();return;}
+  if(target.dataset.edgeLock){mutate(`Toggle lock ${target.dataset.edgeLock}`,p=>{const edge=p.connections.find(x=>x.id===target.dataset.edgeLock);edge.locked=!edge.locked;});return;}
+  if(target.dataset.issue!==undefined){const issue=store.analysis.issues[Number(target.dataset.issue)];if(issue.ports[0]){selected=issue.ports[0];render();}else toast(issue.message);return;}
+  const action=target.dataset.action;if(!action)return;
+  try{
+    if(action.startsWith('export-')){downloadExport(action.slice(7));return;}
+    if(action==='help')helpDialog();
+    else if(action==='new'){if(confirm('Create an empty project? Your current project remains available through Undo.')){selected='';viewBox=null;mutate('Create empty project',p=>Object.assign(p,emptyProject()),{strict:false});}}
+    else if(action==='demo'){selected='';viewBox=null;mutate('Load synthetic demonstration',p=>Object.assign(p,demoProject()),{strict:false});}
+    else if(action==='import')importDialog();
+    else if(action==='preview-import')await previewImport();
+    else if(action==='apply-import'&&pendingImport){const importData=pendingImport;selected='';viewBox=null;if(mutate(`Import ${importData.type}`,p=>Object.assign(p,importData.candidate),{strict:false})){closeDialog();toast('Import applied. Review the reported findings before approval.');}}
+    else if(action==='close-dialog')closeDialog();
+    else if(action==='array')arrayDialog();
+    else if(action==='create-array'){const data=Object.fromEntries(new FormData($('arrayForm')));for(const k of ['rows','columns','pitch','x','y'])data[k]=Number(data[k]);const ports=generateArray(data);if(mutate('Generate site array',p=>p.ports.push(...ports))){viewBox=null;closeDialog();render();}}
+    else if(action==='apply-die'){const form=$('dieForm'),data=Object.fromEntries(new FormData(form));for(const k of ['x','y','width','height','rotation','edgeKeepout','cornerKeepout'])data[k]=Number(data[k]);data.mirrorX=Boolean(form.elements.mirrorX.checked);if(mutate(`Place die ${form.dataset.id}`,p=>Object.assign(p.dies.find(d=>d.id===form.dataset.id),data))){viewBox=null;closeDialog();render();}}
+    else if(action==='advanced')advancedDialog();
+    else if(action==='apply-json'){const parsed=importJSON($('projectJSON').value);if(mutate('Apply explicit project JSON edits',p=>Object.assign(p,parsed),{strict:false})){selected='';viewBox=null;closeDialog();render();}}
+    else if(action==='undo'||action==='redo'){if(action==='undo')store.undo();else store.redo();if(!store.project.ports.some(n=>n.id===selected))selected='';render();persist();}
+    else if(action==='fit'){viewBox=null;renderMap();}
+    else if(action==='lock'&&selected)mutate(`Toggle site lock ${selected}`,p=>{const n=portAt(p,selected);n.locked=!n.locked;});
+    else if(action==='disconnect'&&selected)mutate(`Disconnect ${selected}`,p=>disconnect(p,selected));
+    else if(action==='optimize')optimize();
+    else if(action==='cancel-optimize'){cancelWorker();render();toast('Optimization cancelled. No candidate was applied.');}
+    else if(action==='previous-page'){tablePage--;renderConnectionRows();}
+    else if(action==='next-page'){tablePage++;renderConnectionRows();}
+    else if(action==='baseline-current'){baseline=clone(store.project);render();toast('Current revision captured as the review baseline for this session.');}
+    else if(action==='baseline-import'){openDialog('Load comparison baseline','The current design will not be changed.',`<input id="baselineFile" type="file" accept=".json">`,`<button data-action="apply-baseline" class="primary">Load baseline</button>`);}
+    else if(action==='apply-baseline'){const file=$('baselineFile').files[0];if(!file)throw new Error('Select a baseline JSON file.');baseline=importJSON(await file.text());closeDialog();render();}
+  }catch(error){if($('dialog').open)$('dialogError').textContent=error.message;else toast(error.message,true);}
+});
+document.addEventListener('change',e=>{
+  if(e.target.name==='fromStage')fromStage=e.target.value;
+  if(e.target.name==='toStage')toStage=e.target.value;
+  if(e.target.id==='snap')snapStep=Math.max(0,Number(e.target.value)||0);
+  if(e.target.dataset.layer){const kind=e.target.dataset.layer;if(e.target.checked)layers=[...new Set([...layers,kind])];else layers=layers.filter(k=>k!==kind);viewBox=null;render();}
+  if(e.target.id==='viewSelect'){view=e.target.value;viewBox=null;render();}
+  if(e.target.id==='strictToggle'){strict=e.target.checked;render();if(!strict)toast('Draft mode enabled. Invalid assignments will be reported, not blocked.');}
+  if(e.target.id==='labelToggle'){labels=e.target.checked;render();}
+  if(e.target.id==='overlayToggle'){overlay=e.target.checked;render();}
+  if(e.target.id==='issueFilter'){issueFilter=e.target.value;render();}
+  if($('dialog').open&&e.target.closest('#dialog')&&pendingImport){pendingImport=null;if($('applyImport'))$('applyImport').disabled=true;}
+});
+document.addEventListener('input',e=>{if(e.target.closest('#dialog')&&pendingImport){pendingImport=null;if($('applyImport'))$('applyImport').disabled=true;}});
+document.addEventListener('submit',e=>{
+  const form=e.target;if(!form.dataset.form)return;e.preventDefault();const data=Object.fromEntries(new FormData(form));
+  if(form.dataset.form==='port'){const id=selected;mutate(`Edit site ${id}`,p=>{const n=portAt(p,id);if(!n.locked){n.x=Number(data.x);n.y=Number(data.y);}for(const key of ['net','domain','role','label','pair','polarity'])n[key]=data[key];n.required=Boolean(form.elements.required.checked);});}
+  if(form.dataset.form==='assign')assign(selected,data.target,Boolean(form.elements.replace.checked));
+  if(form.dataset.form==='rules'){mutate('Update planning constraints',p=>{for(const key of Object.keys(ruleLabels))p.rules[key]=Number(data[key]);p.rules.terminalKind=data.terminalKind;p.rules.requirePowerForSignals=Boolean(form.elements.requirePowerForSignals.checked);p.rules.requireCompletePaths=Boolean(form.elements.requireCompletePaths.checked);},{strict:false});}
+});
+document.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)||$('dialog').open)return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(e.shiftKey)store.redo();else store.undo();render();persist();}
+  else if(e.key.toLowerCase()==='f'&&tab==='plan'){viewBox=null;renderMap();}
+  else if(e.key==='Enter'&&e.target.closest('[data-port]')){selectPort(e.target.closest('[data-port]').dataset.port);}
+});
+window.addEventListener('beforeunload',()=>cancelWorker());
+render();persist();if(restoreError)toast(restoreError,true);
+
+return {};
+})();
+</script>
+</body>
+</html>

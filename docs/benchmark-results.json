@@ -1,0 +1,89 @@
+{
+  "createdAt": "2026-09-05T07:45:27.177Z",
+  "node": "v22.16.0",
+  "platform": "linux",
+  "arch": "x64",
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "notes": [
+    "Synthetic microbenchmarks only; no commercial comparison.",
+    "Sparse grids are favourable to the bounding-box sweep. Dense crossings can exhaust the geometry budget.",
+    "Timings are single-process measurements in this environment, not hardware-independent guarantees.",
+    "Optimizer solves a linear subproblem exactly but coupled placement remains heuristic."
+  ],
+  "records": [
+    {
+      "case": "sparse-grid validation",
+      "ports": 128,
+      "connections": 64,
+      "medianMs": 1.053174999999996,
+      "runs": 5,
+      "complete": true,
+      "errors": 0,
+      "crossings": 0,
+      "geometryComparisons": 352
+    },
+    {
+      "case": "sparse-grid validation",
+      "ports": 512,
+      "connections": 256,
+      "medianMs": 3.3564000000000007,
+      "runs": 5,
+      "complete": true,
+      "errors": 0,
+      "crossings": 0,
+      "geometryComparisons": 2432
+    },
+    {
+      "case": "sparse-grid validation",
+      "ports": 2000,
+      "connections": 1000,
+      "medianMs": 9.426153,
+      "runs": 5,
+      "complete": true,
+      "errors": 0,
+      "crossings": 0,
+      "geometryComparisons": 17128
+    },
+    {
+      "case": "sparse-grid validation",
+      "ports": 8000,
+      "connections": 4000,
+      "medianMs": 33.71551800000003,
+      "runs": 5,
+      "complete": true,
+      "errors": 0,
+      "crossings": 0,
+      "geometryComparisons": 131008
+    },
+    {
+      "case": "dual-chiplet stage optimization",
+      "ports": 122,
+      "connections": 96,
+      "ms": 26.900793999999962,
+      "maxTrials": 100,
+      "actualTrials": 100,
+      "beforeScore": 27540,
+      "afterScore": 25920,
+      "beforeCrossings": 2,
+      "afterCrossings": 0,
+      "afterErrors": 0,
+      "complete": true,
+      "status": "improved"
+    },
+    {
+      "case": "reversed-grid stage optimization",
+      "ports": 256,
+      "connections": 128,
+      "ms": 171.847057,
+      "maxTrials": 100,
+      "actualTrials": 100,
+      "beforeScore": 1804250,
+      "afterScore": 32000,
+      "beforeCrossings": 4607,
+      "afterCrossings": 0,
+      "afterErrors": 0,
+      "complete": true,
+      "status": "improved"
+    }
+  ]
+}

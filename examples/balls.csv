@@ -1,0 +1,4 @@
+id,label,kind,x,y,role,domain,units
+BALL_A1,A1,ball,0.55,0.50,any,,mm
+BALL_A2,A2,ball,0.55,0.30,ground,GND,mm
+BALL_A3,A3,ball,0.55,0.70,reserved,,mm

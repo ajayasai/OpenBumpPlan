@@ -1,0 +1,73 @@
+{
+  "scope": "Local Node HTTP requests; browser localhost navigation is separately unverified",
+  "results": [
+    {
+      "method": "GET",
+      "path": "/",
+      "expected": 200,
+      "status": 200,
+      "bytes": 1086,
+      "contentType": "text/html; charset=utf-8",
+      "nosniff": "nosniff",
+      "passed": true
+    },
+    {
+      "method": "HEAD",
+      "path": "/",
+      "expected": 200,
+      "status": 200,
+      "bytes": 0,
+      "contentType": "text/html; charset=utf-8",
+      "nosniff": "nosniff",
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/",
+      "expected": 405,
+      "status": 405,
+      "bytes": 16,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/.git/config",
+      "expected": 404,
+      "status": 404,
+      "bytes": 9,
+      "contentType": "text/plain",
+      "nosniff": "nosniff",
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/%2e%2e%2fetc/passwd",
+      "expected": 404,
+      "status": 404,
+      "bytes": 9,
+      "contentType": "text/plain",
+      "nosniff": "nosniff",
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/missing-file.js",
+      "expected": 404,
+      "status": 404,
+      "bytes": 9,
+      "contentType": "text/plain",
+      "nosniff": "nosniff",
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/src/core/model.js",
+      "expected": 200,
+      "status": 200,
+      "bytes": 12583,
+      "contentType": "text/javascript; charset=utf-8",
+      "nosniff": "nosniff",
+      "passed": true
+    }
+  ]
+}

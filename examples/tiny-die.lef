@@ -1,0 +1,27 @@
+# Synthetic LEF RECT-only importer example. Values are micrometres.
+VERSION 5.8 ;
+UNITS
+  DATABASE MICRONS 1000 ;
+END UNITS
+MACRO TINY_DIE
+  CLASS BLOCK ;
+  ORIGIN 0 0 ;
+  SIZE 1000 BY 1000 ;
+  PIN DATA0
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER M5 ;
+      RECT 190 490 210 510 ;
+    END
+  END DATA0
+  PIN VSS
+    DIRECTION INOUT ;
+    USE GROUND ;
+    PORT
+      LAYER M5 ;
+      RECT 190 290 210 310 ;
+    END
+  END VSS
+END TINY_DIE
+END LIBRARY

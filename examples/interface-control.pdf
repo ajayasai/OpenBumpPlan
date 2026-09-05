@@ -1,0 +1,568 @@
+%PDF-1.4
+%OpenBumpPlan
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R 11 0 R 13 0 R 15 0 R] /Count 6 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 13243 >>
+stream
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 806 Tm (OPENBUMPPLAN / INTERFACE CONTROL) Tj ET
+0.78 0.83 0.88 RG 44 796 m 551 796 l S
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 28 Tm (Revision 1 | c6c35747 | planning only) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 510 28 Tm (Page 1) Tj ET
+BT /F2 21 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 773 Tm (Dual-chiplet package / synthetic) Tj ET
+BT /F2 21 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 740.45 Tm (demonstrator) Tj ET
+BT /F2 10 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 707.9000000000001 Tm (Status: PLANNING CHECKS PASS - NOT SIGNOFF) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 692.4000000000001 Tm (122 sites | 96 assignments | 25,920 um total L1 | 0 crossings) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 678.45 Tm (0 errors | 0 warnings | Score 25,920) Tj ET
+0.96 0.97 0.99 rg 44 412.5 507 240 re f
+0.55 0.63 0.72 RG 0.4 w 102.269 487.404 m 106.154 491.288 l S
+0.55 0.63 0.72 RG 0.4 w 106.154 491.288 m 112.628 499.058 l S
+0.55 0.63 0.72 RG 0.4 w 122.987 510.712 m 133.346 522.365 l S
+0.55 0.63 0.72 RG 0.4 w 134.641 487.404 m 138.526 491.288 l S
+0.55 0.63 0.72 RG 0.4 w 138.526 491.288 m 145.000 499.058 l S
+0.55 0.63 0.72 RG 0.4 w 155.359 510.712 m 165.718 522.365 l S
+0.55 0.63 0.72 RG 0.4 w 167.013 487.404 m 170.897 491.288 l S
+0.55 0.63 0.72 RG 0.4 w 170.897 491.288 m 177.372 499.058 l S
+0.55 0.63 0.72 RG 0.4 w 187.731 510.712 m 198.090 522.365 l S
+0.55 0.63 0.72 RG 0.4 w 199.385 487.404 m 203.269 491.288 l S
+0.55 0.63 0.72 RG 0.4 w 203.269 491.288 m 209.744 499.058 l S
+0.55 0.63 0.72 RG 0.4 w 220.103 510.712 m 230.462 522.365 l S
+0.55 0.63 0.72 RG 0.4 w 102.269 532.724 m 106.154 536.609 l S
+0.55 0.63 0.72 RG 0.4 w 106.154 536.609 m 112.628 544.378 l S
+0.55 0.63 0.72 RG 0.4 w 122.987 556.032 m 133.346 567.686 l S
+0.55 0.63 0.72 RG 0.4 w 134.641 532.724 m 138.526 536.609 l S
+0.55 0.63 0.72 RG 0.4 w 138.526 536.609 m 145.000 544.378 l S
+0.55 0.63 0.72 RG 0.4 w 155.359 556.032 m 165.718 567.686 l S
+0.55 0.63 0.72 RG 0.4 w 167.013 532.724 m 170.897 536.609 l S
+0.55 0.63 0.72 RG 0.4 w 170.897 536.609 m 177.372 544.378 l S
+0.55 0.63 0.72 RG 0.4 w 187.731 556.032 m 198.090 567.686 l S
+0.55 0.63 0.72 RG 0.4 w 199.385 532.724 m 203.269 536.609 l S
+0.55 0.63 0.72 RG 0.4 w 203.269 536.609 m 209.744 544.378 l S
+0.55 0.63 0.72 RG 0.4 w 220.103 556.032 m 230.462 567.686 l S
+0.55 0.63 0.72 RG 0.4 w 102.269 578.045 m 106.154 581.929 l S
+0.55 0.63 0.72 RG 0.4 w 106.154 581.929 m 112.628 589.699 l S
+0.55 0.63 0.72 RG 0.4 w 122.987 601.353 m 133.346 613.006 l S
+0.55 0.63 0.72 RG 0.4 w 134.641 578.045 m 138.526 581.929 l S
+0.55 0.63 0.72 RG 0.4 w 138.526 581.929 m 145.000 589.699 l S
+0.55 0.63 0.72 RG 0.4 w 155.359 601.353 m 165.718 613.006 l S
+0.55 0.63 0.72 RG 0.4 w 167.013 578.045 m 170.897 581.929 l S
+0.55 0.63 0.72 RG 0.4 w 170.897 581.929 m 177.372 589.699 l S
+0.55 0.63 0.72 RG 0.4 w 187.731 601.353 m 198.090 613.006 l S
+0.55 0.63 0.72 RG 0.4 w 199.385 578.045 m 203.269 581.929 l S
+0.55 0.63 0.72 RG 0.4 w 203.269 581.929 m 209.744 589.699 l S
+0.55 0.63 0.72 RG 0.4 w 220.103 601.353 m 230.462 613.006 l S
+0.55 0.63 0.72 RG 0.4 w 445.410 487.404 m 441.526 491.288 l S
+0.55 0.63 0.72 RG 0.4 w 441.526 491.288 m 455.769 499.058 l S
+0.55 0.63 0.72 RG 0.4 w 466.128 510.712 m 476.487 522.365 l S
+0.55 0.63 0.72 RG 0.4 w 445.410 519.776 m 441.526 523.660 l S
+0.55 0.63 0.72 RG 0.4 w 441.526 523.660 m 455.769 531.429 l S
+0.55 0.63 0.72 RG 0.4 w 466.128 543.083 m 476.487 554.737 l S
+0.55 0.63 0.72 RG 0.4 w 445.410 552.147 m 441.526 556.032 l S
+0.55 0.63 0.72 RG 0.4 w 441.526 556.032 m 455.769 563.801 l S
+0.55 0.63 0.72 RG 0.4 w 466.128 575.455 m 476.487 587.109 l S
+0.55 0.63 0.72 RG 0.4 w 445.410 584.519 m 441.526 588.404 l S
+0.55 0.63 0.72 RG 0.4 w 441.526 588.404 m 455.769 596.173 l S
+0.55 0.63 0.72 RG 0.4 w 466.128 607.827 m 476.487 619.481 l S
+0.55 0.63 0.72 RG 0.4 w 400.090 487.404 m 396.205 491.288 l S
+0.55 0.63 0.72 RG 0.4 w 396.205 491.288 m 410.449 499.058 l S
+0.55 0.63 0.72 RG 0.4 w 420.808 510.712 m 431.167 522.365 l S
+0.55 0.63 0.72 RG 0.4 w 400.090 519.776 m 396.205 523.660 l S
+0.55 0.63 0.72 RG 0.4 w 396.205 523.660 m 410.449 531.429 l S
+0.55 0.63 0.72 RG 0.4 w 420.808 543.083 m 431.167 554.737 l S
+0.55 0.63 0.72 RG 0.4 w 400.090 552.147 m 396.205 556.032 l S
+0.55 0.63 0.72 RG 0.4 w 396.205 556.032 m 410.449 563.801 l S
+0.55 0.63 0.72 RG 0.4 w 420.808 575.455 m 431.167 587.109 l S
+0.55 0.63 0.72 RG 0.4 w 400.090 584.519 m 396.205 588.404 l S
+0.55 0.63 0.72 RG 0.4 w 396.205 588.404 m 410.449 596.173 l S
+0.55 0.63 0.72 RG 0.4 w 420.808 607.827 m 431.167 619.481 l S
+0.55 0.63 0.72 RG 0.4 w 354.769 487.404 m 350.885 491.288 l S
+0.55 0.63 0.72 RG 0.4 w 350.885 491.288 m 365.128 499.058 l S
+0.55 0.63 0.72 RG 0.4 w 375.487 510.712 m 385.846 522.365 l S
+0.55 0.63 0.72 RG 0.4 w 354.769 519.776 m 350.885 523.660 l S
+0.55 0.63 0.72 RG 0.4 w 350.885 523.660 m 365.128 531.429 l S
+0.55 0.63 0.72 RG 0.4 w 375.487 543.083 m 385.846 554.737 l S
+0.55 0.63 0.72 RG 0.4 w 354.769 552.147 m 350.885 556.032 l S
+0.55 0.63 0.72 RG 0.4 w 350.885 556.032 m 365.128 563.801 l S
+0.55 0.63 0.72 RG 0.4 w 375.487 575.455 m 385.846 587.109 l S
+0.55 0.63 0.72 RG 0.4 w 354.769 584.519 m 350.885 588.404 l S
+0.55 0.63 0.72 RG 0.4 w 350.885 588.404 m 365.128 596.173 l S
+0.55 0.63 0.72 RG 0.4 w 375.487 607.827 m 385.846 619.481 l S
+0.55 0.63 0.72 RG 0.4 w 112.628 544.378 m 122.987 556.032 l S
+0.55 0.63 0.72 RG 0.4 w 145.000 544.378 m 155.359 556.032 l S
+0.55 0.63 0.72 RG 0.4 w 410.449 499.058 m 420.808 510.712 l S
+0.55 0.63 0.72 RG 0.4 w 410.449 531.429 m 420.808 543.083 l S
+0.55 0.63 0.72 RG 0.4 w 112.628 499.058 m 122.987 510.712 l S
+0.55 0.63 0.72 RG 0.4 w 145.000 589.699 m 155.359 601.353 l S
+0.55 0.63 0.72 RG 0.4 w 177.372 589.699 m 187.731 601.353 l S
+0.55 0.63 0.72 RG 0.4 w 209.744 589.699 m 220.103 601.353 l S
+0.55 0.63 0.72 RG 0.4 w 145.000 499.058 m 155.359 510.712 l S
+0.55 0.63 0.72 RG 0.4 w 177.372 499.058 m 187.731 510.712 l S
+0.55 0.63 0.72 RG 0.4 w 209.744 499.058 m 220.103 510.712 l S
+0.55 0.63 0.72 RG 0.4 w 177.372 544.378 m 187.731 556.032 l S
+0.55 0.63 0.72 RG 0.4 w 209.744 544.378 m 220.103 556.032 l S
+0.55 0.63 0.72 RG 0.4 w 112.628 589.699 m 122.987 601.353 l S
+0.55 0.63 0.72 RG 0.4 w 455.769 499.058 m 466.128 510.712 l S
+0.55 0.63 0.72 RG 0.4 w 365.128 531.429 m 375.487 543.083 l S
+0.55 0.63 0.72 RG 0.4 w 365.128 563.801 m 375.487 575.455 l S
+0.55 0.63 0.72 RG 0.4 w 365.128 596.173 m 375.487 607.827 l S
+0.55 0.63 0.72 RG 0.4 w 455.769 531.429 m 466.128 543.083 l S
+0.55 0.63 0.72 RG 0.4 w 455.769 563.801 m 466.128 575.455 l S
+0.55 0.63 0.72 RG 0.4 w 455.769 596.173 m 466.128 607.827 l S
+0.55 0.63 0.72 RG 0.4 w 410.449 563.801 m 420.808 575.455 l S
+0.55 0.63 0.72 RG 0.4 w 410.449 596.173 m 420.808 607.827 l S
+0.55 0.63 0.72 RG 0.4 w 365.128 499.058 m 375.487 510.712 l S
+0.08 0.55 0.42 rg 100.769 485.904 3 3 re f
+0.08 0.55 0.42 rg 104.654 489.788 3 3 re f
+0.08 0.55 0.42 rg 111.128 497.558 3 3 re f
+0.08 0.55 0.42 rg 121.487 509.212 3 3 re f
+0.08 0.55 0.42 rg 131.846 520.865 3 3 re f
+0.19 0.40 0.68 rg 133.141 485.904 3 3 re f
+0.19 0.40 0.68 rg 137.026 489.788 3 3 re f
+0.19 0.40 0.68 rg 143.500 497.558 3 3 re f
+0.19 0.40 0.68 rg 153.859 509.212 3 3 re f
+0.19 0.40 0.68 rg 164.218 520.865 3 3 re f
+0.08 0.55 0.42 rg 165.513 485.904 3 3 re f
+0.08 0.55 0.42 rg 169.397 489.788 3 3 re f
+0.08 0.55 0.42 rg 175.872 497.558 3 3 re f
+0.08 0.55 0.42 rg 186.231 509.212 3 3 re f
+0.08 0.55 0.42 rg 196.590 520.865 3 3 re f
+0.75 0.38 0.12 rg 197.885 485.904 3 3 re f
+0.75 0.38 0.12 rg 201.769 489.788 3 3 re f
+0.75 0.38 0.12 rg 208.244 497.558 3 3 re f
+0.75 0.38 0.12 rg 218.603 509.212 3 3 re f
+0.75 0.38 0.12 rg 228.962 520.865 3 3 re f
+0.19 0.40 0.68 rg 100.769 531.224 3 3 re f
+0.19 0.40 0.68 rg 104.654 535.109 3 3 re f
+0.19 0.40 0.68 rg 111.128 542.878 3 3 re f
+0.19 0.40 0.68 rg 121.487 554.532 3 3 re f
+0.19 0.40 0.68 rg 131.846 566.186 3 3 re f
+0.19 0.40 0.68 rg 133.141 531.224 3 3 re f
+0.19 0.40 0.68 rg 137.026 535.109 3 3 re f
+0.19 0.40 0.68 rg 143.500 542.878 3 3 re f
+0.19 0.40 0.68 rg 153.859 554.532 3 3 re f
+0.19 0.40 0.68 rg 164.218 566.186 3 3 re f
+0.08 0.55 0.42 rg 165.513 531.224 3 3 re f
+0.08 0.55 0.42 rg 169.397 535.109 3 3 re f
+0.08 0.55 0.42 rg 175.872 542.878 3 3 re f
+0.08 0.55 0.42 rg 186.231 554.532 3 3 re f
+0.08 0.55 0.42 rg 196.590 566.186 3 3 re f
+0.75 0.38 0.12 rg 197.885 531.224 3 3 re f
+0.75 0.38 0.12 rg 201.769 535.109 3 3 re f
+0.75 0.38 0.12 rg 208.244 542.878 3 3 re f
+0.75 0.38 0.12 rg 218.603 554.532 3 3 re f
+0.75 0.38 0.12 rg 228.962 566.186 3 3 re f
+0.19 0.40 0.68 rg 100.769 576.545 3 3 re f
+0.19 0.40 0.68 rg 104.654 580.429 3 3 re f
+0.19 0.40 0.68 rg 111.128 588.199 3 3 re f
+0.19 0.40 0.68 rg 121.487 599.853 3 3 re f
+0.19 0.40 0.68 rg 131.846 611.506 3 3 re f
+0.19 0.40 0.68 rg 133.141 576.545 3 3 re f
+0.19 0.40 0.68 rg 137.026 580.429 3 3 re f
+0.19 0.40 0.68 rg 143.500 588.199 3 3 re f
+0.19 0.40 0.68 rg 153.859 599.853 3 3 re f
+0.19 0.40 0.68 rg 164.218 611.506 3 3 re f
+0.08 0.55 0.42 rg 165.513 576.545 3 3 re f
+0.08 0.55 0.42 rg 169.397 580.429 3 3 re f
+0.08 0.55 0.42 rg 175.872 588.199 3 3 re f
+0.08 0.55 0.42 rg 186.231 599.853 3 3 re f
+0.08 0.55 0.42 rg 196.590 611.506 3 3 re f
+0.75 0.38 0.12 rg 197.885 576.545 3 3 re f
+0.75 0.38 0.12 rg 201.769 580.429 3 3 re f
+0.75 0.38 0.12 rg 208.244 588.199 3 3 re f
+0.75 0.38 0.12 rg 218.603 599.853 3 3 re f
+0.75 0.38 0.12 rg 228.962 611.506 3 3 re f
+0.08 0.55 0.42 rg 443.910 485.904 3 3 re f
+0.08 0.55 0.42 rg 440.026 489.788 3 3 re f
+0.08 0.55 0.42 rg 454.269 497.558 3 3 re f
+0.08 0.55 0.42 rg 464.628 509.212 3 3 re f
+0.08 0.55 0.42 rg 474.987 520.865 3 3 re f
+0.19 0.40 0.68 rg 443.910 518.276 3 3 re f
+0.19 0.40 0.68 rg 440.026 522.160 3 3 re f
+0.19 0.40 0.68 rg 454.269 529.929 3 3 re f
+0.19 0.40 0.68 rg 464.628 541.583 3 3 re f
+0.19 0.40 0.68 rg 474.987 553.237 3 3 re f
+0.08 0.55 0.42 rg 443.910 550.647 3 3 re f
+0.08 0.55 0.42 rg 440.026 554.532 3 3 re f
+0.08 0.55 0.42 rg 454.269 562.301 3 3 re f
+0.08 0.55 0.42 rg 464.628 573.955 3 3 re f
+0.08 0.55 0.42 rg 474.987 585.609 3 3 re f
+0.75 0.38 0.12 rg 443.910 583.019 3 3 re f
+0.75 0.38 0.12 rg 440.026 586.904 3 3 re f
+0.75 0.38 0.12 rg 454.269 594.673 3 3 re f
+0.75 0.38 0.12 rg 464.628 606.327 3 3 re f
+0.75 0.38 0.12 rg 474.987 617.981 3 3 re f
+0.19 0.40 0.68 rg 398.590 485.904 3 3 re f
+0.19 0.40 0.68 rg 394.705 489.788 3 3 re f
+0.19 0.40 0.68 rg 408.949 497.558 3 3 re f
+0.19 0.40 0.68 rg 419.308 509.212 3 3 re f
+0.19 0.40 0.68 rg 429.667 520.865 3 3 re f
+0.19 0.40 0.68 rg 398.590 518.276 3 3 re f
+0.19 0.40 0.68 rg 394.705 522.160 3 3 re f
+0.19 0.40 0.68 rg 408.949 529.929 3 3 re f
+0.19 0.40 0.68 rg 419.308 541.583 3 3 re f
+0.19 0.40 0.68 rg 429.667 553.237 3 3 re f
+0.08 0.55 0.42 rg 398.590 550.647 3 3 re f
+0.08 0.55 0.42 rg 394.705 554.532 3 3 re f
+0.08 0.55 0.42 rg 408.949 562.301 3 3 re f
+0.08 0.55 0.42 rg 419.308 573.955 3 3 re f
+0.08 0.55 0.42 rg 429.667 585.609 3 3 re f
+0.75 0.38 0.12 rg 398.590 583.019 3 3 re f
+0.75 0.38 0.12 rg 394.705 586.904 3 3 re f
+0.75 0.38 0.12 rg 408.949 594.673 3 3 re f
+0.75 0.38 0.12 rg 419.308 606.327 3 3 re f
+0.75 0.38 0.12 rg 429.667 617.981 3 3 re f
+0.19 0.40 0.68 rg 353.269 485.904 3 3 re f
+0.19 0.40 0.68 rg 349.385 489.788 3 3 re f
+0.19 0.40 0.68 rg 363.628 497.558 3 3 re f
+0.19 0.40 0.68 rg 373.987 509.212 3 3 re f
+0.19 0.40 0.68 rg 384.346 520.865 3 3 re f
+0.19 0.40 0.68 rg 353.269 518.276 3 3 re f
+0.19 0.40 0.68 rg 349.385 522.160 3 3 re f
+0.19 0.40 0.68 rg 363.628 529.929 3 3 re f
+0.19 0.40 0.68 rg 373.987 541.583 3 3 re f
+0.19 0.40 0.68 rg 384.346 553.237 3 3 re f
+0.08 0.55 0.42 rg 353.269 550.647 3 3 re f
+0.08 0.55 0.42 rg 349.385 554.532 3 3 re f
+0.08 0.55 0.42 rg 363.628 562.301 3 3 re f
+0.08 0.55 0.42 rg 373.987 573.955 3 3 re f
+0.08 0.55 0.42 rg 384.346 585.609 3 3 re f
+0.75 0.38 0.12 rg 353.269 583.019 3 3 re f
+0.75 0.38 0.12 rg 349.385 586.904 3 3 re f
+0.75 0.38 0.12 rg 363.628 594.673 3 3 re f
+0.75 0.38 0.12 rg 373.987 606.327 3 3 re f
+0.75 0.38 0.12 rg 384.346 617.981 3 3 re f
+0.19 0.40 0.68 rg 518.365 476.192 3 3 re f
+0.19 0.40 0.68 rg 518.365 508.564 3 3 re f
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 392.5 Tm (Physical XY projection; assignments are planning lines, not routed conductors.) Tj ET
+BT /F2 14 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 368.1 Tm (Coordinate convention) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 343.40000000000003 Tm (Canonical unit: micrometre \(um\). Positive Y is up. Die ports use local coordinates: mirror) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 329.45000000000005 Tm (local X, rotate counter-clockwise around the local origin, then translate to package XY.) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 315.50000000000006 Tm (Display separation never affects scoring.) Tj ET
+BT /F2 14 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 289.55000000000007 Tm (Review boundary) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 264.8500000000001 Tm (Not signoff. Manhattan length and straight-line crossings are proxies, not physical routing or) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 250.9000000000001 Tm (electrical simulation. Ground proximity and power quotas do not certify SI, PI, EM, thermal, or) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 236.9500000000001 Tm (manufacturability. The local review ID is not a cryptographic signature.) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 4720 >>
+stream
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 806 Tm (OPENBUMPPLAN / INTERFACE CONTROL) Tj ET
+0.78 0.83 0.88 RG 44 796 m 551 796 l S
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 28 Tm (Revision 1 | c6c35747 | planning only) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 510 28 Tm (Page 2) Tj ET
+BT /F2 14 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 761 Tm (Mechanical interfaces) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 736.3 Tm (CORE: origin \(200, 300\) um; size 2300 x 2500 um; R0; mirror X false) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 722.3499999999999 Tm (IO: origin \(6200, 300\) um; size 2300 x 2500 um; R90; mirror X false) Tj ET
+BT /F2 14 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 696.3999999999999 Tm (Interface assignments) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 671.6999999999998 Tm (CORE:pad:1 -> CORE:bump:1) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 657.7499999999998 Tm (Net GND | GND | ground | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 641.3499999999998 Tm (CORE:bump:1 -> CORE:interposer:1) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 627.3999999999997 Tm (Net GND | GND | ground | L1 220 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 610.9999999999998 Tm (CORE:ball:1 -> CORE:pcb:1) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 597.0499999999997 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 580.6499999999997 Tm (CORE:pad:2 -> CORE:bump:2) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 566.6999999999997 Tm (Net CORE_CLK | CORE | clock | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 550.2999999999997 Tm (CORE:bump:2 -> CORE:interposer:2) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 536.3499999999997 Tm (Net CORE_CLK | CORE | clock | L1 220 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 519.9499999999997 Tm (CORE:ball:2 -> CORE:pcb:2) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 505.9999999999997 Tm (Net CORE_CLK | CORE | clock | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 489.59999999999974 Tm (CORE:pad:3 -> CORE:bump:3) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 475.64999999999975 Tm (Net GND | GND | ground | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 459.2499999999998 Tm (CORE:bump:3 -> CORE:interposer:3) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 445.2999999999998 Tm (Net GND | GND | ground | L1 220 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 428.8999999999998 Tm (CORE:ball:3 -> CORE:pcb:3) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 414.9499999999998 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 398.54999999999984 Tm (CORE:pad:4 -> CORE:bump:4) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 384.59999999999985 Tm (Net VDD_CORE | CORE | power | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 368.1999999999999 Tm (CORE:bump:4 -> CORE:interposer:4) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 354.2499999999999 Tm (Net VDD_CORE | CORE | power | L1 220 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 337.8499999999999 Tm (CORE:ball:4 -> CORE:pcb:4) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 323.8999999999999 Tm (Net VDD_CORE | CORE | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 307.49999999999994 Tm (CORE:pad:5 -> CORE:bump:5) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 293.54999999999995 Tm (Net CORE_TX_P | CORE | signal | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 277.15 Tm (CORE:bump:5 -> CORE:interposer:5) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 263.2 Tm (Net CORE_TX_P | CORE | signal | L1 220 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 246.79999999999998 Tm (CORE:ball:5 -> CORE:pcb:5) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 232.85 Tm (Net CORE_TX_P | CORE | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 216.45 Tm (CORE:pad:6 -> CORE:bump:6) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 202.5 Tm (Net CORE_TX_N | CORE | signal | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 186.1 Tm (CORE:bump:6 -> CORE:interposer:6) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 172.15 Tm (Net CORE_TX_N | CORE | signal | L1 220 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 155.75 Tm (CORE:ball:6 -> CORE:pcb:6) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 141.8 Tm (Net CORE_TX_N | CORE | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 125.4 Tm (CORE:pad:7 -> CORE:bump:7) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 111.45 Tm (Net GND | GND | ground | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 95.05 Tm (CORE:bump:7 -> CORE:interposer:7) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 81.1 Tm (Net GND | GND | ground | L1 220 um) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 10 0 R >>
+endobj
+10 0 obj
+<< /Length 4960 >>
+stream
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 806 Tm (OPENBUMPPLAN / INTERFACE CONTROL) Tj ET
+0.78 0.83 0.88 RG 44 796 m 551 796 l S
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 28 Tm (Revision 1 | c6c35747 | planning only) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 510 28 Tm (Page 3) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 773 Tm (CORE:ball:7 -> CORE:pcb:7) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 759.05 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 742.65 Tm (CORE:pad:8 -> CORE:bump:8) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 728.6999999999999 Tm (Net VDD_CORE | CORE | power | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 712.3 Tm (CORE:bump:8 -> CORE:interposer:8) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 698.3499999999999 Tm (Net VDD_CORE | CORE | power | L1 220 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 681.9499999999999 Tm (CORE:ball:8 -> CORE:pcb:8) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 667.9999999999999 Tm (Net VDD_CORE | CORE | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 651.5999999999999 Tm (CORE:pad:9 -> CORE:bump:9) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 637.6499999999999 Tm (Net CORE_DATA0 | CORE | signal | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 621.2499999999999 Tm (CORE:bump:9 -> CORE:interposer:9) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 607.2999999999998 Tm (Net CORE_DATA0 | CORE | signal | L1 220 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 590.8999999999999 Tm (CORE:ball:9 -> CORE:pcb:9) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 576.9499999999998 Tm (Net CORE_DATA0 | CORE | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 560.5499999999998 Tm (CORE:pad:10 -> CORE:bump:10) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 546.5999999999998 Tm (Net CORE_DATA1 | CORE | signal | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 530.1999999999998 Tm (CORE:bump:10 -> CORE:interposer:10) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 516.2499999999998 Tm (Net CORE_DATA1 | CORE | signal | L1 220 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 499.8499999999998 Tm (CORE:ball:10 -> CORE:pcb:10) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 485.8999999999998 Tm (Net CORE_DATA1 | CORE | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 469.49999999999983 Tm (CORE:pad:11 -> CORE:bump:11) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 455.54999999999984 Tm (Net GND | GND | ground | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 439.14999999999986 Tm (CORE:bump:11 -> CORE:interposer:11) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 425.1999999999999 Tm (Net GND | GND | ground | L1 220 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 408.7999999999999 Tm (CORE:ball:11 -> CORE:pcb:11) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 394.8499999999999 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 378.44999999999993 Tm (CORE:pad:12 -> CORE:bump:12) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 364.49999999999994 Tm (Net VDD_CORE | CORE | power | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 348.09999999999997 Tm (CORE:bump:12 -> CORE:interposer:12) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 334.15 Tm (Net VDD_CORE | CORE | power | L1 220 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 317.75 Tm (CORE:ball:12 -> CORE:pcb:12) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 303.8 Tm (Net VDD_CORE | CORE | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 287.40000000000003 Tm (IO:pad:1 -> IO:bump:1) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 273.45000000000005 Tm (Net GND | GND | ground | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 257.05000000000007 Tm (IO:bump:1 -> IO:interposer:1) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 243.10000000000008 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 226.70000000000007 Tm (IO:ball:1 -> IO:pcb:1) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 212.75000000000009 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 196.35000000000008 Tm (IO:pad:2 -> IO:bump:2) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 182.4000000000001 Tm (Net IO_CLK | IO | clock | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 166.00000000000009 Tm (IO:bump:2 -> IO:interposer:2) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 152.0500000000001 Tm (Net IO_CLK | IO | clock | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 135.6500000000001 Tm (IO:ball:2 -> IO:pcb:2) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 121.70000000000009 Tm (Net IO_CLK | IO | clock | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 105.30000000000008 Tm (IO:pad:3 -> IO:bump:3) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 91.35000000000008 Tm (Net GND | GND | ground | L1 120 um) Tj ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 12 0 R >>
+endobj
+12 0 obj
+<< /Length 4858 >>
+stream
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 806 Tm (OPENBUMPPLAN / INTERFACE CONTROL) Tj ET
+0.78 0.83 0.88 RG 44 796 m 551 796 l S
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 28 Tm (Revision 1 | c6c35747 | planning only) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 510 28 Tm (Page 4) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 773 Tm (IO:bump:3 -> IO:interposer:3) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 759.05 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 742.65 Tm (IO:ball:3 -> IO:pcb:3) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 728.6999999999999 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 712.3 Tm (IO:pad:4 -> IO:bump:4) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 698.3499999999999 Tm (Net VDD_IO | IO | power | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 681.9499999999999 Tm (IO:bump:4 -> IO:interposer:4) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 667.9999999999999 Tm (Net VDD_IO | IO | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 651.5999999999999 Tm (IO:ball:4 -> IO:pcb:4) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 637.6499999999999 Tm (Net VDD_IO | IO | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 621.2499999999999 Tm (IO:pad:5 -> IO:bump:5) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 607.2999999999998 Tm (Net IO_TX_P | IO | signal | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 590.8999999999999 Tm (IO:bump:5 -> IO:interposer:5) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 576.9499999999998 Tm (Net IO_TX_P | IO | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 560.5499999999998 Tm (IO:ball:5 -> IO:pcb:5) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 546.5999999999998 Tm (Net IO_TX_P | IO | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 530.1999999999998 Tm (IO:pad:6 -> IO:bump:6) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 516.2499999999998 Tm (Net IO_TX_N | IO | signal | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 499.8499999999998 Tm (IO:bump:6 -> IO:interposer:6) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 485.8999999999998 Tm (Net IO_TX_N | IO | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 469.49999999999983 Tm (IO:ball:6 -> IO:pcb:6) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 455.54999999999984 Tm (Net IO_TX_N | IO | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 439.14999999999986 Tm (IO:pad:7 -> IO:bump:7) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 425.1999999999999 Tm (Net GND | GND | ground | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 408.7999999999999 Tm (IO:bump:7 -> IO:interposer:7) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 394.8499999999999 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 378.44999999999993 Tm (IO:ball:7 -> IO:pcb:7) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 364.49999999999994 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 348.09999999999997 Tm (IO:pad:8 -> IO:bump:8) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 334.15 Tm (Net VDD_IO | IO | power | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 317.75 Tm (IO:bump:8 -> IO:interposer:8) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 303.8 Tm (Net VDD_IO | IO | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 287.40000000000003 Tm (IO:ball:8 -> IO:pcb:8) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 273.45000000000005 Tm (Net VDD_IO | IO | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 257.05000000000007 Tm (IO:pad:9 -> IO:bump:9) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 243.10000000000008 Tm (Net IO_DATA0 | IO | signal | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 226.70000000000007 Tm (IO:bump:9 -> IO:interposer:9) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 212.75000000000009 Tm (Net IO_DATA0 | IO | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 196.35000000000008 Tm (IO:ball:9 -> IO:pcb:9) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 182.4000000000001 Tm (Net IO_DATA0 | IO | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 166.00000000000009 Tm (IO:pad:10 -> IO:bump:10) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 152.0500000000001 Tm (Net IO_DATA1 | IO | signal | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 135.6500000000001 Tm (IO:bump:10 -> IO:interposer:10) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 121.70000000000009 Tm (Net IO_DATA1 | IO | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 105.30000000000008 Tm (IO:ball:10 -> IO:pcb:10) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 91.35000000000008 Tm (Net IO_DATA1 | IO | signal | L1 340 um) Tj ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 14 0 R >>
+endobj
+14 0 obj
+<< /Length 5014 >>
+stream
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 806 Tm (OPENBUMPPLAN / INTERFACE CONTROL) Tj ET
+0.78 0.83 0.88 RG 44 796 m 551 796 l S
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 28 Tm (Revision 1 | c6c35747 | planning only) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 510 28 Tm (Page 5) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 773 Tm (IO:pad:11 -> IO:bump:11) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 759.05 Tm (Net GND | GND | ground | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 742.65 Tm (IO:bump:11 -> IO:interposer:11) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 728.6999999999999 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 712.3 Tm (IO:ball:11 -> IO:pcb:11) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 698.3499999999999 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 681.9499999999999 Tm (IO:pad:12 -> IO:bump:12) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 667.9999999999999 Tm (Net VDD_IO | IO | power | L1 120 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 651.5999999999999 Tm (IO:bump:12 -> IO:interposer:12) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 637.6499999999999 Tm (Net VDD_IO | IO | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 621.2499999999999 Tm (IO:ball:12 -> IO:pcb:12) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 607.2999999999998 Tm (Net VDD_IO | IO | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 590.8999999999999 Tm (CORE:interposer:5 -> CORE:ball:5) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 576.9499999999998 Tm (Net CORE_TX_P | CORE | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 560.5499999999998 Tm (CORE:interposer:6 -> CORE:ball:6) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 546.5999999999998 Tm (Net CORE_TX_N | CORE | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 530.1999999999998 Tm (IO:interposer:5 -> IO:ball:5) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 516.2499999999998 Tm (Net IO_TX_P | IO | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 499.8499999999998 Tm (IO:interposer:6 -> IO:ball:6) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 485.8999999999998 Tm (Net IO_TX_N | IO | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 469.49999999999983 Tm (CORE:interposer:1 -> CORE:ball:1) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 455.54999999999984 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 439.14999999999986 Tm (CORE:interposer:10 -> CORE:ball:10) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 425.1999999999999 Tm (Net CORE_DATA1 | CORE | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 408.7999999999999 Tm (CORE:interposer:11 -> CORE:ball:11) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 394.8499999999999 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 378.44999999999993 Tm (CORE:interposer:12 -> CORE:ball:12) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 364.49999999999994 Tm (Net VDD_CORE | CORE | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 348.09999999999997 Tm (CORE:interposer:2 -> CORE:ball:2) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 334.15 Tm (Net CORE_CLK | CORE | clock | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 317.75 Tm (CORE:interposer:3 -> CORE:ball:3) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 303.8 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 287.40000000000003 Tm (CORE:interposer:4 -> CORE:ball:4) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 273.45000000000005 Tm (Net VDD_CORE | CORE | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 257.05000000000007 Tm (CORE:interposer:7 -> CORE:ball:7) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 243.10000000000008 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 226.70000000000007 Tm (CORE:interposer:8 -> CORE:ball:8) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 212.75000000000009 Tm (Net VDD_CORE | CORE | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 196.35000000000008 Tm (CORE:interposer:9 -> CORE:ball:9) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 182.4000000000001 Tm (Net CORE_DATA0 | CORE | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 166.00000000000009 Tm (IO:interposer:1 -> IO:ball:1) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 152.0500000000001 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 135.6500000000001 Tm (IO:interposer:10 -> IO:ball:10) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 121.70000000000009 Tm (Net IO_DATA1 | IO | signal | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 105.30000000000008 Tm (IO:interposer:11 -> IO:ball:11) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 91.35000000000008 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 16 0 R >>
+endobj
+16 0 obj
+<< /Length 4579 >>
+stream
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 806 Tm (OPENBUMPPLAN / INTERFACE CONTROL) Tj ET
+0.78 0.83 0.88 RG 44 796 m 551 796 l S
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 28 Tm (Revision 1 | c6c35747 | planning only) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 510 28 Tm (Page 6) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 773 Tm (IO:interposer:12 -> IO:ball:12) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 759.05 Tm (Net VDD_IO | IO | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 742.65 Tm (IO:interposer:2 -> IO:ball:2) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 728.6999999999999 Tm (Net IO_CLK | IO | clock | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 712.3 Tm (IO:interposer:3 -> IO:ball:3) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 698.3499999999999 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 681.9499999999999 Tm (IO:interposer:4 -> IO:ball:4) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 667.9999999999999 Tm (Net VDD_IO | IO | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 651.5999999999999 Tm (IO:interposer:7 -> IO:ball:7) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 637.6499999999999 Tm (Net GND | GND | ground | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 621.2499999999999 Tm (IO:interposer:8 -> IO:ball:8) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 607.2999999999998 Tm (Net VDD_IO | IO | power | L1 340 um) Tj ET
+BT /F2 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 590.8999999999999 Tm (IO:interposer:9 -> IO:ball:9) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 576.9499999999998 Tm (Net IO_DATA0 | IO | signal | L1 340 um) Tj ET
+BT /F2 14 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 548.5499999999998 Tm (Configured rules) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 523.8499999999998 Tm (maxLength: 2600) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 509.8999999999998 Tm (minDomainSpacing: 250) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 495.9499999999998 Tm (pairMaxDistance: 650) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 481.99999999999983 Tm (pairMaxSkew: 150) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 468.04999999999984 Tm (clockShieldRadius: 750) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 454.09999999999985 Tm (clockGroundMin: 2) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 440.14999999999986 Tm (groundRadius: 1500) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 426.1999999999999 Tm (powerRadius: 1700) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 412.2499999999999 Tm (requirePowerForSignals: true) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 398.2999999999999 Tm (minGroundRatio: 0.2) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 384.3499999999999 Tm (crossingWeight: 150) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 370.3999999999999 Tm (maxCrossings: 0) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 356.44999999999993 Tm (geometryBudget: 1000000) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 342.49999999999994 Tm (terminalKind: pcb) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 328.54999999999995 Tm (requireCompletePaths: true) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 314.59999999999997 Tm (allowedStagePairs:) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 300.65 Tm ([["pad","bump"],["pad","ball"],["bump","interposer"],["bump","ball"],["interposer","ball"],["ba) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 286.7 Tm (ll","pcb"]]) Tj ET
+BT /F2 14 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 260.75 Tm (Keep-outs and P/G regions) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 236.05 Tm ({"dieId":"CORE","kinds":["pad","bump"],"id":"core-corner","x":0,"y":0,"width":120,"height":120}) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 223.65 Tm ({"kind":"ball","domain":"","minGround":8,"minPower":6,"id":"package-power-grid","x":0,"y":0,"width":7600,") Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 211.25 Tm (height":5000}) Tj ET
+BT /F2 14 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 186.85 Tm (Findings) Tj ET
+BT /F1 9 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 162.15 Tm (No configured-rule findings.) Tj ET
+BT /F2 14 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 136.20000000000002 Tm (Review and approval) Tj ET
+BT /F1 10 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 111.50000000000001 Tm (Engineering owner: ____________________) Tj ET
+BT /F1 10 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 96.00000000000001 Tm (Reviewer: ____________________ Approval date: ____________________) Tj ET
+BT /F1 8 Tf 0.10 0.16 0.24 rg 1 0 0 1 44 80.50000000000001 Tm (PDF text uses printable ASCII transliteration. Use HTML or JSON for full Unicode labels.) Tj ET
+endstream
+endobj
+xref
+0 17
+0000000000 65535 f 
+0000000023 00000 n 
+0000000072 00000 n 
+0000000162 00000 n 
+0000000232 00000 n 
+0000000307 00000 n 
+0000000443 00000 n 
+0000013739 00000 n 
+0000013875 00000 n 
+0000018647 00000 n 
+0000018784 00000 n 
+0000023797 00000 n 
+0000023935 00000 n 
+0000028846 00000 n 
+0000028984 00000 n 
+0000034051 00000 n 
+0000034189 00000 n 
+trailer
+<< /Size 17 /Root 1 0 R >>
+startxref
+38821
+%%EOF
