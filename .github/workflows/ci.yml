@@ -1,0 +1,22 @@
+name: Planning engine checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+      - run: npm run build
+      - run: node scripts/cli.mjs check examples/chiplet-demo.json
+      - run: node scripts/cli.mjs check examples/chiplet-optimized.json --fail-on warning
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openbumpplan-offline
+          path: dist/

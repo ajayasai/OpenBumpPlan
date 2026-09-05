@@ -13,7 +13,9 @@ Plan and review **IC pads → microbumps → interposer sites → package balls 
 The project has **no npm dependencies**. The build, engine, tests, and command-line tools use Node.js built-ins.
 
 ```sh
-# Node.js 22 or newer, from this directory:
+# Node.js 22 or newer:
+git clone https://github.com/ajayasai/OpenBumpPlan.git
+cd OpenBumpPlan
 npm start
 ```
 
@@ -75,22 +77,19 @@ Check exit codes: **0** policy passed, **1** findings violate the chosen policy,
 
 ## Validation and performance
 
-The release includes **151 passing Node tests** and **12 passing Chromium integration scenarios**. Browser scenarios exercise the actual standalone build, including worker optimization, pointer dragging, reassignment, strict-edit rollback, import preview, downloads, and revision review. The browser harness uses `set_content` because this execution environment blocks file/localhost navigation; native navigation and real-origin storage persistence were not verified here. See [validation details](docs/VALIDATION.md) and the machine-readable results.
+The release includes **151 passing Node tests** and **12 passing Chromium integration scenarios**. Browser scenarios exercise the actual standalone build, including worker optimization, pointer dragging, reassignment, strict-edit rollback, import preview, downloads, and revision review. The browser harness uses `set_content` because the original delivery environment blocked file/localhost navigation; native navigation and real-origin storage persistence were not verified by this harness. See [validation details](docs/VALIDATION.md) and the machine-readable results.
 
-A favorable sparse synthetic case with **8,000 sites / 4,000 connections** took about **33.7 ms median** for engine analysis in this environment. That is **not** a large-scale interactive UI benchmark, a worst-case guarantee, or a commercial comparison. Dense geometry can exhaust the explicit analysis budget, in which case the application reports incompleteness rather than a clean result.
+A favorable sparse synthetic case with **8,000 sites / 4,000 connections** took about **33.7 ms median** for engine analysis in the original delivery environment. That is **not** a large-scale interactive UI benchmark, a worst-case guarantee, or a commercial comparison. Dense geometry can exhaust the explicit analysis budget, in which case the application reports incompleteness rather than a clean result.
 
-## Publishing to your public GitHub account
+## Public source and CI
 
-**The delivered package is not proof of a published repository.** This environment's connected GitHub actions do not provide repository creation or visibility changes. The following local command creates a **new public** `ajayasai/OpenBumpPlan` using your authenticated GitHub CLI:
+The public repository is **[ajayasai/OpenBumpPlan](https://github.com/ajayasai/OpenBumpPlan)**. The complete source, standalone build, synthetic examples, generated interface-control documents, tests, and MIT license are committed on `main`.
 
-```sh
-gh auth login
-npm run publish:github
-```
+[GitHub Actions](https://github.com/ajayasai/OpenBumpPlan/actions) runs the engine tests, rebuilds the offline app, checks the examples, and uploads the standalone app as a workflow artifact. The initial publication also reproduced all 12 Chromium workflow scenarios; see [the publication record](docs/PUBLICATION.md) for the immutable source commit and test run.
 
-Git, Node.js, npm, and GitHub CLI must be installed. The script verifies the account, runs tests/build, refuses an existing target repository or origin remote, creates a public repository, pushes, then prints the verified visibility and URL. It does not force-push or change another repository's visibility. Review the files first: everything in this directory not ignored by Git is intended to be published. Only synthetic designs are included.
+To contribute, clone the repository, create a branch, make your changes, and run `npm test` and `npm run build` before opening a pull request. The historical `npm run publish:github` script creates a **new** repository and intentionally refuses this already-existing target; it is not an update command.
 
-Optional Pages deployment is manual after publication. See [publishing instructions](docs/PUBLISHING.md). Neither cloud CI nor GitHub Pages was executed in this delivery environment.
+Optional GitHub Pages deployment remains manual. See [publishing and deployment instructions](docs/PUBLISHING.md). No live Pages deployment is implied by publishing the source. Only synthetic examples are included; never commit proprietary imports, reports, or customized embedded demo data.
 
 ## Scope and extension points
 

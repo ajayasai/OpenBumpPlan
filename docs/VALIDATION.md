@@ -1,6 +1,6 @@
 # Validation record — 0.1.0 source delivery
 
-These are checks actually performed in the delivery environment on 5 September 2026. They are not certification or a commercial benchmark. Raw records accompany the project.
+These are checks actually performed on 5 September 2026. They are not certification or a commercial benchmark. Raw records accompany the project. The original local results are retained below; [PUBLICATION.md](PUBLICATION.md) records the additional GitHub-hosted test/build/browser run and public repository publication.
 
 ## Automated checks
 
@@ -8,7 +8,7 @@ These are checks actually performed in the delivery environment on 5 September 2
 
 The assignment tests include 120 seeded small masked cost matrices checked against brute-force solutions. This validates the Hungarian implementation's linear subproblem, not global optimality of the full coupled planner. Geometry sweep and spatial-index results are compared with brute-force cases. Transform round trips cover all eight 90-degree rotation/reflection combinations. The report is [`node-test-results.tap`](node-test-results.tap).
 
-**12 Chromium integration scenarios passed, zero failed.** The test runs the actual standalone build in Chromium 144.0.7559.96 through Playwright. It exercises boot/five-stage data, worker optimization, undo/redo, inspector and keyboard edits, strict net-conflict rollback, invalid drafts, pointer drag/snapping, occupied mapping replacement, locks, CSV preview/apply/duplicate rejection, generated arrays, all nine download formats, revision review, embedded ICD rendering, search, layer/exploded/zoom controls, and rule editing. The scenario groupings and timings are in [`browser-test-results.json`](browser-test-results.json). There were no uncaught page exceptions or HTTP(S) requests during these scenarios.
+**12 Chromium integration scenarios passed, zero failed.** The original local test runs the actual standalone build in Chromium 144.0.7559.96 through Playwright. It exercises boot/five-stage data, worker optimization, undo/redo, inspector and keyboard edits, strict net-conflict rollback, invalid drafts, pointer drag/snapping, occupied mapping replacement, locks, CSV preview/apply/duplicate rejection, generated arrays, all nine download formats, revision review, embedded ICD rendering, search, layer/exploded/zoom controls, and rule editing. The scenario groupings and timings are in [`browser-test-results.json`](browser-test-results.json). There were no uncaught page exceptions or HTTP(S) requests during these scenarios. The later GitHub run reproduced all 12 scenarios with Chromium 151.0.7922.34; see [`github-browser-test-results.json`](github-browser-test-results.json).
 
 ```sh
 # Core tests and build use no npm dependencies:
@@ -19,7 +19,7 @@ npm run build
 python tests/browser_test.py --chromium /path/to/chromium
 ```
 
-**Browser test limitation:** managed Chromium prohibited both file:// and localhost navigation. The harness therefore loads the actual HTML with `set_content` in a fresh browser context for each scenario. It does not bypass the navigation policy, disable CSP, or replace app functions. Real-origin localStorage persistence and native-file/local-server browser navigation were **not** verified. Storage-unavailable handling is exercised. Firefox, Safari, mobile devices, assistive technology, and enterprise deployment environments are not qualified.
+**Browser test limitation:** managed Chromium in the original delivery environment prohibited both file:// and localhost navigation. The harness therefore loads the actual HTML with `set_content` in a fresh browser context for each scenario. It does not bypass the navigation policy, disable CSP, or replace app functions. Real-origin localStorage persistence and native-file/local-server browser navigation were **not** verified by the harness, including its later GitHub run. Storage-unavailable handling is exercised. Firefox, Safari, mobile devices, assistive technology, and enterprise deployment environments are not qualified.
 
 ## Export and schema checks
 
@@ -55,4 +55,4 @@ These cases favor the bounding-box sweep. Dense crossings, coincident coordinate
 
 ## Not verified or claimed
 
-No commercial product was run for comparison. No routed designs, foundry-qualified checks, electrical/thermal/current simulations, production package, or customer design was verified. No assertion of full LEF compatibility or industrial-capacity equivalence is made. Docker builds, GitHub Actions, GitHub Pages, public-repository creation, signed approvals, and multi-user deployment were not executed here. The included publishing and CI/deployment files are source deliverables, not completed remote actions.
+No commercial product was run for comparison. No routed designs, foundry-qualified checks, electrical/thermal/current simulations, production package, or customer design was verified. No assertion of full LEF compatibility or industrial-capacity equivalence is made. Docker builds, GitHub Pages, signed approvals, and multi-user deployment remain unverified. The user created the public GitHub repository, after which the source was uploaded and the GitHub-hosted publication workflow executed. See [PUBLICATION.md](PUBLICATION.md) for the remote evidence. Publishing the source does not qualify a deployed engineering service.

@@ -1,21 +1,19 @@
 {
   "version": "0.1.0",
-  "sourceFiles": 62,
-  "nodeTests": {
-    "passed": 151,
-    "failed": 0
-  },
-  "browserScenarios": {
-    "passed": 12,
-    "failed": 0
-  },
-  "httpChecks": {
-    "passed": 7,
-    "failed": 0
-  },
+  "nodeTests": {"passed": 151, "failed": 0},
+  "browserScenarios": {"passed": 12, "failed": 0},
+  "httpChecks": {"passed": 7, "failed": 0, "environment": "original local delivery"},
   "examplePdfPages": 6,
-  "repositoryPublished": false,
-  "publicationBlocker": "Available connected GitHub actions do not include repository creation or visibility updates.",
+  "repositoryPublished": true,
+  "repositoryVisibility": "public",
+  "repository": "https://github.com/ajayasai/OpenBumpPlan",
+  "publicationCommit": "950f01df213a3d9a3a6741c8e621d6a8a7de59ac",
+  "publicationRun": "https://github.com/ajayasai/OpenBumpPlan/actions/runs/33962178905",
+  "publicationRunConclusion": "success",
+  "githubBrowser": "Chromium 151.0.7922.34",
+  "githubBrowserReport": "docs/github-browser-test-results.json",
   "appSha256": "be83a745173d6af90e64ea370dc9787ffa4bedb748bf826aabf369667a2a7d75",
-  "benchmarkSource": "docs/benchmark-results.json"
+  "benchmarkSource": "docs/benchmark-results.json",
+  "pagesDeployed": false,
+  "limitations": ["Engineering alpha, not signoff", "Browser harness uses set_content; real-origin navigation and persistence not qualified", "No commercial comparative benchmark"]
 }
