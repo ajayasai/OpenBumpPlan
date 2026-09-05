@@ -40,3 +40,8 @@ The optimizer defaults to at most 256 source and 512 target sites per stage (con
 ## Extension design
 
 Keep the canonical interchange format independent of vendor databases. Add adapters outside the model, with round-trip fixtures and unit/orientation provenance. Route-aware checks should consume actual paths and stack layers, not reinterpret the existing ratsnest metric. Electrical solvers should produce separately named findings and provenance. A future coupled exact solver should distinguish proven feasibility, optimality gap, timeout, and global infeasibility, and validate its output through the same independent rule engine.
+
+
+## v0.2 engineering modules
+
+`src/core/exact.js` provides the small-stage branch-and-bound oracle and Hall witnesses. `routing.js` provides explicit routing configuration, A* and an independent geometric path checker. `evidence.js` provides platform SHA-256 document binding and deterministic replay. `src/lab.js` renders the Engineering workspace and synthetic demonstrations. The worker dispatches heuristic, exact and routing tasks; stale results compare complete canonical input documents. Project schema remains v1 and engineering evidence/configuration use explicit sidecars. [Guarantees, limits and numeric semantics](ENGINEERING.md) are part of the API contract.

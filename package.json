@@ -1,17 +1,20 @@
 {
   "name": "openbumpplan",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Local-first die/package bump and ball-map planning, checks, optimization, and review",
   "type": "module",
   "license": "MIT",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "start": "node scripts/serve.mjs",
     "build": "node scripts/build.mjs",
     "test": "node --test tests/*.test.mjs",
     "check": "node scripts/cli.mjs check examples/chiplet-demo.json",
     "benchmark": "node scripts/benchmark.mjs",
-    "publish:github": "node scripts/publish.mjs"
+    "publish:github": "node scripts/publish.mjs",
+    "benchmark:engineering": "node scripts/engineering-benchmark.mjs"
   }
 }

@@ -21,3 +21,8 @@ The server is static/read-only and loopback by default; it is not hardened for h
 ## Reporting
 
 Do not attach confidential designs or exploit-bearing files to a public issue. Report a minimal synthetic reproduction through a private maintainer channel once one is established. No security-response SLA or dedicated reporting address is currently promised. Follow responsible disclosure; contributors must not embed secrets in fixtures, screenshots, logs, or reports.
+
+
+## v0.2 computation evidence
+
+SHA-256 evidence is document integrity and deterministic replay, not authentication, a signature, trusted timestamp or approval. Verify against the intended original project and trusted engine version. Browser evidence needs platform Web Crypto and fails explicitly if unavailable. Do not publish evidence containing proprietary project/candidate data. Replay is bounded by caller-authorized node/expansion limits; route/path input sizes are capped. Stage workers are cancellable and use complete canonical document comparisons for stale-result rejection. The short display fingerprint is still a convenience identifier, not a security boundary.

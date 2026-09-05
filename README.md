@@ -1,100 +1,88 @@
 # OpenBumpPlan
 
-**A local-first die/package bump and ball-map planning studio.**
+**Local-first die/package planning with inspectable optimization and reproducible engineering evidence.**
 
-Plan and review **IC pads → microbumps → interposer sites → package balls → PCB sites** in one inspectable, versioned project. Import coordinates, rearrange mappings, check constraints, optimize a stage, compare revisions, and produce an interface-control document without uploading your design to a service.
+Plan **IC pads → microbumps → interposer sites → package balls → PCB sites**. Import coordinates, edit assignments, enforce planning constraints, compare revisions, and generate interface-control documents without uploading design data.
 
-**Version 0.1.0 · engineering alpha · MIT licensed.** This is working planning software, not a qualified routing, SI/PI, or manufacturing-signoff product. No superiority over commercial EDA systems has been established.
+**v0.2.0 · MIT · engineering alpha.** No npm dependencies. Not a manufacturing-signoff product, and not demonstrated superior to every commercial EDA system.
 
-![The running planning studio after optimizing the included synthetic example](docs/studio-screenshot.png)
+![The actual multilayer routing workbench](docs/engineering-screenshot.png)
 
-## Start in a minute
-
-The project has **no npm dependencies**. The build, engine, tests, and command-line tools use Node.js built-ins.
+## Run
 
 ```sh
-# Node.js 22 or newer:
+# Node.js 22 or newer. No npm install is needed.
 git clone https://github.com/ajayasai/OpenBumpPlan.git
 cd OpenBumpPlan
 npm start
 ```
 
-Open **http://127.0.0.1:4173**. The server is read-only and listens on loopback by default. It neither receives nor saves your project. The browser processes design data locally.
+Open **http://127.0.0.1:4173**. The read-only server binds to loopback; projects are processed and saved in the browser, not sent to the server. Export JSON for durable backups. The supplied `dist/openbumpplan.html` is also a self-contained offline app; browser file-origin policies vary. No signup, telemetry, CDN, GPU, cloud account or license server is required. `private: true` in `package.json` only prevents accidental npm registry publication; the GitHub source repository is public.
 
-Alternatively, open **`dist/openbumpplan.html`** directly in a modern browser. It includes the application, styles, and optimization worker in one file. File-origin browser policies can restrict workers or storage; the local server is the fallback. Always export project JSON as your durable backup.
+## New: Engineering workbench
 
-No signup, license server, GPU, cloud account, or build step is needed to use the supplied standalone file. `package.json` has `private: true` solely to prevent accidental publication to the npm registry; it does **not** specify GitHub repository visibility.
+Open **Engineering → Solver challenge → Solve exact stage**. Review the bounds and constraints, then explicitly apply the checked candidate. Or open **Routing challenge → Plan multilayer routes** to inspect obstacle avoidance and vias on separate routing layers.
 
-## Included capabilities
-
-| Area | Implemented in this release |
+| Capability | Implemented behavior |
 |---|---|
-| Input | Project JSON, pad/bump/interposer/ball/PCB CSV, assignment CSV, explicit um/mm/nm conversion, limited LEF MACRO/PIN/PORT RECT importer with visible limitations |
-| Workspace | Physical XY and exploded-stack views, layer toggles, pan/zoom, labels, selection, die placement, 90-degree rotations, X mirroring, generated arrays, drag-to-move with snapping |
-| Mapping | Inspect inherited nets/domains, drag/click to connect, explicitly replace occupied assignments, lock sites and links, undo/redo |
-| Rules | Net/role/domain compatibility, voltage-domain spacing, differential-pair completeness/adjacency/polarity/length mismatch, clock ground-neighbor checks, power/ground coverage and quotas, reserved/NC positions, rectangular/edge/corner keep-outs, required endpoints and path continuity |
-| Geometry | Total and longest physical Manhattan distance, same-stage straight-ratsnest crossings, separately reported collinear overlaps, explicit incomplete-analysis status |
-| Optimization | Pair-aware placement, minimum-cost rectangular assignment, checked local swaps, locked-mapping preservation, regression gate, cancellable Web Worker |
-| Review | Structural and downstream-propagated revision differences, baseline overlay, machine-readable regression report, local revision history |
-| Deliverables | Ports and mappings CSV, project JSON, vector SVG, vector/text PDF, HTML and Markdown ICD, validation JSON, revision-diff JSON |
-| Automation | Dependency-free CLI, unit/property/integration tests, optional browser tests, synthetic benchmark harness, Dockerfile, GitHub Actions templates, public-repository publishing script |
+| Small-stage exact assignment | Deterministic branch-and-bound, complete hard-rule evaluation, lower/upper bounds, explicit optimal/feasible/infeasible/unknown statuses and numeric tolerance. Defaults: 12 movable sources, 24 targets, 20,000 nodes. |
+| Engineering-change control | Hard cap on changed assignments and configurable cost per change; existing locks preserved. |
+| Infeasibility explanations | Hall-deficient source/target sets with IDs and capacity deficits; coupled-rule rejection diagnostics. A cutoff is never labeled infeasible. |
+| Multilayer grid routing | Fixed endpoints, explicit rectangular routing obstacles, trace/clearance inflation, adjacent-layer vias, bounded routing-order retries, no silent coordinate snapping. |
+| Independent path validation | Endpoint, step, obstacle, cross-route clearance, coverage, planar length and pair-skew checks. Budget exhaustion cannot pass. |
+| Reproducible evidence | SHA-256 input/result/envelope binding, engine versions, deterministic replay, stale-input and forged-result rejection. Hashes are not signatures or approvals. |
+| Safe interactive use | Cancellable workers, complete-input staleness checks, review before apply, undo/redo, original-input export and routed SVG. |
 
-The names of the rules are not promises of electrical signoff: “clock shielding” checks nearby connected grounds, and “power distribution” checks geometric coverage and quotas. They do not calculate return-current paths, impedance, voltage drop, current capacity, or electromigration.
+The exact oracle is scoped to one small stage, **not industrial-scale simultaneous assignment/routing**. The router is a conservative uniform-width grid model, **not padstack-aware detailed routing**. See [precise guarantees, limits and commands](docs/ENGINEERING.md).
 
-## Try the included example
+## Measured regression improvements
 
-The startup project is synthetic: two chiplets, **122 sites**, **96 links**, all five stages, ground/power/clock signals, differential pairs, one rotated die, reserved/NC sites, and deliberate assignment crossings.
+On the shipped six-source, six-target coupled-pair challenge:
 
-1. Select a site in **Plan**. Its inspector shows declared and inherited information. Hide layers to disambiguate overlapping sites; use **Move** for geometry or **Connect** for mappings.
-2. With **interposer → ball** selected, click **Optimize stage**. On this example, the score changes **27,540 → 25,920** and crossings **2 → 0**, with no hard-rule errors.
-3. Open **Revisions** to see the changed mappings and downstream signals. Open **Interface document** to review the generated ICD. Export JSON and PDF.
+| Method | Planning score | Hard-rule errors |
+|---|---:|---:|
+| Original checked heuristic | 4,450 | 0 |
+| New exact oracle | **2,850** | **0** |
+| Independent enumeration of all 720 permutations | **2,850** | **0** |
 
-The optimizer minimizes a planning proxy:
+The 35.96% score reduction is real **on this selected synthetic challenge**, found in a seeded search. It is not an average-case claim or a commercial comparison. A four-link change budget obtains the improved result; budgets of zero or two preserve the old heuristic mapping.
 
-```text
-score = sum of physical Manhattan lengths (um)
-      + crossingWeight * same-stage straight-ratsnest crossings
-```
+The routing challenge has two links blocked by an explicit wall on routing layer 0. Two routing layers produce two checked paths, four vias and 1,200 um planar wire. One layer produces no routes in this model. Reproduce both with `npm run benchmark:engineering`; inspect [raw measurements and disclosure](docs/engineering-benchmark.json).
 
-Crossings are not routed-layer shorts, and L1 length is not electrical length. The linear assignment subproblem is exact; the full coupled problem with pairs, grounds, domains, crossings, and locks is **heuristic**, not globally optimal.
+## Existing planning studio
 
-## Command-line use
+The original studio remains available: physical/exploded views, layer visibility, die rotation/mirroring, drag/snap movement, connection reassignment, locks, undo/redo, array generation and CSV/JSON/limited LEF import. The rule engine checks net/role/domain compatibility, domain spacing, pair adjacency/polarity/skew, nearby grounds for clocks, power/ground coverage/quotas, reserved/NC sites, endpoint keep-outs and path completeness. Revision comparison includes inherited-signal and transform effects.
+
+Exports include project JSON, ports/mapping CSV, SVG, PDF, HTML/Markdown interface-control documents, validation and revision-difference reports. LEF supports the documented MACRO/PIN/PORT RECT subset, not full LEF/DEF. Clock shielding and power coverage are geometric proxies, not electromagnetic or power-integrity analysis.
+
+The startup two-chiplet example has 122 sites and 96 links. **Plan → interposer to ball → Optimize stage** changes its planning score from 27,540 to 25,920 and crossings from two to zero, with no hard-rule errors. This original optimizer remains a heuristic with a linear-assignment subproblem; use Engineering for the bounded exact oracle.
+
+## CLI and reproduction
 
 ```sh
 npm test
 npm run build
-npm run benchmark
-
-node scripts/cli.mjs check examples/chiplet-demo.json
+npm run benchmark:engineering
 node scripts/cli.mjs check examples/chiplet-optimized.json --fail-on warning
-node scripts/cli.mjs optimize examples/chiplet-demo.json optimized.json --from interposer --to ball
-node scripts/cli.mjs diff examples/chiplet-demo.json optimized.json --gate --json
-node scripts/cli.mjs export optimized.json interface.pdf
-node scripts/cli.mjs export optimized.json assignments.csv --format connections
+node scripts/cli.mjs exact examples/exact-challenge.json exact.json --from pad --to ball
+node scripts/cli.mjs verify examples/exact-challenge.json exact.json
+node scripts/cli.mjs route examples/routing-challenge.json routing.json --config examples/routing-config.json --svg routes.svg
+node scripts/cli.mjs check-routes examples/routing-challenge.json routing.json
+node scripts/cli.mjs verify examples/routing-challenge.json routing.json
 ```
 
-Check exit codes: **0** policy passed, **1** findings violate the chosen policy, **2** malformed input or command failure. The default permits warnings; `--fail-on warning` rejects them. Full JSON is the authoritative lossless project format.
+`exact` also accepts `--nodes`, `--max-changes` and `--change-penalty`. Exact and route commands output **evidence documents**, not silent project overwrites. The candidate project is in the exact result. `verify` checks that the recorded result is honestly reproduced: it may succeed for an infeasible/partial result, so inspect `planningPass` and `status`. Exit 2 indicates malformed input/usage. See [full semantics](docs/ENGINEERING.md).
 
-## Validation and performance
+## Testing and public source
 
-The release includes **151 passing Node tests** and **12 passing Chromium integration scenarios**. Browser scenarios exercise the actual standalone build, including worker optimization, pointer dragging, reassignment, strict-edit rollback, import preview, downloads, and revision review. The browser harness uses `set_content` because the original delivery environment blocked file/localhost navigation; native navigation and real-origin storage persistence were not verified by this harness. See [validation details](docs/VALIDATION.md) and the machine-readable results.
+The v0.2.0 suite contains **240 Node tests** and **17 browser workflow scenarios**, plus **five native-origin checks**. The latter test real reload persistence, browser-to-Node SHA-256/replay and standalone file loading. They are separate from the embedded-page harness; an environment that blocks native loading does not count as native test coverage. CI executes the checks and publishes their actual results. See [release validation](docs/VALIDATION-v0.2.md) and [GitHub Actions](https://github.com/ajayasai/OpenBumpPlan/actions).
 
-A favorable sparse synthetic case with **8,000 sites / 4,000 connections** took about **33.7 ms median** for engine analysis in the original delivery environment. That is **not** a large-scale interactive UI benchmark, a worst-case guarantee, or a commercial comparison. Dense geometry can exhaust the explicit analysis budget, in which case the application reports incompleteness rather than a clean result.
+The [initial publication record](docs/PUBLICATION.md) and [v0.1 validation](docs/VALIDATION.md) remain historical records. Version 0.2 expands their scope; it does not retroactively alter the tests performed on v0.1.
 
-## Public source and CI
+Only synthetic designs are committed. Never publish proprietary imports, browser snapshots or reports. The historical `npm run publish:github` creates a new repository and refuses an existing target; it is not an update command. Optional Pages deployment is separate from source publication; see [deployment instructions](docs/PUBLISHING.md).
 
-The public repository is **[ajayasai/OpenBumpPlan](https://github.com/ajayasai/OpenBumpPlan)**. The complete source, standalone build, synthetic examples, generated interface-control documents, tests, and MIT license are committed on `main`.
+## Boundaries and contribution
 
-[GitHub Actions](https://github.com/ajayasai/OpenBumpPlan/actions) runs the engine tests, rebuilds the offline app, checks the examples, and uploads the standalone app as a workflow artifact. The initial publication also reproduced all 12 Chromium workflow scenarios; see [the publication record](docs/PUBLICATION.md) for the immutable source commit and test run.
+No native Cadence/Synopsys databases, production padstack/escape routing, foundry-qualified DRC, SI/PI/thermal/mechanical solvers, process certification, authenticated approvals, simultaneous collaborative editing or demonstrated industrial-scale capacity are claimed. The [engineering guide](docs/ENGINEERING.md) contrasts this release with primary commercial documentation rather than inventing parity.
 
-To contribute, clone the repository, create a branch, make your changes, and run `npm test` and `npm run build` before opening a pull request. The historical `npm run publish:github` script creates a **new** repository and intentionally refuses this already-existing target; it is not an update command.
-
-Optional GitHub Pages deployment remains manual. See [publishing and deployment instructions](docs/PUBLISHING.md). No live Pages deployment is implied by publishing the source. Only synthetic examples are included; never commit proprietary imports, reports, or customized embedded demo data.
-
-## Scope and extension points
-
-Read [the exact data/rule semantics](docs/FORMAT.md), [architecture](docs/ARCHITECTURE.md), [competitive scope and roadmap](docs/COMPETITIVE_SCOPE.md), and [security boundaries](SECURITY.md).
-
-Important exclusions: native Cadence/Synopsys databases, full LEF/DEF/GDS/ODB++/IPC-2581 support, routing/escape/via synthesis, same-stage lateral connectivity, electrical fanout, Z-aware TSV/face alignment, SI/PI/thermal/mechanical analysis, current-aware power delivery, process-qualified DRC, tamper-proof approvals, real-time collaboration, and demonstrated industrial-scale capacity.
-
-Contributions should include a reproducible synthetic fixture and tests, not unsupported feature-parity or signoff claims. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Read [data/rule semantics](docs/FORMAT.md), [architecture](docs/ARCHITECTURE.md), [security boundaries](SECURITY.md) and [contribution guidelines](CONTRIBUTING.md). Contributions need reproducible fixtures and tests, not unsupported superiority or signoff statements.

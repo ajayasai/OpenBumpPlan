@@ -1,0 +1,1454 @@
+
+> openbumpplan@0.2.0 test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# Subtest: CLI exact exports replayable evidence without editing the input
+ok 1 - CLI exact exports replayable evidence without editing the input
+  ---
+  duration_ms: 157.336408
+  type: 'test'
+  ...
+# Subtest: CLI verification rejects stale inputs and corrupted evidence
+ok 2 - CLI verification rejects stale inputs and corrupted evidence
+  ---
+  duration_ms: 147.111598
+  type: 'test'
+  ...
+# Subtest: CLI route requires an explicit configuration
+ok 3 - CLI route requires an explicit configuration
+  ---
+  duration_ms: 80.114481
+  type: 'test'
+  ...
+# Subtest: CLI route exports real paths and SVG, then verifies geometry
+ok 4 - CLI route exports real paths and SVG, then verifies geometry
+  ---
+  duration_ms: 210.477267
+  type: 'test'
+  ...
+# Subtest: CLI infeasibility is a nonzero planning result, but authentic replay is distinct
+ok 5 - CLI infeasibility is a nonzero planning result, but authentic replay is distinct
+  ---
+  duration_ms: 145.509295
+  type: 'test'
+  ...
+# Subtest: Web Crypto digest matches the independent Node implementation
+ok 6 - Web Crypto digest matches the independent Node implementation
+  ---
+  duration_ms: 14.581679
+  type: 'test'
+  ...
+# Subtest: nonfinite and non-JSON evidence rejected without lossy coercion
+ok 7 - nonfinite and non-JSON evidence rejected without lossy coercion
+  ---
+  duration_ms: 0.990233
+  type: 'test'
+  ...
+# Subtest: exact evidence replays and binds the full input revision
+ok 8 - exact evidence replays and binds the full input revision
+  ---
+  duration_ms: 19.637171
+  type: 'test'
+  ...
+# Subtest: a recomputed checksum cannot disguise a fabricated optimum
+ok 9 - a recomputed checksum cannot disguise a fabricated optimum
+  ---
+  duration_ms: 7.156925
+  type: 'test'
+  ...
+# Subtest: direct envelope corruption is rejected
+ok 10 - direct envelope corruption is rejected
+  ---
+  duration_ms: 3.117644
+  type: 'test'
+  ...
+# Subtest: unknown/partial evidence is verifiable without being promoted to planning pass
+ok 11 - unknown/partial evidence is verifiable without being promoted to planning pass
+  ---
+  duration_ms: 3.636631
+  type: 'test'
+  ...
+# Subtest: routing evidence replays and rejects a changed route even after rehashing
+ok 12 - routing evidence replays and rejects a changed route even after rehashing
+  ---
+  duration_ms: 16.290069
+  type: 'test'
+  ...
+# Subtest: replay budgets and engine versions are checked
+ok 13 - replay budgets and engine versions are checked
+  ---
+  duration_ms: 2.365694
+  type: 'test'
+  ...
+# Subtest: Hall witness explicitly identifies scarce compatible targets
+ok 14 - Hall witness explicitly identifies scarce compatible targets
+  ---
+  duration_ms: 2.986912
+  type: 'test'
+  ...
+# Subtest: zero-target Hall witness and rectangular cases
+ok 15 - zero-target Hall witness and rectangular cases
+  ---
+  duration_ms: 1.5249
+  type: 'test'
+  ...
+# Subtest: exact result checks full rules and preserves caller input
+ok 16 - exact result checks full rules and preserves caller input
+  ---
+  duration_ms: 30.323488
+  type: 'test'
+  ...
+# Subtest: strict target identity produces an actionable Hall set
+ok 17 - strict target identity produces an actionable Hall set
+  ---
+  duration_ms: 0.900446
+  type: 'test'
+  ...
+# Subtest: coupled differential adjacency can reject every linearly feasible solution
+ok 18 - coupled differential adjacency can reject every linearly feasible solution
+  ---
+  duration_ms: 2.984316
+  type: 'test'
+  ...
+# Subtest: node budget cannot fabricate infeasibility
+ok 19 - node budget cannot fabricate infeasibility
+  ---
+  duration_ms: 1.962604
+  type: 'test'
+  ...
+# Subtest: locked mapping, locks on either endpoint and locked target exclusion
+ok 20 - locked mapping, locks on either endpoint and locked target exclusion
+  ---
+  duration_ms: 4.282172
+  type: 'test'
+  ...
+# Subtest: all locked is an explicit no-op, never an optimality certificate
+ok 21 - all locked is an explicit no-op, never an optimality certificate
+  ---
+  duration_ms: 0.410965
+  type: 'test'
+  ...
+# Subtest: malformed topology and oversized oracle scope fail before search
+ok 22 - malformed topology and oversized oracle scope fail before search
+  ---
+  duration_ms: 2.634044
+  type: 'test'
+  ...
+# Subtest: hard failures in untouched stages are not ignored
+ok 23 - hard failures in untouched stages are not ignored
+  ---
+  duration_ms: 1.398283
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 1
+ok 24 - exact matches independent complete enumeration, seeded case 1
+  ---
+  duration_ms: 4.564598
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 2
+ok 25 - exact matches independent complete enumeration, seeded case 2
+  ---
+  duration_ms: 10.246417
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 3
+ok 26 - exact matches independent complete enumeration, seeded case 3
+  ---
+  duration_ms: 28.318274
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 4
+ok 27 - exact matches independent complete enumeration, seeded case 4
+  ---
+  duration_ms: 1.655202
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 5
+ok 28 - exact matches independent complete enumeration, seeded case 5
+  ---
+  duration_ms: 1.902933
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 6
+ok 29 - exact matches independent complete enumeration, seeded case 6
+  ---
+  duration_ms: 4.934998
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 7
+ok 30 - exact matches independent complete enumeration, seeded case 7
+  ---
+  duration_ms: 25.161254
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 8
+ok 31 - exact matches independent complete enumeration, seeded case 8
+  ---
+  duration_ms: 0.778169
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 9
+ok 32 - exact matches independent complete enumeration, seeded case 9
+  ---
+  duration_ms: 1.956693
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 10
+ok 33 - exact matches independent complete enumeration, seeded case 10
+  ---
+  duration_ms: 6.021932
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 11
+ok 34 - exact matches independent complete enumeration, seeded case 11
+  ---
+  duration_ms: 40.774526
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 12
+ok 35 - exact matches independent complete enumeration, seeded case 12
+  ---
+  duration_ms: 1.693343
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 13
+ok 36 - exact matches independent complete enumeration, seeded case 13
+  ---
+  duration_ms: 2.595723
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 14
+ok 37 - exact matches independent complete enumeration, seeded case 14
+  ---
+  duration_ms: 6.507265
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 15
+ok 38 - exact matches independent complete enumeration, seeded case 15
+  ---
+  duration_ms: 69.978039
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 16
+ok 39 - exact matches independent complete enumeration, seeded case 16
+  ---
+  duration_ms: 1.261598
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 17
+ok 40 - exact matches independent complete enumeration, seeded case 17
+  ---
+  duration_ms: 2.397103
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 18
+ok 41 - exact matches independent complete enumeration, seeded case 18
+  ---
+  duration_ms: 6.185276
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 19
+ok 42 - exact matches independent complete enumeration, seeded case 19
+  ---
+  duration_ms: 57.474138
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 20
+ok 43 - exact matches independent complete enumeration, seeded case 20
+  ---
+  duration_ms: 1.84216
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 21
+ok 44 - exact matches independent complete enumeration, seeded case 21
+  ---
+  duration_ms: 1.840487
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 22
+ok 45 - exact matches independent complete enumeration, seeded case 22
+  ---
+  duration_ms: 6.628902
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 23
+ok 46 - exact matches independent complete enumeration, seeded case 23
+  ---
+  duration_ms: 26.523933
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 24
+ok 47 - exact matches independent complete enumeration, seeded case 24
+  ---
+  duration_ms: 1.516784
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 25
+ok 48 - exact matches independent complete enumeration, seeded case 25
+  ---
+  duration_ms: 2.764036
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 26
+ok 49 - exact matches independent complete enumeration, seeded case 26
+  ---
+  duration_ms: 7.207499
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 27
+ok 50 - exact matches independent complete enumeration, seeded case 27
+  ---
+  duration_ms: 34.757041
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 28
+ok 51 - exact matches independent complete enumeration, seeded case 28
+  ---
+  duration_ms: 0.76253
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 29
+ok 52 - exact matches independent complete enumeration, seeded case 29
+  ---
+  duration_ms: 2.045919
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 30
+ok 53 - exact matches independent complete enumeration, seeded case 30
+  ---
+  duration_ms: 5.771926
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 31
+ok 54 - exact matches independent complete enumeration, seeded case 31
+  ---
+  duration_ms: 29.512698
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 32
+ok 55 - exact matches independent complete enumeration, seeded case 32
+  ---
+  duration_ms: 1.547873
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 33
+ok 56 - exact matches independent complete enumeration, seeded case 33
+  ---
+  duration_ms: 3.293512
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 34
+ok 57 - exact matches independent complete enumeration, seeded case 34
+  ---
+  duration_ms: 5.483049
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 35
+ok 58 - exact matches independent complete enumeration, seeded case 35
+  ---
+  duration_ms: 30.92074
+  type: 'test'
+  ...
+# Subtest: exact matches independent complete enumeration, seeded case 36
+ok 59 - exact matches independent complete enumeration, seeded case 36
+  ---
+  duration_ms: 1.69753
+  type: 'test'
+  ...
+# Subtest: ECO budget bounds changed assignments and avoids unnecessary remapping
+ok 60 - ECO budget bounds changed assignments and avoids unnecessary remapping
+  ---
+  duration_ms: 1.733107
+  type: 'test'
+  ...
+# Subtest: ECO budget cannot turn a cut-off search into infeasibility
+ok 61 - ECO budget cannot turn a cut-off search into infeasibility
+  ---
+  duration_ms: 1.249026
+  type: 'test'
+  ...
+# Subtest: Manhattan metric
+ok 62 - Manhattan metric
+  ---
+  duration_ms: 2.965842
+  type: 'test'
+  ...
+# Subtest: Euclidean metric
+ok 63 - Euclidean metric
+  ---
+  duration_ms: 0.434579
+  type: 'test'
+  ...
+# Subtest: proper crossing
+ok 64 - proper crossing
+  ---
+  duration_ms: 0.41902
+  type: 'test'
+  ...
+# Subtest: endpoint touching excluded
+ok 65 - endpoint touching excluded
+  ---
+  duration_ms: 0.289408
+  type: 'test'
+  ...
+# Subtest: collinear overlap separate from crossing
+ok 66 - collinear overlap separate from crossing
+  ---
+  duration_ms: 0.361153
+  type: 'test'
+  ...
+# Subtest: collinear nonoverlap
+ok 67 - collinear nonoverlap
+  ---
+  duration_ms: 0.263911
+  type: 'test'
+  ...
+# Subtest: zero-length assignment excluded
+ok 68 - zero-length assignment excluded
+  ---
+  duration_ms: 0.288877
+  type: 'test'
+  ...
+# Subtest: rectangle boundary inclusive
+ok 69 - rectangle boundary inclusive
+  ---
+  duration_ms: 0.176459
+  type: 'test'
+  ...
+# Subtest: same-stage crossings counted
+ok 70 - same-stage crossings counted
+  ---
+  duration_ms: 11.122499
+  type: 'test'
+  ...
+# Subtest: different-stage projected crossing ignored
+ok 71 - different-stage projected crossing ignored
+  ---
+  duration_ms: 0.475034
+  type: 'test'
+  ...
+# Subtest: same-net crossing ignored
+ok 72 - same-net crossing ignored
+  ---
+  duration_ms: 0.249294
+  type: 'test'
+  ...
+# Subtest: budget exhaustion explicitly incomplete
+ok 73 - budget exhaustion explicitly incomplete
+  ---
+  duration_ms: 0.139841
+  type: 'test'
+  ...
+# Subtest: spatial index agrees with brute force including negative coordinates
+ok 74 - spatial index agrees with brute force including negative coordinates
+  ---
+  duration_ms: 4.713254
+  type: 'test'
+  ...
+# Subtest: sweep agrees with exhaustive pair checking
+ok 75 - sweep agrees with exhaustive pair checking
+  ---
+  duration_ms: 8.661927
+  type: 'test'
+  ...
+# Subtest: CSV handles BOM, CRLF, embedded comma, quotes, and newline
+ok 76 - CSV handles BOM, CRLF, embedded comma, quotes, and newline
+  ---
+  duration_ms: 2.292338
+  type: 'test'
+  ...
+# Subtest: malformed CSV rejected: "a,a\\n1,2"
+ok 77 - malformed CSV rejected: "a,a\\n1,2"
+  ---
+  duration_ms: 0.443396
+  type: 'test'
+  ...
+# Subtest: malformed CSV rejected: "a,b\\n1"
+ok 78 - malformed CSV rejected: "a,b\\n1"
+  ---
+  duration_ms: 0.330586
+  type: 'test'
+  ...
+# Subtest: malformed CSV rejected: "a,b\\n1,2,3"
+ok 79 - malformed CSV rejected: "a,b\\n1,2,3"
+  ---
+  duration_ms: 0.191176
+  type: 'test'
+  ...
+# Subtest: malformed CSV rejected: "a\\n\\"unterminated"
+ok 80 - malformed CSV rejected: "a\\n\\"unterminated"
+  ---
+  duration_ms: 0.213697
+  type: 'test'
+  ...
+# Subtest: malformed CSV rejected: "a\\nb\\"c"
+ok 81 - malformed CSV rejected: "a\\nb\\"c"
+  ---
+  duration_ms: 0.23625
+  type: 'test'
+  ...
+# Subtest: malformed CSV rejected: "a\\n\\"b\\"x"
+ok 82 - malformed CSV rejected: "a\\n\\"b\\"x"
+  ---
+  duration_ms: 0.196416
+  type: 'test'
+  ...
+# Subtest: unit conversion mm to um
+ok 83 - unit conversion mm to um
+  ---
+  duration_ms: 0.771426
+  type: 'test'
+  ...
+# Subtest: unit conversion nm to um
+ok 84 - unit conversion nm to um
+  ---
+  duration_ms: 0.680407
+  type: 'test'
+  ...
+# Subtest: missing numeric coordinates rejected
+ok 85 - missing numeric coordinates rejected
+  ---
+  duration_ms: 0.935873
+  type: 'test'
+  ...
+# Subtest: unknown CSV columns rejected
+ok 86 - unknown CSV columns rejected
+  ---
+  duration_ms: 0.366131
+  type: 'test'
+  ...
+# Subtest: duplicate imported IDs rejected
+ok 87 - duplicate imported IDs rejected
+  ---
+  duration_ms: 0.248502
+  type: 'test'
+  ...
+# Subtest: boolean text false is false
+ok 88 - boolean text false is false
+  ---
+  duration_ms: 0.257119
+  type: 'test'
+  ...
+# Subtest: unknown boolean rejected
+ok 89 - unknown boolean rejected
+  ---
+  duration_ms: 0.228255
+  type: 'test'
+  ...
+# Subtest: CSV export/import retains formula-leading and apostrophe text safely
+ok 90 - CSV export/import retains formula-leading and apostrophe text safely
+  ---
+  duration_ms: 3.247677
+  type: 'test'
+  ...
+# Subtest: assignment CSV roundtrip ignores informational columns
+ok 91 - assignment CSV roundtrip ignores informational columns
+  ---
+  duration_ms: 3.141609
+  type: 'test'
+  ...
+# Subtest: array generation has unique multiletter row labels
+ok 92 - array generation has unique multiletter row labels
+  ---
+  duration_ms: 0.582885
+  type: 'test'
+  ...
+# Subtest: array reserves requested labels
+ok 93 - array reserves requested labels
+  ---
+  duration_ms: 0.17724
+  type: 'test'
+  ...
+# Subtest: array resource cap enforced
+ok 94 - array resource cap enforced
+  ---
+  duration_ms: 0.195905
+  type: 'test'
+  ...
+# Subtest: LEF parses pin RECT centres, not obstruction or DBU scaling
+ok 95 - LEF parses pin RECT centres, not obstruction or DBU scaling
+  ---
+  duration_ms: 1.108424
+  type: 'test'
+  ...
+# Subtest: LEF multiple macros require explicit selection
+ok 96 - LEF multiple macros require explicit selection
+  ---
+  duration_ms: 0.25788
+  type: 'test'
+  ...
+# Subtest: LEF selects explicit macro
+ok 97 - LEF selects explicit macro
+  ---
+  duration_ms: 0.270072
+  type: 'test'
+  ...
+# Subtest: LEF nonzero origin fails explicitly
+ok 98 - LEF nonzero origin fails explicitly
+  ---
+  duration_ms: 0.230509
+  type: 'test'
+  ...
+# Subtest: LEF polygons fail explicitly
+ok 99 - LEF polygons fail explicitly
+  ---
+  duration_ms: 0.226421
+  type: 'test'
+  ...
+# Subtest: LEF iterated geometry fails explicitly
+ok 100 - LEF iterated geometry fails explicitly
+  ---
+  duration_ms: 0.257359
+  type: 'test'
+  ...
+# Subtest: LEF never silently drops a shapeless pin
+ok 101 - LEF never silently drops a shapeless pin
+  ---
+  duration_ms: 0.22565
+  type: 'test'
+  ...
+# Subtest: LEF multiple rectangles produce an approximation warning
+ok 102 - LEF multiple rectangles produce an approximation warning
+  ---
+  duration_ms: 0.312561
+  type: 'test'
+  ...
+# Subtest: JSON unsupported version rejected
+ok 103 - JSON unsupported version rejected
+  ---
+  duration_ms: 0.208568
+  type: 'test'
+  ...
+# Subtest: canonical project validates
+ok 104 - canonical project validates
+  ---
+  duration_ms: 3.616514
+  type: 'test'
+  ...
+# Subtest: rejects unknown version
+ok 105 - rejects unknown version
+  ---
+  duration_ms: 1.058531
+  type: 'test'
+  ...
+# Subtest: rejects noncanonical units
+ok 106 - rejects noncanonical units
+  ---
+  duration_ms: 0.508457
+  type: 'test'
+  ...
+# Subtest: rejects duplicate port IDs
+ok 107 - rejects duplicate port IDs
+  ---
+  duration_ms: 0.509288
+  type: 'test'
+  ...
+# Subtest: rejects dangling endpoints
+ok 108 - rejects dangling endpoints
+  ---
+  duration_ms: 2.055527
+  type: 'test'
+  ...
+# Subtest: rejects nonfinite coordinates
+ok 109 - rejects nonfinite coordinates
+  ---
+  duration_ms: 0.425472
+  type: 'test'
+  ...
+# Subtest: rejects unknown roles
+ok 110 - rejects unknown roles
+  ---
+  duration_ms: 0.508838
+  type: 'test'
+  ...
+# Subtest: rejects unknown die
+ok 111 - rejects unknown die
+  ---
+  duration_ms: 0.364709
+  type: 'test'
+  ...
+# Subtest: rejects incomplete pair metadata
+ok 112 - rejects incomplete pair metadata
+  ---
+  duration_ms: 0.832159
+  type: 'test'
+  ...
+# Subtest: rejects negative spacing
+ok 113 - rejects negative spacing
+  ---
+  duration_ms: 0.823994
+  type: 'test'
+  ...
+# Subtest: rejects unknown rule typo
+ok 114 - rejects unknown rule typo
+  ---
+  duration_ms: 0.48879
+  type: 'test'
+  ...
+# Subtest: rejects invalid stage rule
+ok 115 - rejects invalid stage rule
+  ---
+  duration_ms: 0.347247
+  type: 'test'
+  ...
+# Subtest: rejects noninteger clock quota
+ok 116 - rejects noninteger clock quota
+  ---
+  duration_ms: 0.325906
+  type: 'test'
+  ...
+# Subtest: rejects invalid ground ratio
+ok 117 - rejects invalid ground ratio
+  ---
+  duration_ms: 0.339432
+  type: 'test'
+  ...
+# Subtest: rejects unbounded geometry budget
+ok 118 - rejects unbounded geometry budget
+  ---
+  duration_ms: 0.301682
+  type: 'test'
+  ...
+# Subtest: rejects unsafe control character
+ok 119 - rejects unsafe control character
+  ---
+  duration_ms: 0.303816
+  type: 'test'
+  ...
+# Subtest: transform inverse R0 mirror=false
+ok 120 - transform inverse R0 mirror=false
+  ---
+  duration_ms: 1.131597
+  type: 'test'
+  ...
+# Subtest: transform inverse R0 mirror=true
+ok 121 - transform inverse R0 mirror=true
+  ---
+  duration_ms: 0.129982
+  type: 'test'
+  ...
+# Subtest: transform inverse R90 mirror=false
+ok 122 - transform inverse R90 mirror=false
+  ---
+  duration_ms: 0.116598
+  type: 'test'
+  ...
+# Subtest: transform inverse R90 mirror=true
+ok 123 - transform inverse R90 mirror=true
+  ---
+  duration_ms: 0.114843
+  type: 'test'
+  ...
+# Subtest: transform inverse R180 mirror=false
+ok 124 - transform inverse R180 mirror=false
+  ---
+  duration_ms: 0.114804
+  type: 'test'
+  ...
+# Subtest: transform inverse R180 mirror=true
+ok 125 - transform inverse R180 mirror=true
+  ---
+  duration_ms: 0.192188
+  type: 'test'
+  ...
+# Subtest: transform inverse R270 mirror=false
+ok 126 - transform inverse R270 mirror=false
+  ---
+  duration_ms: 0.157734
+  type: 'test'
+  ...
+# Subtest: transform inverse R270 mirror=true
+ok 127 - transform inverse R270 mirror=true
+  ---
+  duration_ms: 0.116186
+  type: 'test'
+  ...
+# Subtest: signal metadata propagates through all stages
+ok 128 - signal metadata propagates through all stages
+  ---
+  duration_ms: 0.693491
+  type: 'test'
+  ...
+# Subtest: declared target metadata does not silently disappear
+ok 129 - declared target metadata does not silently disappear
+  ---
+  duration_ms: 0.957102
+  type: 'test'
+  ...
+# Subtest: connect refuses occupied target without explicit replacement
+ok 130 - connect refuses occupied target without explicit replacement
+  ---
+  duration_ms: 1.024076
+  type: 'test'
+  ...
+# Subtest: connect replaces mappings atomically in the mutable candidate
+ok 131 - connect replaces mappings atomically in the mutable candidate
+  ---
+  duration_ms: 0.335815
+  type: 'test'
+  ...
+# Subtest: locked edge cannot be replaced
+ok 132 - locked edge cannot be replaced
+  ---
+  duration_ms: 0.331317
+  type: 'test'
+  ...
+# Subtest: locked target cannot be disconnected
+ok 133 - locked target cannot be disconnected
+  ---
+  duration_ms: 0.4348
+  type: 'test'
+  ...
+# Subtest: backward connections are refused
+ok 134 - backward connections are refused
+  ---
+  duration_ms: 0.282767
+  type: 'test'
+  ...
+# Subtest: review fingerprint ignores revision/audit and array order
+ok 135 - review fingerprint ignores revision/audit and array order
+  ---
+  duration_ms: 14.043157
+  type: 'test'
+  ...
+# Subtest: fingerprint changes with geometry
+ok 136 - fingerprint changes with geometry
+  ---
+  duration_ms: 0.804137
+  type: 'test'
+  ...
+# Subtest: normalizer does not modify input
+ok 137 - normalizer does not modify input
+  ---
+  duration_ms: 0.376271
+  type: 'test'
+  ...
+# Subtest: Hungarian known minimum
+ok 138 - Hungarian known minimum
+  ---
+  duration_ms: 1.903444
+  type: 'test'
+  ...
+# Subtest: Hungarian supports rectangular and negative finite costs
+ok 139 - Hungarian supports rectangular and negative finite costs
+  ---
+  duration_ms: 0.447483
+  type: 'test'
+  ...
+# Subtest: Hungarian empty source set
+ok 140 - Hungarian empty source set
+  ---
+  duration_ms: 0.86447
+  type: 'test'
+  ...
+# Subtest: Hungarian insufficient targets is infeasible
+ok 141 - Hungarian insufficient targets is infeasible
+  ---
+  duration_ms: 0.213518
+  type: 'test'
+  ...
+# Subtest: Hungarian masked impossible matching is infeasible
+ok 142 - Hungarian masked impossible matching is infeasible
+  ---
+  duration_ms: 0.251177
+  type: 'test'
+  ...
+# Subtest: Hungarian rejects NaN costs
+ok 143 - Hungarian rejects NaN costs
+  ---
+  duration_ms: 0.656903
+  type: 'test'
+  ...
+# Subtest: Hungarian matches exhaustive optimum for 120 seeded masked matrices
+ok 144 - Hungarian matches exhaustive optimum for 120 seeded masked matrices
+  ---
+  duration_ms: 8.582298
+  type: 'test'
+  ...
+# Subtest: demo stage improves without new hard errors
+ok 145 - demo stage improves without new hard errors
+  ---
+  duration_ms: 77.790824
+  type: 'test'
+  ...
+# Subtest: optimizer is deterministic
+ok 146 - optimizer is deterministic
+  ---
+  duration_ms: 77.644962
+  type: 'test'
+  ...
+# Subtest: optimizer never mutates original
+ok 147 - optimizer never mutates original
+  ---
+  duration_ms: 15.51592
+  type: 'test'
+  ...
+# Subtest: locked mappings survive optimizer
+ok 148 - locked mappings survive optimizer
+  ---
+  duration_ms: 65.798124
+  type: 'test'
+  ...
+# Subtest: locked sites survive optimizer
+ok 149 - locked sites survive optimizer
+  ---
+  duration_ms: 74.196642
+  type: 'test'
+  ...
+# Subtest: differential pair remains legal
+ok 150 - differential pair remains legal
+  ---
+  duration_ms: 1.325578
+  type: 'test'
+  ...
+# Subtest: failed construction leaves original mappings intact, no infeasibility claim
+ok 151 - failed construction leaves original mappings intact, no infeasibility claim
+  ---
+  duration_ms: 7.488603
+  type: 'test'
+  ...
+# Subtest: analysis-incomplete input is not optimized as if checked
+ok 152 - analysis-incomplete input is not optimized as if checked
+  ---
+  duration_ms: 6.642107
+  type: 'test'
+  ...
+# Subtest: optimizer source cap is explicit
+ok 153 - optimizer source cap is explicit
+  ---
+  duration_ms: 47.031515
+  type: 'test'
+  ...
+# Subtest: optimizer refuses invalid stage
+ok 154 - optimizer refuses invalid stage
+  ---
+  duration_ms: 0.536299
+  type: 'test'
+  ...
+# Subtest: optimizer validates search budgets
+ok 155 - optimizer validates search budgets
+  ---
+  duration_ms: 0.438907
+  type: 'test'
+  ...
+# Subtest: failed strict transaction is atomic
+ok 156 - failed strict transaction is atomic
+  ---
+  duration_ms: 5.443756
+  type: 'test'
+  ...
+# Subtest: successful transaction can undo and redo exactly
+ok 157 - successful transaction can undo and redo exactly
+  ---
+  duration_ms: 17.770776
+  type: 'test'
+  ...
+# Subtest: branching after undo clears redo history
+ok 158 - branching after undo clears redo history
+  ---
+  duration_ms: 1.798749
+  type: 'test'
+  ...
+# Subtest: explicit draft mode permits reported invalid edits
+ok 159 - explicit draft mode permits reported invalid edits
+  ---
+  duration_ms: 1.855385
+  type: 'test'
+  ...
+# Subtest: semantic diff reports changed properties
+ok 160 - semantic diff reports changed properties
+  ---
+  duration_ms: 2.768444
+  type: 'test'
+  ...
+# Subtest: semantic diff detects upstream signal propagation
+ok 161 - semantic diff detects upstream signal propagation
+  ---
+  duration_ms: 1.729119
+  type: 'test'
+  ...
+# Subtest: semantic diff detects moved die without edited port coordinates
+ok 162 - semantic diff detects moved die without edited port coordinates
+  ---
+  duration_ms: 2.727758
+  type: 'test'
+  ...
+# Subtest: semantic diff ignores object property ordering
+ok 163 - semantic diff ignores object property ordering
+  ---
+  duration_ms: 1.719461
+  type: 'test'
+  ...
+# Subtest: SVG escapes user markup and XML quotes
+ok 164 - SVG escapes user markup and XML quotes
+  ---
+  duration_ms: 7.945323
+  type: 'test'
+  ...
+# Subtest: ICD HTML escapes hostile labels and scripts
+ok 165 - ICD HTML escapes hostile labels and scripts
+  ---
+  duration_ms: 32.406774
+  type: 'test'
+  ...
+# Subtest: ICD carries planning boundaries and approval fields
+ok 166 - ICD carries planning boundaries and approval fields
+  ---
+  duration_ms: 1.6058
+  type: 'test'
+  ...
+# Subtest: PDF is paginated vector/text data with valid xref start
+ok 167 - PDF is paginated vector/text data with valid xref start
+  ---
+  duration_ms: 4.754261
+  type: 'test'
+  ...
+# Subtest: PDF handles parentheses, backslashes, and non-ASCII text
+ok 168 - PDF handles parentheses, backslashes, and non-ASCII text
+  ---
+  duration_ms: 1.608234
+  type: 'test'
+  ...
+# Subtest: CLI clean check returns exit 0
+ok 169 - CLI clean check returns exit 0
+  ---
+  duration_ms: 69.863475
+  type: 'test'
+  ...
+# Subtest: CLI validation failure returns exit 1
+ok 170 - CLI validation failure returns exit 1
+  ---
+  duration_ms: 94.314501
+  type: 'test'
+  ...
+# Subtest: CLI malformed input returns exit 2
+ok 171 - CLI malformed input returns exit 2
+  ---
+  duration_ms: 97.699222
+  type: 'test'
+  ...
+# Subtest: CLI PDF export writes actual PDF bytes
+ok 172 - CLI PDF export writes actual PDF bytes
+  ---
+  duration_ms: 71.169925
+  type: 'test'
+  ...
+# Subtest: CLI JSON check includes complete metrics
+ok 173 - CLI JSON check includes complete metrics
+  ---
+  duration_ms: 50.70258
+  type: 'test'
+  ...
+# Subtest: direct route has checked geometry, no mutation and Manhattan lower bound
+ok 174 - direct route has checked geometry, no mutation and Manhattan lower bound
+  ---
+  duration_ms: 18.273242
+  type: 'test'
+  ...
+# Subtest: thin obstacle between grid nodes is not tunneled through
+ok 175 - thin obstacle between grid nodes is not tunneled through
+  ---
+  duration_ms: 6.129973
+  type: 'test'
+  ...
+# Subtest: multilayer routing bridges a complete one-layer obstruction with two vias
+ok 176 - multilayer routing bridges a complete one-layer obstruction with two vias
+  ---
+  duration_ms: 5.963944
+  type: 'test'
+  ...
+# Subtest: exact endpoints: off-grid ports rejected rather than silently moved
+ok 177 - exact endpoints: off-grid ports rejected rather than silently moved
+  ---
+  duration_ms: 0.949098
+  type: 'test'
+  ...
+# Subtest: routing budget is bounded and cannot return checked success for missing links
+ok 178 - routing budget is bounded and cannot return checked success for missing links
+  ---
+  duration_ms: 4.405663
+  type: 'test'
+  ...
+# Subtest: independent checker detects changed endpoints, diagonal jumps and obstacles
+ok 179 - independent checker detects changed endpoints, diagonal jumps and obstacles
+  ---
+  duration_ms: 4.266885
+  type: 'test'
+  ...
+# Subtest: independent checker rejects crossing paths on one layer
+ok 180 - independent checker rejects crossing paths on one layer
+  ---
+  duration_ms: 31.966497
+  type: 'test'
+  ...
+# Subtest: two different nets cannot occupy a shared terminal or terminal halo
+ok 181 - two different nets cannot occupy a shared terminal or terminal halo
+  ---
+  duration_ms: 1.111059
+  type: 'test'
+  ...
+# Subtest: checker never passes on geometry-budget exhaustion
+ok 182 - checker never passes on geometry-budget exhaustion
+  ---
+  duration_ms: 3.310033
+  type: 'test'
+  ...
+# Subtest: routed length limits are checked, not just the ratsnest length
+ok 183 - routed length limits are checked, not just the ratsnest length
+  ---
+  duration_ms: 1.329005
+  type: 'test'
+  ...
+# Subtest: invalid routing configurations fail closed
+ok 184 - invalid routing configurations fail closed
+  ---
+  duration_ms: 5.862915
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 1
+ok 185 - router output passes separate DRC on seeded obstacle case 1
+  ---
+  duration_ms: 4.390935
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 2
+ok 186 - router output passes separate DRC on seeded obstacle case 2
+  ---
+  duration_ms: 1.268181
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 3
+ok 187 - router output passes separate DRC on seeded obstacle case 3
+  ---
+  duration_ms: 1.000483
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 4
+ok 188 - router output passes separate DRC on seeded obstacle case 4
+  ---
+  duration_ms: 4.167228
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 5
+ok 189 - router output passes separate DRC on seeded obstacle case 5
+  ---
+  duration_ms: 0.810389
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 6
+ok 190 - router output passes separate DRC on seeded obstacle case 6
+  ---
+  duration_ms: 0.769333
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 7
+ok 191 - router output passes separate DRC on seeded obstacle case 7
+  ---
+  duration_ms: 0.751098
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 8
+ok 192 - router output passes separate DRC on seeded obstacle case 8
+  ---
+  duration_ms: 0.716043
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 9
+ok 193 - router output passes separate DRC on seeded obstacle case 9
+  ---
+  duration_ms: 3.933965
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 10
+ok 194 - router output passes separate DRC on seeded obstacle case 10
+  ---
+  duration_ms: 0.957633
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 11
+ok 195 - router output passes separate DRC on seeded obstacle case 11
+  ---
+  duration_ms: 0.893253
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 12
+ok 196 - router output passes separate DRC on seeded obstacle case 12
+  ---
+  duration_ms: 3.883521
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 13
+ok 197 - router output passes separate DRC on seeded obstacle case 13
+  ---
+  duration_ms: 0.944939
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 14
+ok 198 - router output passes separate DRC on seeded obstacle case 14
+  ---
+  duration_ms: 1.252231
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 15
+ok 199 - router output passes separate DRC on seeded obstacle case 15
+  ---
+  duration_ms: 3.529291
+  type: 'test'
+  ...
+# Subtest: router output passes separate DRC on seeded obstacle case 16
+ok 200 - router output passes separate DRC on seeded obstacle case 16
+  ---
+  duration_ms: 1.604477
+  type: 'test'
+  ...
+# Subtest: geometrically valid routes cannot hide an invalid logical project
+ok 201 - geometrically valid routes cannot hide an invalid logical project
+  ---
+  duration_ms: 0.672021
+  type: 'test'
+  ...
+# Subtest: baseline fixture is clean
+ok 202 - baseline fixture is clean
+  ---
+  duration_ms: 4.038068
+  type: 'test'
+  ...
+# Subtest: empty design cannot pass review
+ok 203 - empty design cannot pass review
+  ---
+  duration_ms: 0.422277
+  type: 'test'
+  ...
+# Subtest: reports required unmapped site
+ok 204 - reports required unmapped site
+  ---
+  duration_ms: 8.784054
+  type: 'test'
+  ...
+# Subtest: reports reserved site
+ok 205 - reports reserved site
+  ---
+  duration_ms: 0.412328
+  type: 'test'
+  ...
+# Subtest: reports no-connect site
+ok 206 - reports no-connect site
+  ---
+  duration_ms: 0.819145
+  type: 'test'
+  ...
+# Subtest: reports voltage mismatch
+ok 207 - reports voltage mismatch
+  ---
+  duration_ms: 0.49945
+  type: 'test'
+  ...
+# Subtest: reports net conflict
+ok 208 - reports net conflict
+  ---
+  duration_ms: 0.461399
+  type: 'test'
+  ...
+# Subtest: reports role mismatch
+ok 209 - reports role mismatch
+  ---
+  duration_ms: 0.286554
+  type: 'test'
+  ...
+# Subtest: reports excessive length
+ok 210 - reports excessive length
+  ---
+  duration_ms: 0.67131
+  type: 'test'
+  ...
+# Subtest: reports missing domain
+ok 211 - reports missing domain
+  ---
+  duration_ms: 0.549243
+  type: 'test'
+  ...
+# Subtest: reports missing net
+ok 212 - reports missing net
+  ---
+  duration_ms: 0.366423
+  type: 'test'
+  ...
+# Subtest: reports clock shielding
+ok 213 - reports clock shielding
+  ---
+  duration_ms: 0.262819
+  type: 'test'
+  ...
+# Subtest: reports ground coverage
+ok 214 - reports ground coverage
+  ---
+  duration_ms: 0.224768
+  type: 'test'
+  ...
+# Subtest: reports power coverage
+ok 215 - reports power coverage
+  ---
+  duration_ms: 0.259784
+  type: 'test'
+  ...
+# Subtest: reports ground fraction
+ok 216 - reports ground fraction
+  ---
+  duration_ms: 0.725101
+  type: 'test'
+  ...
+# Subtest: reports path truncation
+ok 217 - reports path truncation
+  ---
+  duration_ms: 0.269522
+  type: 'test'
+  ...
+# Subtest: reports forward stage rule
+ok 218 - reports forward stage rule
+  ---
+  duration_ms: 0.234747
+  type: 'test'
+  ...
+# Subtest: reports region ground quota
+ok 219 - reports region ground quota
+  ---
+  duration_ms: 0.320067
+  type: 'test'
+  ...
+# Subtest: reports region power quota
+ok 220 - reports region power quota
+  ---
+  duration_ms: 0.546878
+  type: 'test'
+  ...
+# Subtest: multiple incoming mappings rejected by DRC
+ok 221 - multiple incoming mappings rejected by DRC
+  ---
+  duration_ms: 0.515861
+  type: 'test'
+  ...
+# Subtest: physical site fanout rejected by DRC
+ok 222 - physical site fanout rejected by DRC
+  ---
+  duration_ms: 0.320397
+  type: 'test'
+  ...
+# Subtest: connected ground satisfies coverage
+ok 223 - connected ground satisfies coverage
+  ---
+  duration_ms: 0.447984
+  type: 'test'
+  ...
+# Subtest: unconnected ground does not fake shielding
+ok 224 - unconnected ground does not fake shielding
+  ---
+  duration_ms: 0.298857
+  type: 'test'
+  ...
+# Subtest: domain-matched supply required for power coverage
+ok 225 - domain-matched supply required for power coverage
+  ---
+  duration_ms: 0.426503
+  type: 'test'
+  ...
+# Subtest: pair baseline satisfies adjacency and skew
+ok 226 - pair baseline satisfies adjacency and skew
+  ---
+  duration_ms: 0.369007
+  type: 'test'
+  ...
+# Subtest: pair adjacency enforced
+ok 227 - pair adjacency enforced
+  ---
+  duration_ms: 0.458173
+  type: 'test'
+  ...
+# Subtest: pair skew enforced
+ok 228 - pair skew enforced
+  ---
+  duration_ms: 0.333752
+  type: 'test'
+  ...
+# Subtest: target pair polarity constraints enforced
+ok 229 - target pair polarity constraints enforced
+  ---
+  duration_ms: 0.33299
+  type: 'test'
+  ...
+# Subtest: incomplete pair still blocks review
+ok 230 - incomplete pair still blocks review
+  ---
+  duration_ms: 0.36501
+  type: 'test'
+  ...
+# Subtest: different voltage domains must meet physical spacing
+ok 231 - different voltage domains must meet physical spacing
+  ---
+  duration_ms: 0.385448
+  type: 'test'
+  ...
+# Subtest: outside die
+ok 232 - outside die
+  ---
+  duration_ms: 0.410013
+  type: 'test'
+  ...
+# Subtest: edge keep-out
+ok 233 - edge keep-out
+  ---
+  duration_ms: 0.25221
+  type: 'test'
+  ...
+# Subtest: corner keep-out
+ok 234 - corner keep-out
+  ---
+  duration_ms: 0.28459
+  type: 'test'
+  ...
+# Subtest: occupied rectangle keep-out rejected
+ok 235 - occupied rectangle keep-out rejected
+  ---
+  duration_ms: 0.358678
+  type: 'test'
+  ...
+# Subtest: unoccupied candidate in keep-out is allowed
+ok 236 - unoccupied candidate in keep-out is allowed
+  ---
+  duration_ms: 0.456069
+  type: 'test'
+  ...
+# Subtest: duplicate physical sites reported
+ok 237 - duplicate physical sites reported
+  ---
+  duration_ms: 0.608443
+  type: 'test'
+  ...
+# Subtest: exhausted budget can never produce clean review
+ok 238 - exhausted budget can never produce clean review
+  ---
+  duration_ms: 2.230203
+  type: 'test'
+  ...
+# Subtest: reserved JS property names are safe connection identifiers
+ok 239 - reserved JS property names are safe connection identifiers
+  ---
+  duration_ms: 0.263851
+  type: 'test'
+  ...
+# Subtest: regression gate blocks newly introduced hard errors
+ok 240 - regression gate blocks newly introduced hard errors
+  ---
+  duration_ms: 0.485784
+  type: 'test'
+  ...
+1..240
+# tests 240
+# suites 0
+# pass 240
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1236.215707

@@ -1,0 +1,99 @@
+{
+  "origin": "about:blank (set_content)",
+  "browser": "Chromium 151.0.7922.34",
+  "harness": "Actual standalone HTML loaded using Playwright set_content; fresh context per scenario",
+  "limitations": [
+    "Native file:// / localhost navigation and real-origin localStorage persistence were not tested: managed Chromium blocked navigation in this environment.",
+    "No cross-browser, accessibility audit, or large-scale interactive performance qualification."
+  ],
+  "total": 17,
+  "passed": 17,
+  "failed": 0,
+  "scenarios": [
+    {
+      "name": "Boot: all five layers and 122 sites, no application exception",
+      "passed": true,
+      "seconds": 0.225
+    },
+    {
+      "name": "Worker optimization, measured improvement, undo and redo",
+      "passed": true,
+      "seconds": 0.467
+    },
+    {
+      "name": "Inspector changes and keyboard undo/redo preserve revision content",
+      "passed": true,
+      "seconds": 0.453
+    },
+    {
+      "name": "Strict net conflict rejected atomically; explicit draft edit reported",
+      "passed": true,
+      "seconds": 0.442
+    },
+    {
+      "name": "Pointer movement changes snapped coordinates; Undo restores",
+      "passed": true,
+      "seconds": 0.759
+    },
+    {
+      "name": "Explicit occupied-target reassignment and lock controls",
+      "passed": true,
+      "seconds": 0.424
+    },
+    {
+      "name": "CSV preview, millimetre conversion, apply and duplicate rejection",
+      "passed": true,
+      "seconds": 0.637
+    },
+    {
+      "name": "Array generator creates unassigned sites, not invented nets",
+      "passed": true,
+      "seconds": 0.421
+    },
+    {
+      "name": "All export formats produce actual parsable or signature-valid files",
+      "passed": true,
+      "seconds": 0.293
+    },
+    {
+      "name": "Revision review and embedded interface-control document",
+      "passed": true,
+      "seconds": 0.632
+    },
+    {
+      "name": "Connectivity search, layer toggles, exploded layout and zoom",
+      "passed": true,
+      "seconds": 0.597
+    },
+    {
+      "name": "Rule editing updates validation without claiming signoff",
+      "passed": true,
+      "seconds": 0.332
+    },
+    {
+      "name": "Engineering exact oracle exposes bounds and applies only after review",
+      "passed": true,
+      "seconds": 0.525
+    },
+    {
+      "name": "Multilayer routing workbench displays checked paths and real SVG export",
+      "passed": true,
+      "seconds": 0.446
+    },
+    {
+      "name": "Engineering worker errors are visible and cannot change project data",
+      "passed": true,
+      "seconds": 0.567
+    },
+    {
+      "name": "Engineering stale result is visibly invalidated by a rule edit",
+      "passed": true,
+      "seconds": 0.443
+    },
+    {
+      "name": "Web Crypto evidence export fails explicitly rather than using a weak hash",
+      "passed": true,
+      "seconds": 0.371
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "origin": "http://127.0.0.1:4173/dist/openbumpplan.html",
+  "browser": "Chromium 151.0.7922.34",
+  "harness": "Real HTTP navigation to http://127.0.0.1:4173/dist/openbumpplan.html; fresh browser context per scenario",
+  "limitations": [
+    "No foundry qualification, non-Chromium cross-browser or large-scale interactive performance qualification."
+  ],
+  "total": 17,
+  "passed": 17,
+  "failed": 0,
+  "scenarios": [
+    {
+      "name": "Boot: all five layers and 122 sites, no application exception",
+      "passed": true,
+      "seconds": 0.274
+    },
+    {
+      "name": "Worker optimization, measured improvement, undo and redo",
+      "passed": true,
+      "seconds": 0.448
+    },
+    {
+      "name": "Inspector changes and keyboard undo/redo preserve revision content",
+      "passed": true,
+      "seconds": 0.456
+    },
+    {
+      "name": "Strict net conflict rejected atomically; explicit draft edit reported",
+      "passed": true,
+      "seconds": 0.442
+    },
+    {
+      "name": "Pointer movement changes snapped coordinates; Undo restores",
+      "passed": true,
+      "seconds": 0.748
+    },
+    {
+      "name": "Explicit occupied-target reassignment and lock controls",
+      "passed": true,
+      "seconds": 0.435
+    },
+    {
+      "name": "CSV preview, millimetre conversion, apply and duplicate rejection",
+      "passed": true,
+      "seconds": 0.641
+    },
+    {
+      "name": "Array generator creates unassigned sites, not invented nets",
+      "passed": true,
+      "seconds": 0.396
+    },
+    {
+      "name": "All export formats produce actual parsable or signature-valid files",
+      "passed": true,
+      "seconds": 0.29
+    },
+    {
+      "name": "Revision review and embedded interface-control document",
+      "passed": true,
+      "seconds": 0.596
+    },
+    {
+      "name": "Connectivity search, layer toggles, exploded layout and zoom",
+      "passed": true,
+      "seconds": 0.615
+    },
+    {
+      "name": "Rule editing updates validation without claiming signoff",
+      "passed": true,
+      "seconds": 0.291
+    },
+    {
+      "name": "Engineering exact oracle exposes bounds and applies only after review",
+      "passed": true,
+      "seconds": 0.501
+    },
+    {
+      "name": "Multilayer routing workbench displays checked paths and real SVG export",
+      "passed": true,
+      "seconds": 0.443
+    },
+    {
+      "name": "Engineering worker errors are visible and cannot change project data",
+      "passed": true,
+      "seconds": 0.387
+    },
+    {
+      "name": "Engineering stale result is visibly invalidated by a rule edit",
+      "passed": true,
+      "seconds": 0.418
+    },
+    {
+      "name": "Web Crypto evidence export fails explicitly rather than using a weak hash",
+      "passed": true,
+      "seconds": 0.332
+    }
+  ]
+}

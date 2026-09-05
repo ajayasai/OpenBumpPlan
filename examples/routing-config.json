@@ -1,0 +1,28 @@
+{
+  "x": 0,
+  "y": 0,
+  "pitch": 100,
+  "columns": 7,
+  "rows": 7,
+  "layers": 2,
+  "startLayer": 0,
+  "endLayer": 0,
+  "traceWidth": 10,
+  "clearance": 10,
+  "viaCost": 10,
+  "passes": 2,
+  "maxExpanded": 200000,
+  "geometryBudget": 2000000,
+  "obstacles": [
+    {
+      "id": "L0-wall",
+      "x": 250,
+      "y": -100,
+      "width": 100,
+      "height": 800,
+      "layers": [
+        0
+      ]
+    }
+  ]
+}

@@ -239,9 +239,95 @@ def rules(page):
     assert any(i['code'] == 'MAX_LENGTH' for i in a['issues'])
 
 
+
+@scenario('Engineering exact oracle exposes bounds and applies only after review')
+def exact_engineering(page):
+    page.locator('[data-tab="engineering"]').click()
+    page.locator('[data-action="lab-demo-exact"]').click()
+    before = project(page)
+    page.locator('[data-action="lab-exact"]').click()
+    expect(page.locator('#engineeringResult')).to_contain_text('optimal', timeout=12000)
+    with page.expect_download() as event:
+        page.locator('[data-action="lab-result"]').click()
+    result = json.loads(Path(event.value.path()).read_text())
+    assert result['upperBound'] == result['lowerBound'] == 2850
+    assert project(page) == before, 'Solving alone must not modify the input'
+    page.locator('[data-action="lab-apply"]').click()
+    assert json.loads(export(page, 'validation'))['errors'] == 0
+    expect(page.locator('#engineeringResult')).to_contain_text('STALE')
+    assert page.locator('[data-action="lab-apply"]').is_disabled()
+    page.keyboard.press('Control+z')
+    assert project(page) == before
+    assert page.locator('[data-action="lab-apply"]').is_enabled()
+
+
+@scenario('Multilayer routing workbench displays checked paths and real SVG export')
+def routing_engineering(page):
+    page.locator('[data-tab="engineering"]').click()
+    page.locator('[data-action="lab-demo-routing"]').click()
+    before = project(page)
+    page.locator('[data-action="lab-route"]').click()
+    expect(page.locator('#engineeringResult')).to_contain_text('passes configured grid geometry', timeout=12000)
+    with page.expect_download() as event:
+        page.locator('[data-action="lab-result"]').click()
+    result = json.loads(Path(event.value.path()).read_text())
+    assert result['check']['valid'] and len(result['routes']) == 2
+    assert result['check']['metrics']['vias'] == 4
+    assert project(page) == before
+    with page.expect_download() as event:
+        page.locator('[data-action="lab-svg"]').click()
+    assert b'<svg ' in Path(event.value.path()).read_bytes()
+    assert page.locator('#engineeringResult svg').count() == 1
+
+
+@scenario('Engineering worker errors are visible and cannot change project data')
+def engineering_error(page):
+    page.locator('[data-tab="engineering"]').click()
+    page.locator('[data-action="lab-demo-routing"]').click()
+    before = project(page)
+    config = json.loads(page.locator('#labConfig').input_value())
+    config['pitch'] = 137
+    page.locator('#labConfig').fill(json.dumps(config))
+    page.locator('[data-action="lab-route"]').click()
+    expect(page.locator('#toast')).to_contain_text('off-grid', timeout=12000)
+    assert project(page) == before
+    assert page.locator('[data-action="lab-route"]').is_enabled()
+
+
+@scenario('Engineering stale result is visibly invalidated by a rule edit')
+def engineering_stale(page):
+    page.locator('[data-tab="engineering"]').click()
+    page.locator('[data-action="lab-demo-exact"]').click()
+    page.locator('[data-action="lab-exact"]').click()
+    expect(page.locator('#engineeringResult')).to_contain_text('optimal', timeout=12000)
+    page.locator('[data-tab="rules"]').click()
+    page.locator('[name="maxLength"]').fill('1234')
+    page.locator('[data-form="rules"] button[type="submit"]').click()
+    page.locator('[data-tab="engineering"]').click()
+    expect(page.locator('#engineeringResult')).to_contain_text('STALE')
+    assert page.locator('[data-action="lab-apply"]').is_disabled()
+
+
+@scenario('Web Crypto evidence export fails explicitly rather than using a weak hash')
+def evidence_environment(page):
+    page.locator('[data-tab="engineering"]').click()
+    page.locator('[data-action="lab-demo-exact"]').click()
+    page.locator('[data-action="lab-exact"]').click()
+    expect(page.locator('#engineeringResult')).to_contain_text('optimal', timeout=12000)
+    if page.evaluate('!!globalThis.crypto?.subtle'):
+        with page.expect_download() as event:
+            page.locator('[data-action="lab-evidence"]').click()
+        evidence = json.loads(Path(event.value.path()).read_text())
+        assert len(evidence['projectSHA256']) == 64
+    else:
+        page.locator('[data-action="lab-evidence"]').click()
+        expect(page.locator('#toast')).to_contain_text('Web Crypto')
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--chromium', default=os.environ.get('CHROMIUM', '/usr/bin/chromium'))
+    parser.add_argument('--url', default='')
     args = parser.parse_args()
     with sync_playwright() as pw:
         browser = pw.chromium.launch(executable_path=args.chromium, headless=True, args=['--no-sandbox'])
@@ -255,10 +341,18 @@ def main():
             page.on('request', lambda req: requests.append(req.url) if req.url.startswith(('http://','https://')) else None)
             started = time.perf_counter()
             try:
-                page.set_content(HTML, wait_until='load')
+                if args.url:
+                    page.goto(args.url, wait_until='load')
+                else:
+                    page.set_content(HTML, wait_until='load')
                 fn(page)
                 assert not errors, errors
-                assert not requests, requests
+                if args.url:
+                    from urllib.parse import urlsplit
+                    origin = urlsplit(args.url)
+                    assert all(urlsplit(u).netloc == origin.netloc and urlsplit(u).scheme == origin.scheme for u in requests), requests
+                else:
+                    assert not requests, requests
                 result = {'name': name, 'passed': True}
             except Exception as error:
                 result = {'name': name, 'passed': False, 'error': str(error), 'traceback': traceback.format_exc()}
@@ -270,14 +364,25 @@ def main():
             context.close()
         # Documentation screenshot uses the running application, not a concept rendering.
         page = browser.new_page(viewport={'width': 1600, 'height': 1050})
-        page.set_content(HTML, wait_until='load')
+        if args.url:
+            page.goto(args.url, wait_until='load')
+        else:
+            page.set_content(HTML, wait_until='load')
         page.locator('#labelToggle').uncheck()
         page.locator('[data-action="optimize"]').click()
         expect(page.locator('.metrics')).to_contain_text('25,920', timeout=8000)
         page.wait_for_timeout(6800)  # Allow the normal status toast to expire.
         page.screenshot(path=str(ROOT/'docs/studio-screenshot.png'), full_page=True)
+        page.locator('[data-tab="engineering"]').click()
+        page.locator('[data-action="lab-demo-routing"]').click()
+        page.locator('[data-action="lab-route"]').click()
+        expect(page.locator('#engineeringResult')).to_contain_text('passes configured grid geometry', timeout=12000)
+        page.screenshot(path=str(ROOT/'docs/engineering-screenshot.png'), full_page=True)
         browser.close()
-    report = {'browser': f'Chromium {version}', 'harness': 'Actual standalone HTML loaded using Playwright set_content; fresh context per scenario', 'limitations': ['Native file:// / localhost navigation and real-origin localStorage persistence were not tested: managed Chromium blocked navigation in this environment.', 'No cross-browser, accessibility audit, or large-scale interactive performance qualification.'], 'total': len(RESULTS), 'passed': sum(r['passed'] for r in RESULTS), 'failed': sum(not r['passed'] for r in RESULTS), 'scenarios': RESULTS}
+    report = {'origin': args.url or 'about:blank (set_content)', 'browser': f'Chromium {version}', 'harness': 'Actual standalone HTML loaded using Playwright set_content; fresh context per scenario', 'limitations': ['Native file:// / localhost navigation and real-origin localStorage persistence were not tested: managed Chromium blocked navigation in this environment.', 'No cross-browser, accessibility audit, or large-scale interactive performance qualification.'], 'total': len(RESULTS), 'passed': sum(r['passed'] for r in RESULTS), 'failed': sum(not r['passed'] for r in RESULTS), 'scenarios': RESULTS}
+    if args.url:
+        report['harness'] = 'Real HTTP navigation to ' + args.url + '; fresh browser context per scenario'
+        report['limitations'] = ['No foundry qualification, non-Chromium cross-browser or large-scale interactive performance qualification.']
     (ROOT/'docs/browser-test-results.json').write_text(json.dumps(report, indent=2)+'\n')
     raise SystemExit(0 if report['failed'] == 0 else 1)
 

@@ -1,0 +1,187 @@
+{
+  "schema": "openbumpplan-evidence/1",
+  "engineVersion": "0.2.0",
+  "kind": "routing",
+  "projectSHA256": "2d00ea4b6a4373111066780205a884ec3f395959a000bbadb83452aa25d0daf7",
+  "resultSHA256": "d35522edea69b2251f2b2aa21e24060b5a651e049c4c53686c89f9b15764815f",
+  "result": {
+    "algorithm": "grid-astar/1",
+    "from": "pad",
+    "to": "ball",
+    "config": {
+      "x": 0,
+      "y": 0,
+      "pitch": 100,
+      "columns": 7,
+      "rows": 7,
+      "layers": 2,
+      "startLayer": 0,
+      "endLayer": 0,
+      "traceWidth": 10,
+      "clearance": 10,
+      "viaCost": 10,
+      "passes": 2,
+      "maxExpanded": 200000,
+      "geometryBudget": 2000000,
+      "obstacles": [
+        {
+          "id": "L0-wall",
+          "layers": [
+            0
+          ],
+          "x": 250,
+          "y": -100,
+          "width": 100,
+          "height": 800
+        }
+      ]
+    },
+    "inputCheck": {
+      "complete": true,
+      "errors": 0,
+      "warnings": 0
+    },
+    "status": "routed",
+    "expanded": 52,
+    "attempts": [
+      {
+        "pass": 1,
+        "routed": 2,
+        "errors": 0,
+        "cost": 1240
+      },
+      {
+        "pass": 2,
+        "routed": 2,
+        "errors": 0,
+        "cost": 1240
+      }
+    ],
+    "routes": [
+      {
+        "connectionId": "e0",
+        "points": [
+          {
+            "x": 0,
+            "y": 100,
+            "layer": 0
+          },
+          {
+            "x": 100,
+            "y": 100,
+            "layer": 0
+          },
+          {
+            "x": 200,
+            "y": 100,
+            "layer": 0
+          },
+          {
+            "x": 200,
+            "y": 100,
+            "layer": 1
+          },
+          {
+            "x": 300,
+            "y": 100,
+            "layer": 1
+          },
+          {
+            "x": 400,
+            "y": 100,
+            "layer": 1
+          },
+          {
+            "x": 400,
+            "y": 100,
+            "layer": 0
+          },
+          {
+            "x": 500,
+            "y": 100,
+            "layer": 0
+          },
+          {
+            "x": 600,
+            "y": 100,
+            "layer": 0
+          }
+        ]
+      },
+      {
+        "connectionId": "e1",
+        "points": [
+          {
+            "x": 0,
+            "y": 500,
+            "layer": 0
+          },
+          {
+            "x": 100,
+            "y": 500,
+            "layer": 0
+          },
+          {
+            "x": 200,
+            "y": 500,
+            "layer": 0
+          },
+          {
+            "x": 200,
+            "y": 500,
+            "layer": 1
+          },
+          {
+            "x": 300,
+            "y": 500,
+            "layer": 1
+          },
+          {
+            "x": 400,
+            "y": 500,
+            "layer": 1
+          },
+          {
+            "x": 400,
+            "y": 500,
+            "layer": 0
+          },
+          {
+            "x": 500,
+            "y": 500,
+            "layer": 0
+          },
+          {
+            "x": 600,
+            "y": 500,
+            "layer": 0
+          }
+        ]
+      }
+    ],
+    "unrouted": [],
+    "check": {
+      "complete": true,
+      "valid": true,
+      "errors": 0,
+      "issues": [],
+      "detailsTruncated": false,
+      "missing": [],
+      "comparisons": 38,
+      "metrics": {
+        "routed": 2,
+        "required": 2,
+        "wireLength": 1200,
+        "vias": 4,
+        "cost": 1240
+      },
+      "lengths": {
+        "e0": 600,
+        "e1": 600
+      }
+    },
+    "pass": 1,
+    "limitation": "Conservative uniform-width grid planning, explicit routing obstacles only. No padstacks, SI/PI, delay matching, impedance, thermal analysis, or foundry signoff. Failure is not a proof of global unroutability."
+  },
+  "envelopeSHA256": "424195f4fe4f356f5a1c9bfb3f059ed1a5a7ef0c8d4b1d58e935268d973b55db"
+}

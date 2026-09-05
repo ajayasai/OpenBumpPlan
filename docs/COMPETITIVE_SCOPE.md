@@ -1,3 +1,9 @@
+# Current scope note — v0.2.0
+
+Version 0.2 adds a bounded exact oracle, engineering-change budgets, multilayer grid-route planning and replayable evidence. These changes supersede statements below about their absence in v0.1. See [the current engineering guide and primary-source comparison](ENGINEERING.md). No licensed commercial benchmark or universal superiority claim is established.
+
+## Historical v0.1 assessment
+
 # Competitive scope, evidence, and roadmap
 
 ## What can honestly be claimed

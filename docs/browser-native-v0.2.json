@@ -1,0 +1,98 @@
+{
+  "origin": "http://127.0.0.1:4173/",
+  "browser": "Chromium 151.0.7922.34",
+  "harness": "Real HTTP navigation to http://127.0.0.1:4173/; fresh browser context per scenario",
+  "limitations": [
+    "No foundry qualification, non-Chromium cross-browser or large-scale interactive performance qualification."
+  ],
+  "total": 17,
+  "passed": 17,
+  "failed": 0,
+  "scenarios": [
+    {
+      "name": "Boot: all five layers and 122 sites, no application exception",
+      "passed": true,
+      "seconds": 0.233
+    },
+    {
+      "name": "Worker optimization, measured improvement, undo and redo",
+      "passed": true,
+      "seconds": 0.498
+    },
+    {
+      "name": "Inspector changes and keyboard undo/redo preserve revision content",
+      "passed": true,
+      "seconds": 0.459
+    },
+    {
+      "name": "Strict net conflict rejected atomically; explicit draft edit reported",
+      "passed": true,
+      "seconds": 0.434
+    },
+    {
+      "name": "Pointer movement changes snapped coordinates; Undo restores",
+      "passed": true,
+      "seconds": 0.727
+    },
+    {
+      "name": "Explicit occupied-target reassignment and lock controls",
+      "passed": true,
+      "seconds": 0.471
+    },
+    {
+      "name": "CSV preview, millimetre conversion, apply and duplicate rejection",
+      "passed": true,
+      "seconds": 0.602
+    },
+    {
+      "name": "Array generator creates unassigned sites, not invented nets",
+      "passed": true,
+      "seconds": 0.395
+    },
+    {
+      "name": "All export formats produce actual parsable or signature-valid files",
+      "passed": true,
+      "seconds": 0.323
+    },
+    {
+      "name": "Revision review and embedded interface-control document",
+      "passed": true,
+      "seconds": 0.638
+    },
+    {
+      "name": "Connectivity search, layer toggles, exploded layout and zoom",
+      "passed": true,
+      "seconds": 0.618
+    },
+    {
+      "name": "Rule editing updates validation without claiming signoff",
+      "passed": true,
+      "seconds": 0.323
+    },
+    {
+      "name": "Engineering exact oracle exposes bounds and applies only after review",
+      "passed": true,
+      "seconds": 0.525
+    },
+    {
+      "name": "Multilayer routing workbench displays checked paths and real SVG export",
+      "passed": true,
+      "seconds": 0.466
+    },
+    {
+      "name": "Engineering worker errors are visible and cannot change project data",
+      "passed": true,
+      "seconds": 0.384
+    },
+    {
+      "name": "Engineering stale result is visibly invalidated by a rule edit",
+      "passed": true,
+      "seconds": 0.461
+    },
+    {
+      "name": "Web Crypto evidence export fails explicitly rather than using a weak hash",
+      "passed": true,
+      "seconds": 0.379
+    }
+  ]
+}

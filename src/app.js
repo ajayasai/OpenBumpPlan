@@ -1,4 +1,6 @@
-import { VERSION, KINDS, ROLES, clone, emptyProject, normalizeProject, effectiveSignals, worldPoint, inversePoint, rank, connect, disconnect, portAt, fingerprint } from './core/model.js';
+import { engineeringPage, engineeringDemo, demoRoutingConfig, routeSVG } from './lab.js';
+import { createEvidence } from './core/evidence.js';
+import { VERSION, KINDS, ROLES, clone, emptyProject, normalizeProject, effectiveSignals, worldPoint, inversePoint, rank, connect, disconnect, portAt, fingerprint, stableStringify } from './core/model.js';
 import { analyze, compatible } from './core/rules.js';
 import { ProjectStore, compareProjects } from './core/revisions.js';
 import { demoProject } from './core/demo.js';
@@ -6,6 +8,7 @@ import { importJSON, importPortsCSV, importConnectionsCSV, importLEF, generateAr
 import { escapeHTML, LAYER_COLORS, ROLE_COLORS, diagram, exportJSON, exportPortsCSV, exportConnectionsCSV, exportSVG, exportPDF, exportICDHTML, exportICDMarkdown } from './core/exporters.js';
 const $ = id => document.getElementById(id), esc=escapeHTML;
 const storageKey='openbumpplan.project.v1';
+let labRecord=null,labNodeLimit=20000,labMaxChanges=12,labChangePenalty=0,labConfigText=JSON.stringify(demoRoutingConfig(),null,2);
 let saveStatus='Not yet saved — export JSON';
 let initial=demoProject(),restoreError='';
 try {const saved=localStorage.getItem(storageKey);if(saved)initial=importJSON(saved);}catch(e){restoreError=`Local restore failed: ${e.message}. Synthetic demo loaded.`;}
@@ -21,10 +24,10 @@ function controls(){return `<button data-action="new" title="Create an empty pro
 function render(){
   const p=store.project,a=store.analysis,m=a.metrics;
   $('app').innerHTML=`<header class="brandbar"><div class="brandicon" aria-hidden="true"></div><div><div class="brandname">OpenBumpPlan</div><div class="brandtag">DIE → PACKAGE → BOARD</div></div><span class="version">v${VERSION} · ALPHA</span><div class="spacer"></div><span class="privacy">● Local-only design data</span>${controls()}</header>
-  <div class="projectbar"><span class="projectname" title="${esc(p.name)}">${esc(p.name)}</span><nav class="tabs" aria-label="Workspace views">${[['plan','Plan'],['connections','Connectivity'],['rules','Rules'],['revisions','Revisions'],['icd','Interface document']].map(([id,label])=>`<button data-tab="${id}" class="${tab===id?'active':''}" aria-current="${tab===id?'page':'false'}">${label}</button>`).join('')}</nav><div class="spacer"></div><span class="pill">r${p.revision}</span></div>
+  <div class="projectbar"><span class="projectname" title="${esc(p.name)}">${esc(p.name)}</span><nav class="tabs" aria-label="Workspace views">${[['plan','Plan'],['connections','Connectivity'],['rules','Rules'],['revisions','Revisions'],['icd','Interface document'],['engineering','Engineering']].map(([id,label])=>`<button data-tab="${id}" class="${tab===id?'active':''}" aria-current="${tab===id?'page':'false'}">${label}</button>`).join('')}</nav><div class="spacer"></div><span class="pill">r${p.revision}</span></div>
   <section class="metrics" aria-label="Planning metrics"><div class="metric"><div class="label">Configured-rule review</div><div class="value ${a.errors?'bad':a.warnings?'warn':'good'}">${!a.complete?'Incomplete':a.errors?`${a.errors} errors`:a.warnings?'Review warnings':'Checks pass'}</div><div class="detail">${a.warnings} warnings · planning only, not signoff</div></div><div class="metric"><div class="label">Manhattan length</div><div class="value">${metricNumber(m.totalLength/1000)}<span class="unit">mm total</span></div><div class="detail">Longest ${metricNumber(m.maxLength)} um · physical XY</div></div><div class="metric"><div class="label">Ratsnest crossings</div><div class="value ${m.crossings?'warn':''}">${m.crossings}${!a.complete?'+':''}<span class="unit">same stage</span></div><div class="detail">${m.overlaps} collinear overlaps, separate from score</div></div><div class="metric"><div class="label">Assigned paths</div><div class="value">${m.connections}<span class="unit">links / ${m.ports} sites</span></div><div class="detail">${m.unassigned} required sites unassigned</div></div><div class="metric"><div class="label">Planning objective</div><div class="value">${metricNumber(m.score)}${!a.complete?'+':''}</div><div class="detail">L1 + ${p.rules.crossingWeight} × crossings · lower is better</div></div></section>
-  <main id="workspace">${tab==='plan'?planPage():tab==='connections'?connectionsPage():tab==='rules'?rulesPage():tab==='revisions'?revisionsPage():icdPage()}</main>
-  <footer class="footer"><span id="saveState">${esc(saveStatus)}</span><span>Review ID ${fingerprint(p)}</span><span class="spacer"></span><span>Geometric planning ≠ SI / PI / routing / signoff</span><button class="quiet" data-action="advanced" style="font-size:10px;padding:2px 6px">Project JSON</button></footer>`;
+  <main id="workspace">${tab==='plan'?planPage():tab==='connections'?connectionsPage():tab==='rules'?rulesPage():tab==='revisions'?revisionsPage():tab==='engineering'?engineeringPage(p,{from:fromStage,to:toStage,nodeLimit:labNodeLimit,maxChanges:labMaxChanges,changePenalty:labChangePenalty,configText:labConfigText,record:labRecord,busy:Boolean(worker)}):icdPage()}</main>
+  <footer class="footer"><span id="saveState">${esc(saveStatus)}</span><span>Review ID ${fingerprint(p)}</span><span class="spacer"></span><span>Planning / grid routing ≠ SI / PI / signoff</span><button class="quiet" data-action="advanced" style="font-size:10px;padding:2px 6px">Project JSON</button></footer>`;
   $('exportSelect').addEventListener('change',e=>{if(e.target.value)downloadExport(e.target.value);e.target.value='';});
   if(tab==='plan')renderMap();
   if(tab==='connections'){$('connectionSearch').addEventListener('input',e=>{search=e.target.value;tablePage=0;renderConnectionRows();});renderConnectionRows();}
@@ -81,12 +84,23 @@ function helpDialog(){openDialog('Planning workflow','This is an alpha planning 
 function download(data,name,type){const blob=new Blob([data],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);}
 function downloadExport(format){try{const p=store.project,prefix=`openbumpplan-r${p.revision}`;const outputs={json:()=>[exportJSON(p),`${prefix}.json`,'application/json'],ports:()=>[exportPortsCSV(p),`${prefix}-ports.csv`,'text/csv'],connections:()=>[exportConnectionsCSV(p),`${prefix}-assignments.csv`,'text/csv'],svg:()=>[exportSVG(p,{view,layers}),`${prefix}-map.svg`,'image/svg+xml'],pdf:()=>[exportPDF(p),`${prefix}-ICD.pdf`,'application/pdf'],html:()=>[exportICDHTML(p),`${prefix}-ICD.html`,'text/html'],md:()=>[exportICDMarkdown(p),`${prefix}-ICD.md`,'text/markdown'],validation:()=>[JSON.stringify(store.analysis,null,2),`${prefix}-validation.json`,'application/json'],diff:()=>[JSON.stringify(compareProjects(baseline,p),null,2),`${prefix}-diff.json`,'application/json']};if(!outputs[format])throw new Error('Unknown export format.');download(...outputs[format]());toast('Export created from the current revision.');}catch(e){toast(e.message,true);}}
 function cancelWorker(){if(worker)worker.terminate();worker=null;if(workerURL)URL.revokeObjectURL(workerURL);workerURL=null;}
-function optimize(){if(worker)return;const from=document.querySelector('[name="fromStage"]').value,to=document.querySelector('[name="toStage"]').value,revision=store.project.revision,inputFingerprint=fingerprint(store.project);try{
+function optimize(){if(worker)return;const from=document.querySelector('[name="fromStage"]').value,to=document.querySelector('[name="toStage"]').value,revision=store.project.revision,inputFingerprint=stableStringify(store.project);try{
   if(globalThis.OPENBUMPPLAN_WORKER_SOURCE){workerURL=URL.createObjectURL(new Blob([globalThis.OPENBUMPPLAN_WORKER_SOURCE],{type:'text/javascript'}));worker=new Worker(workerURL);}else worker=new Worker(new URL('./worker.js',import.meta.url),{type:'module'});
-  worker.onmessage=event=>{cancelWorker();if(store.project.revision!==revision||fingerprint(store.project)!==inputFingerprint){render();toast('The design changed during optimization. Stale results were discarded.',true);return;}if(!event.data.ok){render();toast(event.data.error,true);return;}const result=event.data.result;if(result.changed){mutate(`Optimize ${from} -> ${to}`,p=>{p.connections=result.project.connections;},{strict:true});toast(`Checked optimization: score ${metricNumber(result.before.metrics.score)} → ${metricNumber(result.after.metrics.score)}; crossings ${result.before.metrics.crossings} → ${result.after.metrics.crossings}.`);}else{render();toast(result.message);}};
+  worker.onmessage=event=>{cancelWorker();if(store.project.revision!==revision||stableStringify(store.project)!==inputFingerprint){render();toast('The design changed during optimization. Stale results were discarded.',true);return;}if(!event.data.ok){render();toast(event.data.error,true);return;}const result=event.data.result;if(result.changed){mutate(`Optimize ${from} -> ${to}`,p=>{p.connections=result.project.connections;},{strict:true});toast(`Checked optimization: score ${metricNumber(result.before.metrics.score)} → ${metricNumber(result.after.metrics.score)}; crossings ${result.before.metrics.crossings} → ${result.after.metrics.crossings}.`);}else{render();toast(result.message);}};
   worker.onerror=event=>{cancelWorker();render();toast(`Optimization worker failed: ${event.message}. No design changes were applied.`,true);};
   worker.postMessage({project:clone(store.project),from,to,options:{maxTrials:700}});render();
   }catch(e){cancelWorker();toast(e.message,true);}}
+function runEngineering(kind) {
+  if(worker)return;
+  const input=clone(store.project),inputKey=stableStringify(input),from=fromStage,to=toStage;
+  const options=kind==='exact'?{nodeLimit:labNodeLimit,maxChanges:labMaxChanges,changePenalty:labChangePenalty}:JSON.parse(labConfigText);
+  try {
+    if(globalThis.OPENBUMPPLAN_WORKER_SOURCE){workerURL=URL.createObjectURL(new Blob([globalThis.OPENBUMPPLAN_WORKER_SOURCE],{type:'text/javascript'}));worker=new Worker(workerURL);}else worker=new Worker(new URL('./worker.js',import.meta.url),{type:'module'});
+    worker.onmessage=event=>{cancelWorker();if(stableStringify(store.project)!==inputKey){render();toast('Design changed: stale engineering result discarded.',true);return;}if(!event.data.ok){render();toast(event.data.error,true);return;}labRecord={kind,input,result:event.data.result};render();toast(`${kind} computation completed: ${event.data.result.status}. Review scope and checks before using the result.`);};
+    worker.onerror=event=>{cancelWorker();render();toast(`Engineering worker failed: ${event.message}`,true);};
+    worker.postMessage({task:kind,project:input,from,to,options});render();
+  }catch(error){cancelWorker();render();throw error;}
+}
 // Delegated handlers survive workspace re-rendering without accumulating listeners.
 document.addEventListener('click',async e=>{
   const target=e.target.closest('button');if(!target)return;
@@ -98,6 +112,16 @@ document.addEventListener('click',async e=>{
   if(target.dataset.issue!==undefined){const issue=store.analysis.issues[Number(target.dataset.issue)];if(issue.ports[0]){selected=issue.ports[0];render();}else toast(issue.message);return;}
   const action=target.dataset.action;if(!action)return;
   try{
+    if(action==='lab-exact'||action==='lab-route'){runEngineering(action==='lab-exact'?'exact':'routing');return;}
+    if(action==='lab-demo-exact'||action==='lab-demo-routing'){cancelWorker();const kind=action==='lab-demo-exact'?'exact':'routing';fromStage='pad';toStage='ball';labRecord=null;labConfigText=JSON.stringify(demoRoutingConfig(),null,2);viewBox=null;selected='';mutate(`Load synthetic ${kind} challenge`,p=>Object.assign(p,engineeringDemo(kind)),{strict:false});return;}
+    if(action==='lab-apply'){if(!labRecord?.result.project||stableStringify(labRecord.input)!==stableStringify(store.project))throw new Error('No current checked candidate.');mutate('Apply exact stage candidate',p=>{p.connections=clone(labRecord.result.project.connections);},{strict:true});return;}
+    if(['lab-result','lab-input','lab-evidence','lab-svg'].includes(action)){
+      if(!labRecord)throw new Error('Run a computation first.');
+      const record=labRecord;
+      if(action==='lab-svg'){download(routeSVG(record.result),'openbumpplan-routes.svg','image/svg+xml');return;}
+      const value=action==='lab-input'?record.input:action==='lab-result'?record.result:await createEvidence(record.input,record.kind,record.result);
+      download(JSON.stringify(value,null,2),`openbumpplan-${record.kind}-${action.slice(4)}.json`,'application/json');return;
+    }
     if(action.startsWith('export-')){downloadExport(action.slice(7));return;}
     if(action==='help')helpDialog();
     else if(action==='new'){if(confirm('Create an empty project? Your current project remains available through Undo.')){selected='';viewBox=null;mutate('Create empty project',p=>Object.assign(p,emptyProject()),{strict:false});}}
@@ -136,7 +160,7 @@ document.addEventListener('change',e=>{
   if(e.target.id==='issueFilter'){issueFilter=e.target.value;render();}
   if($('dialog').open&&e.target.closest('#dialog')&&pendingImport){pendingImport=null;if($('applyImport'))$('applyImport').disabled=true;}
 });
-document.addEventListener('input',e=>{if(e.target.closest('#dialog')&&pendingImport){pendingImport=null;if($('applyImport'))$('applyImport').disabled=true;}});
+document.addEventListener('input',e=>{if(e.target.id==='labConfig')labConfigText=e.target.value;if(e.target.id==='labNodes')labNodeLimit=Number(e.target.value);if(e.target.id==='labMaxChanges')labMaxChanges=Number(e.target.value);if(e.target.id==='labChangePenalty')labChangePenalty=Number(e.target.value);if(e.target.closest('#dialog')&&pendingImport){pendingImport=null;if($('applyImport'))$('applyImport').disabled=true;}});
 document.addEventListener('submit',e=>{
   const form=e.target;if(!form.dataset.form)return;e.preventDefault();const data=Object.fromEntries(new FormData(form));
   if(form.dataset.form==='port'){const id=selected;mutate(`Edit site ${id}`,p=>{const n=portAt(p,id);if(!n.locked){n.x=Number(data.x);n.y=Number(data.y);}for(const key of ['net','domain','role','label','pair','polarity'])n[key]=data[key];n.required=Boolean(form.elements.required.checked);});}

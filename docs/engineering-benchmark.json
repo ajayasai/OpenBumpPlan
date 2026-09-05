@@ -1,0 +1,70 @@
+{
+  "version": "0.2.0",
+  "node": "v22.23.2",
+  "platform": "linux x64",
+  "cpu": "AMD EPYC 7763 64-Core Processor",
+  "disclosure": "Synthetic regression fixtures. The exact challenge was selected after a seeded search (first improvement at seed 23). This is not average-case evidence, a speed superiority claim, or a commercial benchmark.",
+  "exact": {
+    "sources": 6,
+    "targets": 6,
+    "heuristicScore": 4450,
+    "heuristicErrors": 0,
+    "exactScore": 2850,
+    "exactErrors": 0,
+    "lowerBound": 2850,
+    "relativeImprovement": 0.3595505617977528,
+    "nodes": 71,
+    "exhaustivePermutations": 720,
+    "independentOptimum": 2850,
+    "heuristicMs": 30.149503000000003,
+    "exactMs": 7.772311000000002
+  },
+  "eco": [
+    {
+      "maxChanges": 0,
+      "status": "optimal",
+      "changed": 0,
+      "score": 4450
+    },
+    {
+      "maxChanges": 2,
+      "status": "optimal",
+      "changed": 0,
+      "score": 4450
+    },
+    {
+      "maxChanges": 4,
+      "status": "optimal",
+      "changed": 4,
+      "score": 2850
+    },
+    {
+      "maxChanges": 6,
+      "status": "optimal",
+      "changed": 4,
+      "score": 2850
+    }
+  ],
+  "routing": {
+    "oneLayer": {
+      "routed": 0,
+      "required": 2,
+      "status": "partial"
+    },
+    "twoLayers": {
+      "routed": 2,
+      "required": 2,
+      "wireLength": 1200,
+      "vias": 4,
+      "cost": 1240,
+      "errors": 0,
+      "status": "routed"
+    }
+  },
+  "evidence": {
+    "exactReplay": true,
+    "routingReplay": true,
+    "exactEnvelopeSHA256": "f77fa4564b238582e49520d410f88546e8fe2b59797e601abf54aa81e4e2cbc2",
+    "routingEnvelopeSHA256": "424195f4fe4f356f5a1c9bfb3f059ed1a5a7ef0c8d4b1d58e935268d973b55db"
+  }
+}
