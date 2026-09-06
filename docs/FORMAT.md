@@ -90,3 +90,7 @@ This is **not a full LEF parser**. Nonzero `ORIGIN`, `POLYGON`, `PATH`, `VIA`, `
 JSON preserves the complete project. Ports/mappings CSV export separate tables. SVG and HTML retain Unicode. The PDF writer uses Base14 Helvetica and printable-ASCII transliteration; unsupported characters become `?`. Use HTML/JSON for exact international labels. The PDF is real vector/text output, not a screenshot or a print-only button.
 
 Revision comparison includes additions/removals/changes to sites, dies, links, keep-outs, regions and rules, plus inherited-net changes and transformed physical movement. Audit entries and revision numbers are not signed. The eight-hex-digit review ID is a noncryptographic content fingerprint excluding audit and revision. Baselines, undo history, and localStorage are conveniences; exported versioned JSON and ordinary version control are the recommended durable record.
+
+## v0.2.0 evidence and routing extension
+
+The core project stays at schema version 1. Route-witness and review-bundle JSON are separate, content-bound artifact types described in [v0.2.0 semantics](V0.2.0.md). `maxLength` and `pairMaxSkew` also constrain planar route lengths when a routing witness is explicitly checked; via delay and physical Z length are not modeled. The old unsigned revision audit remains distinct from Ed25519 manifest signatures.

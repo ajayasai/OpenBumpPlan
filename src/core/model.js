@@ -1,5 +1,5 @@
 /** Canonical, dependency-free model. All geometry is micrometres, right-handed XY. */
-export const VERSION = '0.1.0';
+export const VERSION = '0.3.1';
 export const KINDS = ['pad', 'bump', 'interposer', 'ball', 'pcb'];
 export const ROLES = ['any', 'signal', 'clock', 'power', 'ground', 'reserved', 'nc'];
 export const DEFAULT_RULES = Object.freeze({

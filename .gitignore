@@ -12,3 +12,6 @@ playwright-report/
 test-results/
 coverage/
 private-designs/
+
+.upgrade-baseline/
+.release/
