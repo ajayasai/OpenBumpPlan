@@ -16,8 +16,16 @@ The application CSP disallows outbound connect requests and eval. It permits inl
 
 ## Limits
 
-The server is static/read-only and loopback by default; it is not hardened for hostile multi-tenant deployment. No authentication, encrypted workspace, real-time collaboration, signed approvals, or tamper-proof audit exists. FNV review IDs are not cryptographic hashes. DOM/SVG rendering and repeated analyses can be slow for large, dense, or deliberately adversarial inputs even within caps. Budget exhaustion must be treated as an incomplete review.
+The server is static/read-only and loopback by default; it is not hardened for hostile multi-tenant deployment. No multi-user authentication, encrypted workspace, real-time collaboration, reviewer-role enforcement, key revocation, or tamper-proof external audit exists. v0.2.0 adds local Ed25519 manifest signatures, not an approval authority. FNV review IDs are not cryptographic hashes. DOM/SVG rendering and repeated analyses can be slow for large, dense, or deliberately adversarial inputs even within caps. Budget exhaustion must be treated as an incomplete review.
 
 ## Reporting
 
 Do not attach confidential designs or exploit-bearing files to a public issue. Report a minimal synthetic reproduction through a private maintainer channel once one is established. No security-response SLA or dedicated reporting address is currently promised. Follow responsible disclosure; contributors must not embed secrets in fixtures, screenshots, logs, or reports.
+
+## v0.2.0 evidence and publication
+
+Review bundles are self-contained, SHA-256-bound records. A hash-only check is not an authenticity check: an adversary can replace a project and recompute all unkeyed hashes. Use an independently trusted Ed25519 public key and an expected current project digest. Signature verification fails closed, including routing pass flags, on invalid keys, altered signatures, wrong keys, or mismatched evidence. A signed old project is still old; signatures alone do not establish freshness, identity, role, or signoff. The hashing fallback has known-vector/OpenSSL cross-tests, not external crypto certification.
+
+A route witness proves only the configured conservative grid constraints checked by the verifier. Physical trace/via stacks, foundry rules, electrical/thermal behavior and off-stage copper are not inferred. The exact solver reports bounds/status within a finite stage scope and floating-point model; do not reinterpret it as a global physical optimum.
+
+The prepared update helper validates an explicit file/hash manifest and refuses a repository that has moved beyond its reviewed base commit. It updates only listed files, never force-pushes, never changes visibility, and prints success only after a public-visibility/commit readback. The manifest itself must come from a trusted release source: it is not signed by an external publisher. Review workflow/source changes before allowing publication.

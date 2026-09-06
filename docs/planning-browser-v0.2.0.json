@@ -1,0 +1,73 @@
+{
+  "browser": "Chromium 144.0.7559.96",
+  "harness": "Actual standalone HTML loaded using Playwright set_content; fresh context per scenario",
+  "limitations": [
+    "Native file:// / localhost navigation and real-origin localStorage persistence were not tested: managed Chromium blocked navigation in this environment.",
+    "No cross-browser, accessibility audit, or large-scale interactive performance qualification."
+  ],
+  "total": 12,
+  "passed": 12,
+  "failed": 0,
+  "scenarios": [
+    {
+      "name": "Boot: all five layers and 122 sites, no application exception",
+      "passed": true,
+      "seconds": 0.405
+    },
+    {
+      "name": "Worker optimization, measured improvement, undo and redo",
+      "passed": true,
+      "seconds": 0.712
+    },
+    {
+      "name": "Inspector changes and keyboard undo/redo preserve revision content",
+      "passed": true,
+      "seconds": 0.858
+    },
+    {
+      "name": "Strict net conflict rejected atomically; explicit draft edit reported",
+      "passed": true,
+      "seconds": 0.71
+    },
+    {
+      "name": "Pointer movement changes snapped coordinates; Undo restores",
+      "passed": true,
+      "seconds": 1.189
+    },
+    {
+      "name": "Explicit occupied-target reassignment and lock controls",
+      "passed": true,
+      "seconds": 0.857
+    },
+    {
+      "name": "CSV preview, millimetre conversion, apply and duplicate rejection",
+      "passed": true,
+      "seconds": 1.365
+    },
+    {
+      "name": "Array generator creates unassigned sites, not invented nets",
+      "passed": true,
+      "seconds": 0.785
+    },
+    {
+      "name": "All export formats produce actual parsable or signature-valid files",
+      "passed": true,
+      "seconds": 0.417
+    },
+    {
+      "name": "Revision review and embedded interface-control document",
+      "passed": true,
+      "seconds": 0.914
+    },
+    {
+      "name": "Connectivity search, layer toggles, exploded layout and zoom",
+      "passed": true,
+      "seconds": 0.784
+    },
+    {
+      "name": "Rule editing updates validation without claiming signoff",
+      "passed": true,
+      "seconds": 0.489
+    }
+  ]
+}

@@ -1,0 +1,280 @@
+{
+  "schemaVersion": 1,
+  "name": "Synthetic congestion case seed 10",
+  "revision": 0,
+  "units": "um",
+  "description": "",
+  "dies": [],
+  "ports": [
+    {
+      "label": "pad0",
+      "dieId": "",
+      "net": "N0",
+      "domain": "V",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "pad0",
+      "kind": "pad",
+      "x": 30,
+      "y": 20
+    },
+    {
+      "label": "ball0",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball0",
+      "kind": "ball",
+      "x": 70,
+      "y": 10
+    },
+    {
+      "label": "pad1",
+      "dieId": "",
+      "net": "N1",
+      "domain": "V",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "pad1",
+      "kind": "pad",
+      "x": 10,
+      "y": 10
+    },
+    {
+      "label": "ball1",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball1",
+      "kind": "ball",
+      "x": 70,
+      "y": 90
+    },
+    {
+      "label": "pad2",
+      "dieId": "",
+      "net": "N2",
+      "domain": "V",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "pad2",
+      "kind": "pad",
+      "x": 60,
+      "y": 20
+    },
+    {
+      "label": "ball2",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball2",
+      "kind": "ball",
+      "x": 40,
+      "y": 60
+    },
+    {
+      "label": "pad3",
+      "dieId": "",
+      "net": "N3",
+      "domain": "V",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "pad3",
+      "kind": "pad",
+      "x": 40,
+      "y": 50
+    },
+    {
+      "label": "ball3",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball3",
+      "kind": "ball",
+      "x": 30,
+      "y": 50
+    },
+    {
+      "label": "pad4",
+      "dieId": "",
+      "net": "N4",
+      "domain": "V",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "pad4",
+      "kind": "pad",
+      "x": 50,
+      "y": 20
+    },
+    {
+      "label": "ball4",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball4",
+      "kind": "ball",
+      "x": 20,
+      "y": 100
+    },
+    {
+      "label": "pad5",
+      "dieId": "",
+      "net": "N5",
+      "domain": "V",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "pad5",
+      "kind": "pad",
+      "x": 20,
+      "y": 70
+    },
+    {
+      "label": "ball5",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball5",
+      "kind": "ball",
+      "x": 100,
+      "y": 30
+    }
+  ],
+  "connections": [
+    {
+      "net": "",
+      "locked": false,
+      "id": "e0",
+      "from": "pad0",
+      "to": "ball0"
+    },
+    {
+      "net": "",
+      "locked": false,
+      "id": "e1",
+      "from": "pad1",
+      "to": "ball1"
+    },
+    {
+      "net": "",
+      "locked": false,
+      "id": "e2",
+      "from": "pad2",
+      "to": "ball2"
+    },
+    {
+      "net": "",
+      "locked": false,
+      "id": "e3",
+      "from": "pad3",
+      "to": "ball3"
+    },
+    {
+      "net": "",
+      "locked": false,
+      "id": "e4",
+      "from": "pad4",
+      "to": "ball4"
+    },
+    {
+      "net": "",
+      "locked": false,
+      "id": "e5",
+      "from": "pad5",
+      "to": "ball5"
+    }
+  ],
+  "keepouts": [],
+  "regions": [],
+  "rules": {
+    "maxLength": 1000000,
+    "minDomainSpacing": 0,
+    "pairMaxDistance": 650,
+    "pairMaxSkew": 150,
+    "clockShieldRadius": 750,
+    "clockGroundMin": 0,
+    "groundRadius": 0,
+    "powerRadius": 0,
+    "requirePowerForSignals": false,
+    "minGroundRatio": 0,
+    "crossingWeight": 150,
+    "maxCrossings": 100,
+    "geometryBudget": 1000000,
+    "terminalKind": "ball",
+    "requireCompletePaths": false,
+    "allowedStagePairs": [
+      [
+        "pad",
+        "bump"
+      ],
+      [
+        "pad",
+        "ball"
+      ],
+      [
+        "bump",
+        "interposer"
+      ],
+      [
+        "bump",
+        "ball"
+      ],
+      [
+        "interposer",
+        "ball"
+      ],
+      [
+        "ball",
+        "pcb"
+      ]
+    ]
+  },
+  "audit": []
+}

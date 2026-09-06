@@ -1,0 +1,304 @@
+{
+  "type": "openbumpplan-coupled-proof",
+  "schemaVersion": 1,
+  "scope": {
+    "fromKind": "pad",
+    "toKind": "ball",
+    "sourceIds": [
+      "RESTRICTED",
+      "TX_N",
+      "TX_P"
+    ],
+    "targetIds": [
+      "BALL_1",
+      "BALL_2",
+      "BALL_3",
+      "BALL_4"
+    ],
+    "quantum": 0.001,
+    "changePenalty": 0,
+    "objective": "sum round((L1_um + changedTargetPenalty_um) / quantum_um)",
+    "candidatePolicy": "all unary-compatible targets within maxLength; no nearest-k pruning"
+  },
+  "problemSHA256": "9a77ffc5adbc2a864ffb478fd122fd8e0a8c0de69622f1e03b8b3119249838ce",
+  "claim": "optimal",
+  "bestNodeId": "root/1/2",
+  "records": [
+    {
+      "id": "root",
+      "certificate": {
+        "claim": "optimal",
+        "assignment": [
+          0,
+          1,
+          2
+        ],
+        "objectiveTicks": 200000,
+        "potentials": [
+          0,
+          110000,
+          100000,
+          100000,
+          110000,
+          200000,
+          200000,
+          0,
+          200000
+        ]
+      }
+    },
+    {
+      "id": "root/0",
+      "certificate": {
+        "claim": "optimal",
+        "assignment": [
+          1,
+          3,
+          0
+        ],
+        "objectiveTicks": 210000,
+        "potentials": [
+          0,
+          110000,
+          120000,
+          120000,
+          110000,
+          210000,
+          210000,
+          0,
+          210000
+        ]
+      }
+    },
+    {
+      "id": "root/1",
+      "certificate": {
+        "claim": "optimal",
+        "assignment": [
+          0,
+          3,
+          1
+        ],
+        "objectiveTicks": 210000,
+        "potentials": [
+          0,
+          0,
+          90000,
+          100000,
+          100000,
+          100000,
+          100000,
+          0,
+          100000
+        ]
+      }
+    },
+    {
+      "id": "root/2",
+      "certificate": {
+        "claim": "optimal",
+        "assignment": [
+          0,
+          1,
+          3
+        ],
+        "objectiveTicks": 210000,
+        "potentials": [
+          10000,
+          110000,
+          0,
+          110000,
+          110000,
+          110000,
+          110000,
+          0,
+          110000
+        ]
+      }
+    },
+    {
+      "id": "root/0/1",
+      "certificate": {
+        "claim": "optimal",
+        "assignment": [
+          1,
+          2,
+          0
+        ],
+        "objectiveTicks": 220000,
+        "potentials": [
+          0,
+          0,
+          10000,
+          10000,
+          110000,
+          110000,
+          110000,
+          0,
+          110000
+        ]
+      }
+    },
+    {
+      "id": "root/0/2",
+      "certificate": {
+        "claim": "optimal",
+        "assignment": [
+          1,
+          3,
+          2
+        ],
+        "objectiveTicks": 310000,
+        "potentials": [
+          0,
+          10000,
+          10000,
+          110000,
+          110000,
+          110000,
+          110000,
+          0,
+          110000
+        ]
+      }
+    },
+    {
+      "id": "root/1/1",
+      "certificate": {
+        "claim": "optimal",
+        "assignment": [
+          0,
+          2,
+          1
+        ],
+        "objectiveTicks": 220000,
+        "potentials": [
+          10000,
+          0,
+          100000,
+          110000,
+          110000,
+          110000,
+          110000,
+          0,
+          110000
+        ]
+      }
+    },
+    {
+      "id": "root/1/2",
+      "certificate": {
+        "claim": "optimal",
+        "assignment": [
+          0,
+          3,
+          2
+        ],
+        "objectiveTicks": 300000,
+        "potentials": [
+          0,
+          0,
+          0,
+          100000,
+          100000,
+          100000,
+          100000,
+          0,
+          100000
+        ]
+      }
+    },
+    {
+      "id": "root/0/1/1",
+      "certificate": {
+        "claim": "optimal",
+        "assignment": [
+          1,
+          0,
+          2
+        ],
+        "objectiveTicks": 220000,
+        "potentials": [
+          0,
+          0,
+          10000,
+          10000,
+          110000,
+          110000,
+          110000,
+          0,
+          110000
+        ]
+      }
+    },
+    {
+      "id": "root/0/1/2",
+      "certificate": {
+        "claim": "optimal",
+        "assignment": [
+          1,
+          2,
+          3
+        ],
+        "objectiveTicks": 330000,
+        "potentials": [
+          0,
+          0,
+          0,
+          110000,
+          110000,
+          110000,
+          110000,
+          0,
+          110000
+        ]
+      }
+    },
+    {
+      "id": "root/1/1/2",
+      "certificate": {
+        "claim": "optimal",
+        "assignment": [
+          0,
+          2,
+          3
+        ],
+        "objectiveTicks": 320000,
+        "potentials": [
+          10000,
+          0,
+          0,
+          110000,
+          110000,
+          110000,
+          110000,
+          0,
+          110000
+        ]
+      }
+    },
+    {
+      "id": "root/0/1/1/2",
+      "certificate": {
+        "claim": "optimal",
+        "assignment": [
+          1,
+          0,
+          3
+        ],
+        "objectiveTicks": 230000,
+        "potentials": [
+          0,
+          100000,
+          0,
+          110000,
+          110000,
+          110000,
+          110000,
+          0,
+          110000
+        ]
+      }
+    }
+  ]
+}

@@ -1,15 +1,19 @@
-import { VERSION, KINDS, ROLES, clone, emptyProject, normalizeProject, effectiveSignals, worldPoint, inversePoint, rank, connect, disconnect, portAt, fingerprint } from './core/model.js';
+import { stableStringify, VERSION, KINDS, ROLES, clone, emptyProject, normalizeProject, effectiveSignals, worldPoint, inversePoint, rank, connect, disconnect, portAt, fingerprint } from './core/model.js';
 import { analyze, compatible } from './core/rules.js';
 import { ProjectStore, compareProjects } from './core/revisions.js';
-import { demoProject } from './core/demo.js';
+import { demoProject, routingDemoProject, coupledDemoProject } from './core/demo.js';
 import { importJSON, importPortsCSV, importConnectionsCSV, importLEF, generateArray } from './core/importers.js';
 import { escapeHTML, LAYER_COLORS, ROLE_COLORS, diagram, exportJSON, exportPortsCSV, exportConnectionsCSV, exportSVG, exportPDF, exportICDHTML, exportICDMarkdown } from './core/exporters.js';
+import { routingDesignKey, verifyRoutes, exportRoutesSVG } from './core/routing.js';
+import { createReviewBundle, verifyReviewBundle, projectSHA256 } from './core/evidence.js';
 const $ = id => document.getElementById(id), esc=escapeHTML;
 const storageKey='openbumpplan.project.v1';
 let saveStatus='Not yet saved — export JSON';
 let initial=demoProject(),restoreError='';
 try {const saved=localStorage.getItem(storageKey);if(saved)initial=importJSON(saved);}catch(e){restoreError=`Local restore failed: ${e.message}. Synthetic demo loaded.`;}
 let store=new ProjectStore(initial),baseline=clone(initial),tab='plan',selected='',mode='inspect',view='physical',layers=[...KINDS],strict=true,labels=true,overlay=false,viewBox=null,mapLayout=null,drag=null,search='',tablePage=0,issueFilter='all',worker=null,workerURL=null,pendingImport=null,toastTimer=null,fromStage='interposer',toStage='ball',snapStep=10;
+let engineeringResult=null, bundleVerification=null;
+const engineeringSettings={fromKind:'interposer',toKind:'ball',sourceIds:'',changePenalty:0,maxChanges:12,maxNodes:50000,pitch:10,layers:2,clearance:0,viaCost:40,quantum:.001,maxSubproblems:64,traceWidth:1,viaDiameter:2,padDiameter:2,copperClearance:1};
 function toast(message,error=false) {$('toast').textContent=message;$('toast').className=`show${error?' error':''}`;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),6500);}
 function persist() {try{localStorage.setItem(storageKey,exportJSON(store.project));saveStatus='Saved on this device';$('saveState').textContent=saveStatus;}catch{saveStatus='Local save unavailable — export JSON';$('saveState').textContent=saveStatus;toast('Local storage is unavailable/full. Export JSON to keep your work.',true);}}
 function mutate(action,fn,options={}) {try{store.transact(action,fn,{strict,...options});render();persist();return true;}catch(e){toast(e.message,true);return false;}}
@@ -21,9 +25,9 @@ function controls(){return `<button data-action="new" title="Create an empty pro
 function render(){
   const p=store.project,a=store.analysis,m=a.metrics;
   $('app').innerHTML=`<header class="brandbar"><div class="brandicon" aria-hidden="true"></div><div><div class="brandname">OpenBumpPlan</div><div class="brandtag">DIE → PACKAGE → BOARD</div></div><span class="version">v${VERSION} · ALPHA</span><div class="spacer"></div><span class="privacy">● Local-only design data</span>${controls()}</header>
-  <div class="projectbar"><span class="projectname" title="${esc(p.name)}">${esc(p.name)}</span><nav class="tabs" aria-label="Workspace views">${[['plan','Plan'],['connections','Connectivity'],['rules','Rules'],['revisions','Revisions'],['icd','Interface document']].map(([id,label])=>`<button data-tab="${id}" class="${tab===id?'active':''}" aria-current="${tab===id?'page':'false'}">${label}</button>`).join('')}</nav><div class="spacer"></div><span class="pill">r${p.revision}</span></div>
+  <div class="projectbar"><span class="projectname" title="${esc(p.name)}">${esc(p.name)}</span><nav class="tabs" aria-label="Workspace views">${[['plan','Plan'],['connections','Connectivity'],['rules','Rules'],['engineering','Engineering'],['revisions','Revisions'],['icd','Interface document']].map(([id,label])=>`<button data-tab="${id}" class="${tab===id?'active':''}" aria-current="${tab===id?'page':'false'}">${label}</button>`).join('')}</nav><div class="spacer"></div><span class="pill">r${p.revision}</span></div>
   <section class="metrics" aria-label="Planning metrics"><div class="metric"><div class="label">Configured-rule review</div><div class="value ${a.errors?'bad':a.warnings?'warn':'good'}">${!a.complete?'Incomplete':a.errors?`${a.errors} errors`:a.warnings?'Review warnings':'Checks pass'}</div><div class="detail">${a.warnings} warnings · planning only, not signoff</div></div><div class="metric"><div class="label">Manhattan length</div><div class="value">${metricNumber(m.totalLength/1000)}<span class="unit">mm total</span></div><div class="detail">Longest ${metricNumber(m.maxLength)} um · physical XY</div></div><div class="metric"><div class="label">Ratsnest crossings</div><div class="value ${m.crossings?'warn':''}">${m.crossings}${!a.complete?'+':''}<span class="unit">same stage</span></div><div class="detail">${m.overlaps} collinear overlaps, separate from score</div></div><div class="metric"><div class="label">Assigned paths</div><div class="value">${m.connections}<span class="unit">links / ${m.ports} sites</span></div><div class="detail">${m.unassigned} required sites unassigned</div></div><div class="metric"><div class="label">Planning objective</div><div class="value">${metricNumber(m.score)}${!a.complete?'+':''}</div><div class="detail">L1 + ${p.rules.crossingWeight} × crossings · lower is better</div></div></section>
-  <main id="workspace">${tab==='plan'?planPage():tab==='connections'?connectionsPage():tab==='rules'?rulesPage():tab==='revisions'?revisionsPage():icdPage()}</main>
+  <main id="workspace">${tab==='plan'?planPage():tab==='connections'?connectionsPage():tab==='rules'?rulesPage():tab==='engineering'?engineeringPage():tab==='revisions'?revisionsPage():icdPage()}</main>
   <footer class="footer"><span id="saveState">${esc(saveStatus)}</span><span>Review ID ${fingerprint(p)}</span><span class="spacer"></span><span>Geometric planning ≠ SI / PI / routing / signoff</span><button class="quiet" data-action="advanced" style="font-size:10px;padding:2px 6px">Project JSON</button></footer>`;
   $('exportSelect').addEventListener('change',e=>{if(e.target.value)downloadExport(e.target.value);e.target.value='';});
   if(tab==='plan')renderMap();
@@ -81,9 +85,9 @@ function helpDialog(){openDialog('Planning workflow','This is an alpha planning 
 function download(data,name,type){const blob=new Blob([data],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);}
 function downloadExport(format){try{const p=store.project,prefix=`openbumpplan-r${p.revision}`;const outputs={json:()=>[exportJSON(p),`${prefix}.json`,'application/json'],ports:()=>[exportPortsCSV(p),`${prefix}-ports.csv`,'text/csv'],connections:()=>[exportConnectionsCSV(p),`${prefix}-assignments.csv`,'text/csv'],svg:()=>[exportSVG(p,{view,layers}),`${prefix}-map.svg`,'image/svg+xml'],pdf:()=>[exportPDF(p),`${prefix}-ICD.pdf`,'application/pdf'],html:()=>[exportICDHTML(p),`${prefix}-ICD.html`,'text/html'],md:()=>[exportICDMarkdown(p),`${prefix}-ICD.md`,'text/markdown'],validation:()=>[JSON.stringify(store.analysis,null,2),`${prefix}-validation.json`,'application/json'],diff:()=>[JSON.stringify(compareProjects(baseline,p),null,2),`${prefix}-diff.json`,'application/json']};if(!outputs[format])throw new Error('Unknown export format.');download(...outputs[format]());toast('Export created from the current revision.');}catch(e){toast(e.message,true);}}
 function cancelWorker(){if(worker)worker.terminate();worker=null;if(workerURL)URL.revokeObjectURL(workerURL);workerURL=null;}
-function optimize(){if(worker)return;const from=document.querySelector('[name="fromStage"]').value,to=document.querySelector('[name="toStage"]').value,revision=store.project.revision,inputFingerprint=fingerprint(store.project);try{
+function optimize(){if(worker)return;const from=document.querySelector('[name="fromStage"]').value,to=document.querySelector('[name="toStage"]').value,revision=store.project.revision,inputFingerprint=stableStringify(store.project);try{
   if(globalThis.OPENBUMPPLAN_WORKER_SOURCE){workerURL=URL.createObjectURL(new Blob([globalThis.OPENBUMPPLAN_WORKER_SOURCE],{type:'text/javascript'}));worker=new Worker(workerURL);}else worker=new Worker(new URL('./worker.js',import.meta.url),{type:'module'});
-  worker.onmessage=event=>{cancelWorker();if(store.project.revision!==revision||fingerprint(store.project)!==inputFingerprint){render();toast('The design changed during optimization. Stale results were discarded.',true);return;}if(!event.data.ok){render();toast(event.data.error,true);return;}const result=event.data.result;if(result.changed){mutate(`Optimize ${from} -> ${to}`,p=>{p.connections=result.project.connections;},{strict:true});toast(`Checked optimization: score ${metricNumber(result.before.metrics.score)} → ${metricNumber(result.after.metrics.score)}; crossings ${result.before.metrics.crossings} → ${result.after.metrics.crossings}.`);}else{render();toast(result.message);}};
+  const activeWorker=worker;worker.onmessage=event=>{if(worker!==activeWorker)return;cancelWorker();if(store.project.revision!==revision||stableStringify(store.project)!==inputFingerprint){render();toast('The design changed during optimization. Stale results were discarded.',true);return;}if(!event.data.ok){render();toast(event.data.error,true);return;}const result=event.data.result;if(result.changed){mutate(`Optimize ${from} -> ${to}`,p=>{p.connections=result.project.connections;},{strict:true});toast(`Checked optimization: score ${metricNumber(result.before.metrics.score)} → ${metricNumber(result.after.metrics.score)}; crossings ${result.before.metrics.crossings} → ${result.after.metrics.crossings}.`);}else{render();toast(result.message);}};
   worker.onerror=event=>{cancelWorker();render();toast(`Optimization worker failed: ${event.message}. No design changes were applied.`,true);};
   worker.postMessage({project:clone(store.project),from,to,options:{maxTrials:700}});render();
   }catch(e){cancelWorker();toast(e.message,true);}}
@@ -98,6 +102,7 @@ document.addEventListener('click',async e=>{
   if(target.dataset.issue!==undefined){const issue=store.analysis.issues[Number(target.dataset.issue)];if(issue.ports[0]){selected=issue.ports[0];render();}else toast(issue.message);return;}
   const action=target.dataset.action;if(!action)return;
   try{
+    if(action.startsWith('engineering-')){await engineeringAction(action);return;}
     if(action.startsWith('export-')){downloadExport(action.slice(7));return;}
     if(action==='help')helpDialog();
     else if(action==='new'){if(confirm('Create an empty project? Your current project remains available through Undo.')){selected='';viewBox=null;mutate('Create empty project',p=>Object.assign(p,emptyProject()),{strict:false});}}
@@ -125,6 +130,7 @@ document.addEventListener('click',async e=>{
   }catch(error){if($('dialog').open)$('dialogError').textContent=error.message;else toast(error.message,true);}
 });
 document.addEventListener('change',e=>{
+  if(e.target.dataset.engineering){const key=e.target.dataset.engineering;engineeringSettings[key]=e.target.type==='number'?Number(e.target.value):e.target.value;}
   if(e.target.name==='fromStage')fromStage=e.target.value;
   if(e.target.name==='toStage')toStage=e.target.value;
   if(e.target.id==='snap')snapStep=Math.max(0,Number(e.target.value)||0);
@@ -151,3 +157,77 @@ document.addEventListener('keydown',e=>{
 });
 window.addEventListener('beforeunload',()=>cancelWorker());
 render();persist();if(restoreError)toast(restoreError,true);
+
+function engineeringControl(label,key,type='number') {
+  return `<label>${esc(label)}<input data-engineering="${key}" type="${type}" value="${esc(engineeringSettings[key])}" ${type==='number'?'min="0" step="any"':''}></label>`;
+}
+const isAssignmentKind=kind=>['exact','scalable','coupled'].includes(kind);
+const isRouteKind=kind=>['route','negotiated','physical'].includes(kind);
+function engineeringPage() {
+  const r=engineeringResult,current=!!r&&r.designKey===routingDesignKey(store.project),result=r?.result;
+  const stageSelect=key=>`<label>${key==='fromKind'?'From':'To'} layer<select data-engineering="${key}">${KINDS.map(k=>option(k,k,engineeringSettings[key])).join('')}</select></label>`;
+  let report='';
+  if(result){
+    const summary=isAssignmentKind(r.kind)?{status:result.status,searchComplete:result.searchComplete,feasible:result.feasible,objective:result.objective,lowerBound:result.lowerBound,absoluteGap:result.gap,changedSources:result.changes,scope:result.scope,statistics:result.stats,conflict:result.conflict||null,integerObjectiveTicks:result.objectiveTicks,lowerBoundTicks:result.lowerBoundTicks,certificateCheck:result.verification,candidateErrors:result.candidateAnalysis?.errors}:
+      {status:result.status,verified:result.verified,metrics:result.metrics,grid:result.config,expansions:result.expansions,failures:result.failures,findings:result.verification?.issues||[],technology:result.technology,copperCheck:result.copperVerification};
+    report=`<div class="card" id="engineeringReport"><h3>${isAssignmentKind(r.kind)?'Coupled assignment search':'Routing witness'} · ${esc(result.status)}</h3><div class="notice ${current?'':'bad'}">${current?'Result matches current design content.':'STALE RESULT — the design changed. Rerun before applying or approving.'}${r.applied?' Mapping applied through the checked undoable transaction.':''}</div><p>${esc(result.message)}</p><div class="actions"><button data-action="engineering-download">Export ${isRouteKind(r.kind)?'route witness':'search report'}</button>${isAssignmentKind(r.kind)?`<button data-action="engineering-apply" class="primary" ${current&&result.feasible&&result.changed&&!r.applied?'':'disabled'}>Apply checked mapping</button>`:`<button data-action="engineering-svg">Export route SVG</button><button data-action="engineering-bundle-routes" class="primary" ${current&&result.verified?'':'disabled'}>Bundle with verified routes</button>`}</div>${isRouteKind(r.kind)&&result.routes.length?`<div class="route-preview">${exportRoutesSVG(store.project,result)}</div>`:''}<details class="engineering-details"><summary>Structured findings and search scope</summary><pre class="mono engineering-json">${esc(JSON.stringify(summary,null,2))}</pre></details></div>`;
+  }
+  return `<section class="contentpage"><div class="pageheading"><div><h2>Certified assignments. Checked copper.</h2><p class="hint">Explicit search scope and independently checked evidence, not green status based on solver promises.</p></div><span class="spacer"></span><button data-action="engineering-coupled-demo">Load constrained example</button><button data-action="engineering-demo">Load routing example</button></div><div class="card"><div class="formgrid">${stageSelect('fromKind')}${stageSelect('toKind')}</div></div>${report}<div class="card"><h3>Scalable certified assignment / coupled search</h3><p>Sparse integer-cost min-cost flow removes the 12-source permutation limit. Coupled search rejects rule failures and partitions the remaining space. An independent checker verifies every bound and partition before calling an answer optimal. Search may still exhaust its budget.</p><div class="formgrid">${engineeringControl('Cost quantum (um)','quantum')}${engineeringControl('Coupled subproblem budget (1–128)','maxSubproblems')}</div><div class="actions"><button data-action="engineering-coupled" class="primary" ${worker?'disabled':''}>Solve with coupled certificate</button><button data-action="engineering-scalable" ${worker?'disabled':''}>Solve linear relaxation only</button></div><p class="hint">Objective: rounded stage L1 + changed-target penalty, not the crossing score. Source IDs and penalty below apply; maximum-changes applies only to the older permutation solver.</p></div><div class="twocol"><div class="card"><h3>Coupled exact search / ECO window</h3><p>Up to 12 movable sources and 64 targets. Other assignments and locked signals stay fixed. Completed search evaluates all configured hard constraints; budget exhaustion reports uncertainty.</p><div class="formgrid">${engineeringControl('Source IDs (comma-separated; blank = all)','sourceIds','text')}${engineeringControl('Penalty per changed target','changePenalty')}${engineeringControl('Maximum changed sources','maxChanges')}${engineeringControl('Search-node budget','maxNodes')}</div><div class="actions"><button data-action="engineering-exact" class="primary" ${worker?'disabled':''}>Solve coupled assignments</button></div></div><div class="card"><h3>Layered grid routing</h3><p>A* explores several net orders with conservative keep-outs and clearance. Every segment is checked again. A failed attempt does not prove the design unroutable.</p><div class="formgrid">${engineeringControl('Routing pitch (um; no silent snapping)','pitch')}${engineeringControl('Routing layers','layers')}${engineeringControl('Clearance (um)','clearance')}${engineeringControl('Via penalty (objective units)','viaCost')}</div><div class="actions"><button data-action="engineering-route" ${worker?'disabled':''}>Find and verify routes</button><button data-action="engineering-negotiated" ${worker?'disabled':''}>Negotiate congestion</button></div></div></div><div class="card"><h3>Continuous copper geometry</h3><p>Declare round-capped trace widths and circular via/pad diameters. A separate checker computes continuous distances without the routing rasterizer. These are engineering model inputs, not foundry-qualified process defaults.</p><div class="formgrid">${engineeringControl('Trace width (um)','traceWidth')}${engineeringControl('Via diameter (um)','viaDiameter')}${engineeringControl('Pad diameter (um)','padDiameter')}${engineeringControl('Copper edge clearance (um)','copperClearance')}</div><button data-action="engineering-physical" class="primary" ${worker?'disabled':''}>Route and check copper</button></div>${worker?'<div class="notice">Engineering worker running. Changes during the run make its result stale. <button data-action="cancel-optimize">Cancel</button></div>':''}<div class="card"><h3>Content-bound review evidence</h3><p>SHA-256 binds project, rules, findings and optional routing evidence. Verification recomputes findings. Hashes alone do not authenticate an author; the CLI supports Ed25519 signatures against an externally trusted public key.</p><div class="actions"><button data-action="engineering-bundle">Export planning review bundle</button><label>Verify a review bundle<input id="reviewBundleFile" type="file" accept=".json"></label><button data-action="engineering-verify">Verify against current project</button></div>${bundleVerification?`<pre class="mono engineering-json" id="bundleVerification">${esc(JSON.stringify(bundleVerification,null,2))}</pre>`:''}<p>Planning results and route witnesses are not electrical, thermal, foundry, or manufacturing signoff. Preserve process constraints; do not disable them to manufacture a pass.</p></div></section>`;
+}
+function runEngineering(kind) {
+  if(worker)return;
+  const {fromKind:from,toKind:to,...settings}=engineeringSettings;
+  const ids=settings.sourceIds.trim()?{sourceIds:settings.sourceIds.split(',').map(s=>s.trim())}:{};
+  const options=kind==='exact'?{maxNodes:settings.maxNodes,timeLimitMs:5000,maxChanges:settings.maxChanges,changePenalty:settings.changePenalty,...ids}:
+    isAssignmentKind(kind)?{...ids,quantum:settings.quantum,changePenalty:settings.changePenalty,timeLimitMs:15000,...(kind==='coupled'?{maxSubproblems:settings.maxSubproblems}:{})}:
+    {pitch:settings.pitch,layers:settings.layers,clearance:settings.clearance,viaCost:settings.viaCost,timeLimitMs:15000,
+      ...(kind==='physical'?{technology:{units:'um',traceWidth:settings.traceWidth,viaDiameter:settings.viaDiameter,padDiameter:settings.padDiameter,clearance:settings.copperClearance}}:{})};
+  const snapshot=clone(store.project),content=stableStringify(snapshot);
+  try {
+    if(globalThis.OPENBUMPPLAN_WORKER_SOURCE){workerURL=URL.createObjectURL(new Blob([globalThis.OPENBUMPPLAN_WORKER_SOURCE],{type:'text/javascript'}));worker=new Worker(workerURL);}
+    else worker=new Worker(new URL('./worker.js',import.meta.url),{type:'module'});
+    const activeWorker=worker;
+    worker.onmessage=event=>{
+      if(worker!==activeWorker)return;cancelWorker();
+      if(stableStringify(store.project)!==content){render();toast('The design changed. Stale engineering results were discarded.',true);return;}
+      if(!event.data.ok){render();toast(event.data.error,true);return;}
+      engineeringResult={kind,inputProject:snapshot,result:event.data.result,designKey:routingDesignKey(snapshot),applied:false};render();toast(event.data.result.message);
+    };
+    worker.onerror=event=>{if(worker!==activeWorker)return;cancelWorker();render();toast(`Engineering worker failed: ${event.message}`,true);};
+    worker.postMessage({jobType:kind,project:snapshot,from,to,options});render();
+  }catch(error){cancelWorker();render();toast(error.message,true);}
+}
+async function engineeringAction(action) {
+  const r=engineeringResult,current=r&&r.designKey===routingDesignKey(store.project);
+  if(action==='engineering-demo'||action==='engineering-coupled-demo'){
+    cancelWorker();engineeringResult=null;bundleVerification=null;
+    Object.assign(engineeringSettings,{fromKind:'pad',toKind:'ball',sourceIds:'',pitch:10,layers:2,clearance:0,viaCost:10});
+    mutate('Load synthetic engineering laboratory',p=>Object.assign(p,action==='engineering-demo'?routingDemoProject():coupledDemoProject()),{strict:false});
+  }else if(action==='engineering-exact')runEngineering('exact');
+  else if(action==='engineering-route')runEngineering('route');
+  else if(action==='engineering-scalable')runEngineering('scalable');
+  else if(action==='engineering-coupled')runEngineering('coupled');
+  else if(action==='engineering-negotiated')runEngineering('negotiated');
+  else if(action==='engineering-physical')runEngineering('physical');
+  else if(action==='engineering-apply'){
+    if(!current||!isAssignmentKind(r.kind)||!r.result.feasible||r.applied)throw new Error('No current feasible unapplied assignment result.');
+    if(mutate('Apply checked coupled-stage solution',p=>{p.connections=clone(r.result.project.connections);},{strict:true})){
+      r.applied=true;r.designKey=routingDesignKey(store.project);render();
+    }
+  }else if(action==='engineering-download'){
+    if(!r)throw new Error('Run an engineering analysis first.');
+    const {project,before,after,...summary}=r.result;
+    download(JSON.stringify(isRouteKind(r.kind)?r.result:{inputProject:r.inputProject,...summary},null,2),'openbumpplan-'+r.kind+'-evidence.json','application/json');
+  }else if(action==='engineering-svg'){
+    if(!r||!isRouteKind(r.kind))throw new Error('Run routing first.');
+    download(exportRoutesSVG(store.project,r.result),'openbumpplan-routes.svg','image/svg+xml');
+  }else if(action==='engineering-bundle'||action==='engineering-bundle-routes'){
+    if(action==='engineering-bundle-routes'&&(!current||!isRouteKind(r.kind)||!verifyRoutes(store.project,r.result).ok))throw new Error('A current, valid routing witness is required.');
+    const snapshot=clone(store.project),bundle=await createReviewBundle(snapshot,{routing:action==='engineering-bundle-routes'?r.result:null});
+    if(stableStringify(snapshot)!==stableStringify(store.project))throw new Error('Design changed during evidence generation; export cancelled.');
+    download(JSON.stringify(bundle,null,2),'openbumpplan-review-bundle.json','application/json');
+  }else if(action==='engineering-verify'){
+    const file=$('reviewBundleFile').files[0];if(!file||file.size>20*1024*1024)throw new Error('Choose a review bundle JSON smaller than 20 MB.');
+    const snapshot=clone(store.project);bundleVerification=await verifyReviewBundle(JSON.parse(await file.text()),{expectedProjectSHA256:await projectSHA256(snapshot)});if(stableStringify(snapshot)!==stableStringify(store.project))throw new Error("Current project changed during verification.");render();
+  }
+}

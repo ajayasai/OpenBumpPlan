@@ -1,0 +1,1803 @@
+{
+  "version": "0.3.0",
+  "environment": {
+    "node": "v22.16.0",
+    "platform": "linux",
+    "architecture": "x64",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C"
+  },
+  "scope": "Synthetic engine qualification only. No commercial tools were run. These are not industrial capacity, interactive UI latency, electrical signoff or comparative vendor results.",
+  "protocol": {
+    "scale": "Three measured runs, connected local-neighbour candidate grids, all configured hard rules rechecked; integer L1/ECO objective. Favorable near-aligned placements, not arbitrary hard coupled constraints.",
+    "routing": "Fixed seeds 1 through 100, six nets on a 12x12 single-layer grid. Identical total expansion/time ceilings, but negotiated search uses more effort and may be slower. Seed 10 was separately selected as a regression example, not a representative performance claim."
+  },
+  "scale": [
+    {
+      "sources": 64,
+      "sites": 128,
+      "candidateEdges": 288,
+      "inputSHA256": "00249abea58052639d2be64f6fad783d890866bbeb806232bfe1a934a654696d",
+      "runsMs": [
+        43.381,
+        15.004,
+        15.198
+      ],
+      "medianMs": 15.198,
+      "standaloneProofCheckMs": 4.799,
+      "status": "certified-coupled-optimal",
+      "subproblems": 1,
+      "objectiveUm": 16000
+    },
+    {
+      "sources": 256,
+      "sites": 512,
+      "candidateEdges": 1216,
+      "inputSHA256": "9c62a1677d7006424f3aecd194b0d26f83b85e33e4be52537b9e27c056fb491d",
+      "runsMs": [
+        81.995,
+        44.122,
+        54.612
+      ],
+      "medianMs": 54.612,
+      "standaloneProofCheckMs": 17.035,
+      "status": "certified-coupled-optimal",
+      "subproblems": 1,
+      "objectiveUm": 64000
+    },
+    {
+      "sources": 1024,
+      "sites": 2048,
+      "candidateEdges": 4992,
+      "inputSHA256": "65767c08b854c84827111ba252d79a5d9a9ac18bb6231fff49087f0059a80c19",
+      "runsMs": [
+        235.154,
+        185.017,
+        166.689
+      ],
+      "medianMs": 185.017,
+      "standaloneProofCheckMs": 57.644,
+      "status": "certified-coupled-optimal",
+      "subproblems": 1,
+      "objectiveUm": 256000
+    },
+    {
+      "sources": 4096,
+      "sites": 8192,
+      "candidateEdges": 20224,
+      "inputSHA256": "39f240af1502216f17d3bec679aed0e9dc754580a4b24f0846e4d4c5b9c9e39d",
+      "runsMs": [
+        1418.752,
+        1392.861,
+        1406.716
+      ],
+      "medianMs": 1406.716,
+      "standaloneProofCheckMs": 336.328,
+      "status": "certified-coupled-optimal",
+      "subproblems": 1,
+      "objectiveUm": 1024000
+    }
+  ],
+  "routing": {
+    "instances": 100,
+    "previousComplete": 71,
+    "currentComplete": 88,
+    "recovered": 17,
+    "regressed": 0,
+    "previousMedianMs": 0.329,
+    "currentMedianMs": 0.369,
+    "options": {
+      "pitch": 10,
+      "layers": 1,
+      "originX": 0,
+      "originY": 0,
+      "columns": 12,
+      "rows": 12,
+      "orderTrials": 3,
+      "timeLimitMs": 1000,
+      "maxExpansions": 100000,
+      "maxIterations": 25
+    },
+    "cases": [
+      {
+        "seed": 1,
+        "inputSHA256": "312d84619f802751901dce1164bf2ae4be973c5c30eb811e95a2c47c0031e610",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 570,
+          "elapsedMs": 2.564
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 570,
+          "elapsedMs": 1.298,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 2,
+        "inputSHA256": "0ff010660f942688f107924b027ba10940e59231f5e661a4595cf15da64984c5",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 370,
+          "elapsedMs": 1.124
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 370,
+          "elapsedMs": 0.883,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 3,
+        "inputSHA256": "06dc5ecfa8034b3b8eaad6ac898e80679934fbcd920ecb06915be4cfc8632f39",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 320,
+          "elapsedMs": 0.448
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 320,
+          "elapsedMs": 0.369,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 4,
+        "inputSHA256": "ab1bf2528dce1eacffb94d632201e46c2e02ded3cc7eb6b3548c2a9cbe60abb8",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 510,
+          "elapsedMs": 1.314
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 510,
+          "elapsedMs": 1.035,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 5,
+        "inputSHA256": "aecf68bccd0a84c81b285142272e5a3be608403d114323244756bc329192029f",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 330,
+          "elapsedMs": 1.979
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 330,
+          "elapsedMs": 0.623,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 6,
+        "inputSHA256": "10ddd5bf099aa55b28a1cf4ed079d566a6661f4a9df83a2a3fc44de3c748ec78",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 400,
+          "elapsedMs": 1.078
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 400,
+          "elapsedMs": 0.939,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 7,
+        "inputSHA256": "ada4e57992d7259f7e7cd925918efb403e0023f0a655ea297e8e09fd9a6bd2fd",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 490,
+          "elapsedMs": 0.839
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 490,
+          "elapsedMs": 0.836,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 8,
+        "inputSHA256": "b758e0274384549b14dd9062f7027aa15601aa8cc07e1decc929f6386ccbe1d0",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 490,
+          "elapsedMs": 0.66
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 490,
+          "elapsedMs": 0.729,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 9,
+        "inputSHA256": "456d6853380a1ae763e1023a1051f328605ee2c81ae103fa45daf814db6a78c1",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 480,
+          "elapsedMs": 0.726
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 480,
+          "elapsedMs": 0.587,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 10,
+        "inputSHA256": "ef19c9c89ab1480e50ff4bfcab3664d19d37cad99e3d70882133644d04e81fea",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 380,
+          "elapsedMs": 0.959
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 630,
+          "elapsedMs": 6.408,
+          "iterations": 4
+        }
+      },
+      {
+        "seed": 11,
+        "inputSHA256": "a924d2a597f9b7c5d71a77cbeac1d71df1ab32424a39dc81062b4e58d299e990",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 490,
+          "elapsedMs": 1.139
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 490,
+          "elapsedMs": 0.966,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 12,
+        "inputSHA256": "750594fc1c937ed6fc57567a664be04d962a5856038b1986457c6eaf41b0aa87",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 280,
+          "elapsedMs": 1.218
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 410,
+          "elapsedMs": 6.089,
+          "iterations": 3
+        }
+      },
+      {
+        "seed": 13,
+        "inputSHA256": "1487b834363c0bffd050d80d00850f7519a1da05c112c78999593b524a688027",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 490,
+          "elapsedMs": 3.219
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 700,
+          "elapsedMs": 2.41,
+          "iterations": 1
+        }
+      },
+      {
+        "seed": 14,
+        "inputSHA256": "2559d9319a06220308a6d16cd692450dccf8e6c111249f1baeb520c6f251c75a",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 370,
+          "elapsedMs": 0.747
+        },
+        "current": {
+          "verified": false,
+          "routed": 6,
+          "wireLength": 540,
+          "elapsedMs": 24.041,
+          "iterations": 25
+        }
+      },
+      {
+        "seed": 15,
+        "inputSHA256": "2623df21e3287d0f0e0e86e5da9d1ae6a13e166f444b5e216518bfd7a2035688",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 610,
+          "elapsedMs": 0.459
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 610,
+          "elapsedMs": 0.914,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 16,
+        "inputSHA256": "df4f3fc7ced5671b180012bb2bafa45e717868e1c08853bcabd5dec7a740b635",
+        "previous": {
+          "verified": false,
+          "routed": 4,
+          "wireLength": 330,
+          "elapsedMs": 0.329
+        },
+        "current": {
+          "verified": false,
+          "routed": 6,
+          "wireLength": 530,
+          "elapsedMs": 13.016,
+          "iterations": 25
+        }
+      },
+      {
+        "seed": 17,
+        "inputSHA256": "d89f6d23110dcac49691f45b1f737e43c3b39367249b3db9d750bd78e987baf1",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 370,
+          "elapsedMs": 0.427
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 590,
+          "elapsedMs": 3.192,
+          "iterations": 4
+        }
+      },
+      {
+        "seed": 18,
+        "inputSHA256": "3d96bcfbc636143069be73845cd36debc756470c5f08f7141a0c8139b3b503ac",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 520,
+          "elapsedMs": 0.364
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 520,
+          "elapsedMs": 0.274,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 19,
+        "inputSHA256": "626390462a4c4cd19f3b4dc9bec9e4d3c43f0d89d6d71b0f62586a667103509d",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 660,
+          "elapsedMs": 0.546
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 660,
+          "elapsedMs": 0.484,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 20,
+        "inputSHA256": "a67a1a01b10c4673f13c8c914a442bc7d93a834dfef487a64b3d588f2dfd6c4c",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 820,
+          "elapsedMs": 0.407
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 820,
+          "elapsedMs": 0.398,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 21,
+        "inputSHA256": "77576be662123d46a84cb8cf76b2b24f86a55aa60015821f7b5a15f52bb2ef80",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 620,
+          "elapsedMs": 0.291
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 620,
+          "elapsedMs": 0.316,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 22,
+        "inputSHA256": "a126febe1686765100c04c6754e42bc4a43086f42a43dd84cb5bfd8aa8d9b6a9",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 620,
+          "elapsedMs": 0.194
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 620,
+          "elapsedMs": 0.197,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 23,
+        "inputSHA256": "efc03a0ec0c822bf94ad8e45d3bff40b09e673e00b240aa4c2bd60d5863f53bd",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 550,
+          "elapsedMs": 0.703
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 550,
+          "elapsedMs": 0.414,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 24,
+        "inputSHA256": "a19d8eda81261c590880afa0638fa3e2344d4d484053ffddca1846e0de79d124",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 390,
+          "elapsedMs": 0.332
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 390,
+          "elapsedMs": 0.282,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 25,
+        "inputSHA256": "f31cf895de54c8526210a6f246f3ebb24cf6adfb1ab05b1b4637bc725c185f1b",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 520,
+          "elapsedMs": 0.373
+        },
+        "current": {
+          "verified": false,
+          "routed": 6,
+          "wireLength": 630,
+          "elapsedMs": 13.34,
+          "iterations": 25
+        }
+      },
+      {
+        "seed": 26,
+        "inputSHA256": "5c6722d6354b46e649b071765b98340c650af3b4ad00608b98f032ea994d026f",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 350,
+          "elapsedMs": 0.474
+        },
+        "current": {
+          "verified": false,
+          "routed": 6,
+          "wireLength": 530,
+          "elapsedMs": 13.89,
+          "iterations": 25
+        }
+      },
+      {
+        "seed": 27,
+        "inputSHA256": "6cb7aa80d24167d865155c03cca2f3312bbbb64ffc764a74c613c6fe764bd2dd",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 0.341
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 0.437,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 28,
+        "inputSHA256": "1128c00c0033a1c384cc28d2c3367c02d0710d1042827ef56850663a1f42afbd",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 0.362
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 0.313,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 29,
+        "inputSHA256": "1ebc89f0974be620a896412c32a2efbc80a9e8d8713d3c90afc08966a5097e60",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 420,
+          "elapsedMs": 0.302
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 420,
+          "elapsedMs": 0.225,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 30,
+        "inputSHA256": "75e7fce1b12459f88262ed0ecc9081c8d89e735aac4b83d0a85cef97f31e0fcb",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 150,
+          "elapsedMs": 0.128
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 150,
+          "elapsedMs": 0.115,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 31,
+        "inputSHA256": "2e1880717e5860b6a64616a4292969f1874ac2ba9da145784a60dea8faff1289",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 570,
+          "elapsedMs": 0.175
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 570,
+          "elapsedMs": 0.167,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 32,
+        "inputSHA256": "5070f3fba41acccd5a5b5e6ef3bb4b7f21cd62ce94ec030bf2f48ed520ae0c83",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 520,
+          "elapsedMs": 0.88
+        },
+        "current": {
+          "verified": false,
+          "routed": 6,
+          "wireLength": 680,
+          "elapsedMs": 14.322,
+          "iterations": 25
+        }
+      },
+      {
+        "seed": 33,
+        "inputSHA256": "57afb14f44adbfe4e5b820964c27c31a126de42293d036d80e3e99b9b0d67218",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 610,
+          "elapsedMs": 0.29
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 610,
+          "elapsedMs": 0.282,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 34,
+        "inputSHA256": "d7cfc079519c07b753c9d1b24d9114947f7876722b6d423cc9a9931ff9911598",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 450,
+          "elapsedMs": 0.21
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 450,
+          "elapsedMs": 0.566,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 35,
+        "inputSHA256": "a5bd5ee5b31d12a3bc78b7b50e0b475472fc57faf9c6f254de7832dc68ec7411",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 400,
+          "elapsedMs": 0.528
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 560,
+          "elapsedMs": 1.458,
+          "iterations": 2
+        }
+      },
+      {
+        "seed": 36,
+        "inputSHA256": "ce1a7039e2f983c001bc603d23a2b01e520c34d86c1171585743b0c3e11552cf",
+        "previous": {
+          "verified": false,
+          "routed": 4,
+          "wireLength": 310,
+          "elapsedMs": 0.394
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 650,
+          "elapsedMs": 2.243,
+          "iterations": 5
+        }
+      },
+      {
+        "seed": 37,
+        "inputSHA256": "2b0f029a4831db7a075c29175a0f2b31abbdb46c2f32d7765741b789538de7e9",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 640,
+          "elapsedMs": 0.206
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 640,
+          "elapsedMs": 0.52,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 38,
+        "inputSHA256": "35c0e8388adc6691fe11e0af359908ad5c506fa1c23d8775f116657cd0336123",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 790,
+          "elapsedMs": 0.436
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 790,
+          "elapsedMs": 0.992,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 39,
+        "inputSHA256": "29e3ce3a0d3155886110310c2647170419b892ab8be7ed9616a37b9954260b48",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 540,
+          "elapsedMs": 0.347
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 540,
+          "elapsedMs": 0.259,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 40,
+        "inputSHA256": "6fcba61f8c43a3779f44f76bc81186bce3e3c1a09ca94eb8cc0917374663fb48",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 680,
+          "elapsedMs": 0.485
+        },
+        "current": {
+          "verified": false,
+          "routed": 6,
+          "wireLength": 810,
+          "elapsedMs": 13.875,
+          "iterations": 25
+        }
+      },
+      {
+        "seed": 41,
+        "inputSHA256": "da44153bfd159e16390d603aca1d81baff9fa46215c125150c49eb7fdb59ebf4",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 490,
+          "elapsedMs": 0.325
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 490,
+          "elapsedMs": 0.354,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 42,
+        "inputSHA256": "d6fca07fe29e6eec70ee326c74184368f54ab9d1567af45683e8e2453c8a3c95",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 490,
+          "elapsedMs": 0.183
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 490,
+          "elapsedMs": 0.164,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 43,
+        "inputSHA256": "1ed37f5999f962e2eb82fa2cb16a7edb82a4a4d696c2da16968c3ec8512faa36",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 270,
+          "elapsedMs": 0.143
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 270,
+          "elapsedMs": 0.235,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 44,
+        "inputSHA256": "2f8c7541bbed6009c3834db4044e108b678b78d2e1328628b1703b4f34a59d85",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 510,
+          "elapsedMs": 0.319
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 510,
+          "elapsedMs": 0.272,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 45,
+        "inputSHA256": "9d2511da3a76f031af842c7d51271ca36ac13cd960d7fb3c615fec3795e1e9de",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 390,
+          "elapsedMs": 0.225
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 390,
+          "elapsedMs": 0.207,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 46,
+        "inputSHA256": "ef81bb79f02e7a3643bbe64e135cf080fbe96cb0e2d509b772240a5d7dcff96a",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 280,
+          "elapsedMs": 0.139
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 280,
+          "elapsedMs": 0.614,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 47,
+        "inputSHA256": "7e8bc75d749949f520c4541ad75c9ed24c7684e2e2e6d72b2372138001e2eaa0",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 410,
+          "elapsedMs": 0.278
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 410,
+          "elapsedMs": 0.278,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 48,
+        "inputSHA256": "1d5fe49ca5ecfdd4a0369429e0c0794769c887e4e2aa953ae46912442b0c140c",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 390,
+          "elapsedMs": 0.159
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 390,
+          "elapsedMs": 0.145,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 49,
+        "inputSHA256": "e8b3a46ebbab3becf02de78f4f1c47c584be5130f4d96c08c881f342dcf39f75",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 500,
+          "elapsedMs": 0.301
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 500,
+          "elapsedMs": 0.28,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 50,
+        "inputSHA256": "edb35decd6930c572ac91f0240a66ddb416aa9d1d1a272224fad92a26971c5bd",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 480,
+          "elapsedMs": 0.278
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 480,
+          "elapsedMs": 0.32,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 51,
+        "inputSHA256": "b8b0c1cfbc14aa2c2938e187f579a68e27c2cf569f669a80dce77c64347ecf7e",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 420,
+          "elapsedMs": 0.465
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 670,
+          "elapsedMs": 10.333,
+          "iterations": 20
+        }
+      },
+      {
+        "seed": 52,
+        "inputSHA256": "58608799c28c9a15ccc88a05015874efb77444cade83f2b5c228b709ed7718fc",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 480,
+          "elapsedMs": 0.376
+        },
+        "current": {
+          "verified": false,
+          "routed": 6,
+          "wireLength": 580,
+          "elapsedMs": 13.36,
+          "iterations": 25
+        }
+      },
+      {
+        "seed": 53,
+        "inputSHA256": "f59b172f2d6653442b058cf694fe5e582682d88e33e0426255981ab07e4f6b33",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 580,
+          "elapsedMs": 0.492
+        },
+        "current": {
+          "verified": false,
+          "routed": 6,
+          "wireLength": 610,
+          "elapsedMs": 12.214,
+          "iterations": 25
+        }
+      },
+      {
+        "seed": 54,
+        "inputSHA256": "63e547ac357cb680190dcdd9245c572a49e58d1792f76cbcc5ac1b146b817635",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 470,
+          "elapsedMs": 0.509
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 720,
+          "elapsedMs": 2.471,
+          "iterations": 5
+        }
+      },
+      {
+        "seed": 55,
+        "inputSHA256": "d125014335adb549cde57fb1faed052a69307501f0646d6380c2b9b18c288fea",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 310,
+          "elapsedMs": 0.224
+        },
+        "current": {
+          "verified": false,
+          "routed": 6,
+          "wireLength": 370,
+          "elapsedMs": 12.411,
+          "iterations": 25
+        }
+      },
+      {
+        "seed": 56,
+        "inputSHA256": "29c55790ff3440267604a2348a428ba061204efa42965140bf1d5e83d190f601",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 510,
+          "elapsedMs": 0.355
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 510,
+          "elapsedMs": 0.328,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 57,
+        "inputSHA256": "8a3557c5b8c247dba83bfcd569567a7491c54305c1bfafdb79f69a7d11f1b1a9",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 0.182
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 0.211,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 58,
+        "inputSHA256": "26c67a3a2cf6ae7a18726d8ea8d00ea14f7ce3f23220e06a4e5d0de7beccd8c2",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 340,
+          "elapsedMs": 0.143
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 340,
+          "elapsedMs": 0.149,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 59,
+        "inputSHA256": "ae4223e161b6b36061838338f031458cd2720b2bce231d0b9afb027b2272db57",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 510,
+          "elapsedMs": 0.241
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 510,
+          "elapsedMs": 0.238,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 60,
+        "inputSHA256": "a18a9a0079a75b0ccc1e59c52c64616ae3f7a00903f081e458170930b3f7eb7d",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 560,
+          "elapsedMs": 0.316
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 560,
+          "elapsedMs": 0.255,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 61,
+        "inputSHA256": "4ee934ace664d624afa4a04e6d6243c5eb748557d05699ff670b1026282a50c2",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 470,
+          "elapsedMs": 0.199
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 470,
+          "elapsedMs": 0.153,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 62,
+        "inputSHA256": "0a41d568d0fea6ab205c6b576c0591e440b978012865ba9626142690aae2a804",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 540,
+          "elapsedMs": 0.195
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 540,
+          "elapsedMs": 0.186,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 63,
+        "inputSHA256": "58313fd05e03c088c90fe458654f2a48fb48eed618c108ecbe288e5353ce004e",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 420,
+          "elapsedMs": 0.185
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 420,
+          "elapsedMs": 0.184,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 64,
+        "inputSHA256": "0d2abfdb1e136a480a6eab5549188f7eab7545c42a72a37c3939db35ae8c4c8f",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 560,
+          "elapsedMs": 0.295
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 560,
+          "elapsedMs": 0.609,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 65,
+        "inputSHA256": "ca26f8e31fe587b74882452f697ff1857405332ede66f9118b1f7a582ce8e2d6",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 350,
+          "elapsedMs": 0.15
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 350,
+          "elapsedMs": 0.152,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 66,
+        "inputSHA256": "e774d44bfe96488a2ed19a85426085e2a781463cc844024b4867748228183e41",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 430,
+          "elapsedMs": 0.416
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 710,
+          "elapsedMs": 7.87,
+          "iterations": 17
+        }
+      },
+      {
+        "seed": 67,
+        "inputSHA256": "cf64f7c5ea38ccbff0ad13130d3bd45c092023f8419bb8432c75f01cf89b6a4a",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 480,
+          "elapsedMs": 0.235
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 480,
+          "elapsedMs": 0.304,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 68,
+        "inputSHA256": "411885f4639e5f8e141ae3391b7004011bc6f0b7675c52027b9d80b68d9a27eb",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 330,
+          "elapsedMs": 0.242
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 1.264,
+          "iterations": 3
+        }
+      },
+      {
+        "seed": 69,
+        "inputSHA256": "74022377bdee55b13e88c88c08d45d21e9b04d3b7f11986d22e6c75ed9611598",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 510,
+          "elapsedMs": 0.437
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 860,
+          "elapsedMs": 8.466,
+          "iterations": 16
+        }
+      },
+      {
+        "seed": 70,
+        "inputSHA256": "b47909d26c68830d757e5524957239d77241fece925852a292e703509fd6503a",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 400,
+          "elapsedMs": 0.537
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 950,
+          "elapsedMs": 9.29,
+          "iterations": 24
+        }
+      },
+      {
+        "seed": 71,
+        "inputSHA256": "0d758c153fab7fd6e0950c980f9ac0836be35f57e3ee60bfe9d01be8777b6d3b",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 380,
+          "elapsedMs": 0.314
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 530,
+          "elapsedMs": 3.287,
+          "iterations": 4
+        }
+      },
+      {
+        "seed": 72,
+        "inputSHA256": "1b5280cd3f7ac3760291d2b5c363695a42bbd22b2309acb1b6c86ef7b3ffa813",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 470,
+          "elapsedMs": 0.235
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 470,
+          "elapsedMs": 0.226,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 73,
+        "inputSHA256": "1499977a2a47916ec07076cf2738aa1f93610990d6782bf80be9d1114afeade4",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 550,
+          "elapsedMs": 0.407
+        },
+        "current": {
+          "verified": false,
+          "routed": 6,
+          "wireLength": 800,
+          "elapsedMs": 15.084,
+          "iterations": 25
+        }
+      },
+      {
+        "seed": 74,
+        "inputSHA256": "52f205b94e31ff35185447e135f146b18678bb442e2b50cda21398922d70c42d",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 590,
+          "elapsedMs": 0.172
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 590,
+          "elapsedMs": 0.173,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 75,
+        "inputSHA256": "c0702c6a99a4a744d3105a291a849651d7a0051f1496c49c0dee9d8dd2afb89d",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 440,
+          "elapsedMs": 0.722
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 440,
+          "elapsedMs": 0.264,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 76,
+        "inputSHA256": "93e38f49e751cb7dddb169a4591af63021138720e7ea9d0e95c90797cd50737d",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 0.228
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 0.228,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 77,
+        "inputSHA256": "5539b9636d8853664cb5e0d81721bb2e0f4a4ab33a8dfb64b903f4e091f1b63a",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 330,
+          "elapsedMs": 0.143
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 330,
+          "elapsedMs": 0.133,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 78,
+        "inputSHA256": "222b41268e5d5e36cf12006cdd9ac779f3cf670c241d92ef7d93b6f2bb948080",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 350,
+          "elapsedMs": 0.149
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 350,
+          "elapsedMs": 0.147,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 79,
+        "inputSHA256": "b994e23d0f5a679df12104c28a48785675ac2f5e5eddbb0e8f176d87a0221195",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 490,
+          "elapsedMs": 0.329
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 660,
+          "elapsedMs": 2.542,
+          "iterations": 6
+        }
+      },
+      {
+        "seed": 80,
+        "inputSHA256": "eb226d0fa8a5a5958bf171fdb5b03d8b700680e44f3dbc644bb498879061e787",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 510,
+          "elapsedMs": 0.204
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 510,
+          "elapsedMs": 0.154,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 81,
+        "inputSHA256": "1e0bb8acb70d1c583ecebdf8c11abc2166d3c7889cc9bd4b64813e696d9da8f4",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 390,
+          "elapsedMs": 0.8
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 640,
+          "elapsedMs": 2.009,
+          "iterations": 4
+        }
+      },
+      {
+        "seed": 82,
+        "inputSHA256": "ec03bacca5059a4b6eeae8522d13b2cd90b442bac85edba4eb4a28e0ba76fc75",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 420,
+          "elapsedMs": 0.159
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 420,
+          "elapsedMs": 0.137,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 83,
+        "inputSHA256": "e8109736c843ff3fad6bb1c5d62c199f8700675db2bd4514f7bd5d9080756fe3",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 470,
+          "elapsedMs": 0.254
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 470,
+          "elapsedMs": 0.238,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 84,
+        "inputSHA256": "0aceabf51c81e389ca8ac982185cbb3b4fed9210fc39365b9617b4f3608081c9",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 0.166
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 0.143,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 85,
+        "inputSHA256": "22e99747900d495139ec817d191006353801b71085b149c0d6904bdb0933b62f",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 580,
+          "elapsedMs": 0.273
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 580,
+          "elapsedMs": 0.305,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 86,
+        "inputSHA256": "692c3168f7382c6568d376e8b4219c801dad31fecccd961b0818e28431eae53a",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 580,
+          "elapsedMs": 0.266
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 580,
+          "elapsedMs": 0.417,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 87,
+        "inputSHA256": "574da4410398dd5a76634f99ba66759a183f204efeb817235a276e3b714e4ab0",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 410,
+          "elapsedMs": 0.894
+        },
+        "current": {
+          "verified": false,
+          "routed": 6,
+          "wireLength": 590,
+          "elapsedMs": 11.359,
+          "iterations": 25
+        }
+      },
+      {
+        "seed": 88,
+        "inputSHA256": "8875468677ec215dd8c26cf12e3bd7e8f98a64c6ea0428900e32a12985d783aa",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 400,
+          "elapsedMs": 0.148
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 400,
+          "elapsedMs": 0.18,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 89,
+        "inputSHA256": "5ea08ddfb4d6207466ea5d639098f3f600dd292b5d8c9a995c31703d8cc75ef5",
+        "previous": {
+          "verified": false,
+          "routed": 5,
+          "wireLength": 390,
+          "elapsedMs": 0.337
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 720,
+          "elapsedMs": 5.389,
+          "iterations": 11
+        }
+      },
+      {
+        "seed": 90,
+        "inputSHA256": "dabb573858ebe9d3cc22015adaa2cf4b937dee360823175b255a4ab16cfa3bc5",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 640,
+          "elapsedMs": 0.173
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 640,
+          "elapsedMs": 0.172,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 91,
+        "inputSHA256": "a201f772c5b9ac652afd4c5ed85e4d0b62dd91df0ef517feb4119cf1a7016232",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 0.375
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 460,
+          "elapsedMs": 0.329,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 92,
+        "inputSHA256": "d29c9482f25069f8af56e9d2801db937ae50ba02b6fb982946ab39e9a2fe4313",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 520,
+          "elapsedMs": 0.176
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 520,
+          "elapsedMs": 0.162,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 93,
+        "inputSHA256": "ca609cfba5de0a3d9bf3a890b45937e489c9fe35fb9ec6a599d737c63e4c08a2",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 530,
+          "elapsedMs": 0.26
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 530,
+          "elapsedMs": 0.264,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 94,
+        "inputSHA256": "ca5a932f529a1f45a4b108a8694d25b8ee66fcde3f767907b7445dd3fe0b8a49",
+        "previous": {
+          "verified": false,
+          "routed": 4,
+          "wireLength": 520,
+          "elapsedMs": 0.494
+        },
+        "current": {
+          "verified": false,
+          "routed": 6,
+          "wireLength": 940,
+          "elapsedMs": 13.961,
+          "iterations": 25
+        }
+      },
+      {
+        "seed": 95,
+        "inputSHA256": "f46f08f5a36c9e75bfc234f1df3c95208ef48902d3dd58a83dd21ca6de91dbe8",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 420,
+          "elapsedMs": 0.277
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 420,
+          "elapsedMs": 0.238,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 96,
+        "inputSHA256": "9bd7e263aa18bc21c724746343647a0941481985dd5d477bab7d50a363fd2399",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 590,
+          "elapsedMs": 0.377
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 590,
+          "elapsedMs": 0.36,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 97,
+        "inputSHA256": "bb5478a3318172994035f0a1edc1795ce2749dc0ec423a7589c2bf7d79f47cff",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 360,
+          "elapsedMs": 0.157
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 360,
+          "elapsedMs": 0.14,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 98,
+        "inputSHA256": "4823b984d35a739040b4352db92e768efce57cd54acfaee6ce6473926bee9096",
+        "previous": {
+          "verified": false,
+          "routed": 4,
+          "wireLength": 330,
+          "elapsedMs": 0.351
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 600,
+          "elapsedMs": 2.905,
+          "iterations": 6
+        }
+      },
+      {
+        "seed": 99,
+        "inputSHA256": "d01f21f118ec5807386bce1f7d2f7dee53de627f50ecf41415acb8f992265079",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 370,
+          "elapsedMs": 0.185
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 370,
+          "elapsedMs": 0.138,
+          "iterations": 0
+        }
+      },
+      {
+        "seed": 100,
+        "inputSHA256": "a54342a0c5e56486c252982dd996fe730043fae0b569d5228cb88af7eb5ec61b",
+        "previous": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 430,
+          "elapsedMs": 0.2
+        },
+        "current": {
+          "verified": true,
+          "routed": 6,
+          "wireLength": 430,
+          "elapsedMs": 0.167,
+          "iterations": 0
+        }
+      }
+    ]
+  }
+}

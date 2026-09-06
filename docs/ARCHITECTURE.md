@@ -15,13 +15,13 @@ Browser UI / Blob Web Worker         Node CLI / tests / benchmarks
 
 `optimizer.js` uses a Hungarian solver for the rectangular linear assignment subproblem. Differential pairs receive joint candidate placement; locked endpoints and edges remain fixed. Full-rule analysis guards proposed results and local swaps. The baseline project is never mutated. There is no claim that greedy pair placement plus local refinement finds the globally best feasible mapping. Failure to find a candidate is not an infeasibility certificate.
 
-`revisions.js` implements atomic clone/check/commit transactions, up to 50 undo snapshots, redo, and up to 200 local audit records. It also compares structure and propagated net/physical effects. Review IDs use noncryptographic FNV-1a over canonicalized content; they are labels, not signatures. A proper signed approval system would be a separate feature.
+`revisions.js` implements atomic clone/check/commit transactions, up to 50 undo snapshots, redo, and up to 200 local audit records. It also compares structure and propagated net/physical effects. Review IDs use noncryptographic FNV-1a over canonicalized content; they are labels, not signatures. v0.2.0 adds separate SHA-256/Ed25519 evidence in evidence.js and scripts/signing.mjs; short FNV labels are never used as signature or stale-worker authority.
 
 `importers.js` checks units and formats before model normalization. Imports are previewed with analysis and applied explicitly. `exporters.js` escapes HTML/XML, supports reversible spreadsheet-safe CSV, generates inspectable SVG/HTML/Markdown, and writes a compact ASCII-transliterated vector/text PDF without font dependencies.
 
 ## Browser
 
-`src/app.js` is a DOM/SVG application using delegated controls. It implements five workspace tabs and a local import dialog, inspector, rule editor, mapping operations, array generator, and exports. Site movement is one undoable transaction on pointer release. A worker performs optimization so the main thread can accept cancellation and other edits; revision plus fingerprint checks discard stale results.
+`src/app.js` is a DOM/SVG application using delegated controls. It implements planning/review workspace tabs plus Engineering and a local import dialog, inspector, rule editor, mapping operations, array generator, and exports. Site movement is one undoable transaction on pointer release. A worker performs optimization so the main thread can accept cancellation and other edits; full canonical content checks discard stale results.
 
 Ordinary UI rule analysis is synchronous. Large or dense projects can pause the UI despite the geometry budget. DOM/SVG rendering is not virtualized beyond table/issue pagination and suppressed labels on larger maps. This release therefore does not promise responsive interaction at its maximum schema size.
 
@@ -39,4 +39,10 @@ The optimizer defaults to at most 256 source and 512 target sites per stage (con
 
 ## Extension design
 
-Keep the canonical interchange format independent of vendor databases. Add adapters outside the model, with round-trip fixtures and unit/orientation provenance. Route-aware checks should consume actual paths and stack layers, not reinterpret the existing ratsnest metric. Electrical solvers should produce separately named findings and provenance. A future coupled exact solver should distinguish proven feasibility, optimality gap, timeout, and global infeasibility, and validate its output through the same independent rule engine.
+Keep the canonical interchange format independent of vendor databases. Add adapters outside the model, with round-trip fixtures and unit/orientation provenance. Route-aware checks should consume actual paths and stack layers, not reinterpret the existing ratsnest metric. Electrical solvers should produce separately named findings and provenance. The v0.2.0 coupled solver distinguishes scoped optimality, feasibility with a bound, timeout/unknown, and scoped infeasibility; it validates candidates with the ordinary rule engine.
+
+## v0.2.0 modules
+
+`solver.js` implements small-window coupled search, ECO limits, a Hungarian lower bound, and necessary-condition Hall witnesses. `routing.js` owns the conservative layered grid, bounded A* search, a separate witness checker, and SVG route visualization. `evidence.js` binds complete project/findings/witness payloads with SHA-256 and reruns checks during verification; `hash.js` provides a bounded offline hashing fallback. `scripts/signing.mjs` alone handles Ed25519 through native Node crypto. No private key or signing API is added to the browser.
+
+The Engineering workspace dispatches tagged exact/route jobs through the existing worker and discards results against full canonical content. State changes after a result mark it stale. Solver application is a separate, undoable checked transaction. Route evidence is stored outside the schema-v1 project and bound to its content. See [v0.2.0 semantics](V0.2.0.md) for limits and proof scope.

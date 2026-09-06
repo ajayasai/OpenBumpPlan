@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "name": "Coupled assignment laboratory / pair bottleneck",
+  "revision": 1,
+  "units": "um",
+  "description": "Synthetic constructive counterexample to greedy pair-first assignment. No process constraints or customer data. The differential pair must use the farther adjacent pair so the third signal can reach a target.",
+  "dies": [],
+  "ports": [
+    {
+      "label": "TX_P",
+      "dieId": "",
+      "net": "TX_P",
+      "domain": "V1",
+      "role": "signal",
+      "pair": "TX",
+      "polarity": "+",
+      "locked": false,
+      "required": true,
+      "id": "TX_P",
+      "kind": "pad",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "label": "TX_N",
+      "dieId": "",
+      "net": "TX_N",
+      "domain": "V1",
+      "role": "signal",
+      "pair": "TX",
+      "polarity": "-",
+      "locked": false,
+      "required": true,
+      "id": "TX_N",
+      "kind": "pad",
+      "x": 0,
+      "y": 10
+    },
+    {
+      "label": "RESTRICTED",
+      "dieId": "",
+      "net": "CONTROL",
+      "domain": "V1",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "RESTRICTED",
+      "kind": "pad",
+      "x": -100,
+      "y": 0
+    },
+    {
+      "label": "B1",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "BALL_1",
+      "kind": "ball",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "label": "B2",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "BALL_2",
+      "kind": "ball",
+      "x": 0,
+      "y": 10
+    },
+    {
+      "label": "B3",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "BALL_3",
+      "kind": "ball",
+      "x": 100,
+      "y": 0
+    },
+    {
+      "label": "B4",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "BALL_4",
+      "kind": "ball",
+      "x": 100,
+      "y": 10
+    }
+  ],
+  "connections": [
+    {
+      "id": "certified:RESTRICTED",
+      "from": "RESTRICTED",
+      "to": "BALL_1",
+      "net": "",
+      "locked": false
+    },
+    {
+      "id": "certified:TX_N",
+      "from": "TX_N",
+      "to": "BALL_4",
+      "net": "",
+      "locked": false
+    },
+    {
+      "id": "certified:TX_P",
+      "from": "TX_P",
+      "to": "BALL_3",
+      "net": "",
+      "locked": false
+    }
+  ],
+  "keepouts": [],
+  "regions": [],
+  "rules": {
+    "maxLength": 120,
+    "minDomainSpacing": 0,
+    "pairMaxDistance": 10,
+    "pairMaxSkew": 0,
+    "clockShieldRadius": 750,
+    "clockGroundMin": 0,
+    "groundRadius": 0,
+    "powerRadius": 1400,
+    "requirePowerForSignals": false,
+    "minGroundRatio": 0,
+    "crossingWeight": 150,
+    "maxCrossings": 0,
+    "geometryBudget": 1000000,
+    "terminalKind": "ball",
+    "requireCompletePaths": false,
+    "allowedStagePairs": [
+      [
+        "pad",
+        "bump"
+      ],
+      [
+        "pad",
+        "ball"
+      ],
+      [
+        "bump",
+        "interposer"
+      ],
+      [
+        "bump",
+        "ball"
+      ],
+      [
+        "interposer",
+        "ball"
+      ],
+      [
+        "ball",
+        "pcb"
+      ]
+    ]
+  },
+  "audit": [
+    {
+      "revision": 1,
+      "action": "CLI certified stage optimization",
+      "time": "2026-09-06T08:17:07.061Z",
+      "fingerprint": "98627867"
+    }
+  ]
+}

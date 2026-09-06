@@ -1,0 +1,69 @@
+{
+  "browser": "144.0.7559.96",
+  "mode": "set_content",
+  "limitations": [
+    "Native localhost/file navigation and true-origin persistence remain unverified; this managed browser blocks navigation."
+  ],
+  "total": 11,
+  "passed": 11,
+  "failed": 0,
+  "scenarios": [
+    {
+      "name": "Engineering workspace is available without changing the design",
+      "passed": true,
+      "seconds": 0.451
+    },
+    {
+      "name": "Exact worker solves greedy pair bottleneck and checked Apply is undoable",
+      "passed": true,
+      "seconds": 0.789
+    },
+    {
+      "name": "Layered routing produces a checked witness and actual vector SVG",
+      "passed": true,
+      "seconds": 7.703
+    },
+    {
+      "name": "A completed route becomes visibly stale after constraints change",
+      "passed": true,
+      "seconds": 0.655
+    },
+    {
+      "name": "Off-grid routing fails closed without modifying the model",
+      "passed": true,
+      "seconds": 0.51
+    },
+    {
+      "name": "Unsupported exact-stage size reports a resource limit, not infeasibility",
+      "passed": true,
+      "seconds": 0.46
+    },
+    {
+      "name": "Cancellation terminates a running worker without applying a candidate",
+      "passed": true,
+      "seconds": 0.831
+    },
+    {
+      "name": "A worker result is discarded when project content changes during execution",
+      "passed": true,
+      "seconds": 5.818
+    },
+    {
+      "name": "Browser SHA-256 review bundle verifies independently in the Node CLI",
+      "passed": true,
+      "seconds": 0.496
+    },
+    {
+      "name": "Browser verifier checks current-design freshness as well as bundle hashes",
+      "passed": true,
+      "seconds": 1.015
+    },
+    {
+      "name": "Corrupt review contents do not acquire a passing browser verification",
+      "passed": true,
+      "seconds": 0.399
+    }
+  ],
+  "testedEngineVersion": "0.3.1",
+  "nativeOriginVerified": false
+}
