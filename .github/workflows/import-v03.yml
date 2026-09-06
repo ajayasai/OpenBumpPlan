@@ -9,6 +9,9 @@ permissions:
 concurrency:
   group: publish-openbumpplan-v03
   cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
 jobs:
   qualify:
     runs-on: ubuntu-latest
@@ -16,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: upgrade/v0.3.0
+          ref: ${{ github.sha }}
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
@@ -62,6 +65,16 @@ jobs:
                   target.write_bytes(archive.extractfile(member).read())
           print(f'Applied {len(members)} SHA-256 checked source files')
           PY
+      - name: Retain exact expanded source for integrity diagnostics
+        run: |
+          tar --exclude=./.git --exclude=./.publication -czf "$RUNNER_TEMP/v03-source-snapshot.tar.gz" .
+          sha256sum "$RUNNER_TEMP/v03-source-snapshot.tar.gz"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v03-expanded-source-diagnostic
+          path: ${{ runner.temp }}/v03-source-snapshot.tar.gz
+          if-no-files-found: error
+          retention-days: 7
       - name: Rebuild, verify release identity, and run all Node tests
         run: |
           npm run build
