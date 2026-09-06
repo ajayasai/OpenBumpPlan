@@ -1,0 +1,121 @@
+name: Qualify staged OpenBumpPlan v0.3.0
+on:
+  push:
+    branches: ['upgrade/v0.3.0']
+    paths: ['.publication/ready.json']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: publish-openbumpplan-v03
+  cancel-in-progress: false
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: upgrade/v0.3.0
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify source archive and safely apply overlay
+        run: |
+          python - <<'PY'
+          import base64, hashlib, io, json, lzma, pathlib, tarfile
+          root = pathlib.Path('.').resolve()
+          manifest = json.loads((root / '.publication/ready.json').read_text())
+          parts = sorted((root / '.publication').glob('part-*.b64'))
+          if len(parts) != manifest['parts'] or not 1 <= len(parts) <= 30:
+              raise SystemExit('Transfer chunk count mismatch')
+          payload = base64.b64decode(''.join(p.read_text().strip() for p in parts), validate=True)
+          if len(payload) > 500000 or hashlib.sha256(payload).hexdigest() != manifest['archive_sha256']:
+              raise SystemExit('Source archive checksum mismatch')
+          unpacked = lzma.decompress(payload)
+          if len(unpacked) > 10000000:
+              raise SystemExit('Source archive exceeds budget')
+          with tarfile.open(fileobj=io.BytesIO(unpacked), mode='r:') as archive:
+              members = archive.getmembers()
+              if len(members) != len(set(manifest['members'])) or {m.name for m in members} != set(manifest['members']):
+                  raise SystemExit('Archive member set mismatch')
+              for member in members:
+                  p = pathlib.PurePosixPath(member.name)
+                  if not member.isfile() or p.is_absolute() or '..' in p.parts or p.parts[0] in ('.git', '.github', '.publication') or member.size > 5000000:
+                      raise SystemExit('Unsafe archive member')
+                  cursor = root
+                  for part in p.parts:
+                      cursor = cursor / part
+                      if cursor.is_symlink():
+                          raise SystemExit('Destination symlink rejected')
+              for member in members:
+                  target = root / member.name
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  target.write_bytes(archive.extractfile(member).read())
+          print(f'Applied {len(members)} SHA-256 checked source files')
+          PY
+      - name: Rebuild, verify release identity, and run all Node tests
+        run: |
+          npm run build
+          python - <<'PY'
+          import hashlib, json, pathlib
+          m=json.loads(pathlib.Path('.publication/ready.json').read_text())
+          assert hashlib.sha256(pathlib.Path('dist/openbumpplan.html').read_bytes()).hexdigest()==m['build_sha256'], 'Standalone build differs'
+          PY
+          npm run verify:release
+          npm test | tee docs/github-node-v0.3.0.tap
+          node scripts/cli.mjs verify-coupled examples/pair-bottleneck.json examples/coupled-proof.json
+          node scripts/cli.mjs verify-copper examples/routing-laboratory.json examples/physical-routes.json --technology examples/copper-technology.json
+          node scripts/cli.mjs verify-bundle examples/physical-review.json --project examples/routing-laboratory.json --technology examples/copper-technology.json
+      - name: Reproduce frozen qualification protocol
+        run: |
+          cp docs/qualification-v0.3.0.json "$RUNNER_TEMP/local-qualification.json"
+          npm run qualify:v03
+          mv docs/qualification-v0.3.0.json docs/github-qualification-v0.3.0.json
+          cp "$RUNNER_TEMP/local-qualification.json" docs/qualification-v0.3.0.json
+      - name: Install browser test dependencies
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Exercise real HTML, workers, downloads, localhost and persistence
+        run: |
+          python - <<'PY'
+          import pathlib, subprocess
+          from playwright.sync_api import sync_playwright
+          root=pathlib.Path('.')
+          local=['browser-test-results.json','engineering-browser-v0.3.0.json','v03-browser.json']
+          saved={name:(root/'docs'/name).read_bytes() for name in local}
+          with sync_playwright() as p:
+              chromium=p.chromium.executable_path
+          for script in ['browser_test.py','engineering_browser_test.py','browser_v03.py']:
+              subprocess.run(['python','tests/'+script,'--chromium',chromium],check=True)
+          for name in local:
+              p=root/'docs'/name
+              (root/'docs'/('github-'+name)).write_bytes(p.read_bytes())
+              p.write_bytes(saved[name])
+          for script in ['engineering_browser_test.py','browser_v03.py']:
+              subprocess.run(['python','tests/'+script,'--native','--chromium',chromium],check=True)
+          PY
+      - name: Commit verified upgrade to staging without rewriting history
+        run: |
+          npm run verify:release
+          rm -r .publication
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- . ':!.github'
+          git diff --cached --check
+          git commit -m 'Publish tested v0.3.0 certified assignment, congestion routing and continuous copper checks'
+          git push origin HEAD:upgrade/v0.3.0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v03-staging-qualification
+          path: |
+            docs/*browser*.json
+            docs/*v0.3.0*.json
+            docs/github-node-v0.3.0.tap
+            docs/*studio*.png
