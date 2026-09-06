@@ -2,7 +2,7 @@ name: Qualify staged OpenBumpPlan v0.3.0
 on:
   push:
     branches: ['upgrade/v0.3.0']
-    paths: ['.publication/ready.json']
+    paths: ['.publication/ready.json', '.github/workflows/import-v03.yml']
   workflow_dispatch:
 permissions:
   contents: write
@@ -27,31 +27,35 @@ jobs:
       - name: Verify source archive and safely apply overlay
         run: |
           python - <<'PY'
-          import base64, hashlib, io, json, lzma, pathlib, tarfile
+          import base64, hashlib, io, json, lzma, pathlib, tarfile, sys, traceback
+          def diagnostic(cls, error, tb):
+              print('::error::Import failed: ' + str(error), flush=True)
+              traceback.print_exception(cls, error, tb)
+          sys.excepthook = diagnostic
           root = pathlib.Path('.').resolve()
           manifest = json.loads((root / '.publication/ready.json').read_text())
           parts = sorted((root / '.publication').glob('part-*.b64'))
           if len(parts) != manifest['parts'] or not 1 <= len(parts) <= 30:
-              raise SystemExit('Transfer chunk count mismatch')
+              raise ValueError('Transfer chunk count mismatch: '+str(len(parts)))
           payload = base64.b64decode(''.join(p.read_text().strip() for p in parts), validate=True)
           if len(payload) > 500000 or hashlib.sha256(payload).hexdigest() != manifest['archive_sha256']:
-              raise SystemExit('Source archive checksum mismatch')
+              raise ValueError('Source archive checksum mismatch: '+hashlib.sha256(payload).hexdigest())
           unpacked = lzma.decompress(payload)
           if len(unpacked) > 10000000:
-              raise SystemExit('Source archive exceeds budget')
+              raise ValueError('Source archive exceeds budget')
           with tarfile.open(fileobj=io.BytesIO(unpacked), mode='r:') as archive:
               members = archive.getmembers()
               if len(members) != len(set(manifest['members'])) or {m.name for m in members} != set(manifest['members']):
-                  raise SystemExit('Archive member set mismatch')
+                  raise ValueError('Archive member set mismatch')
               for member in members:
                   p = pathlib.PurePosixPath(member.name)
                   if not member.isfile() or p.is_absolute() or '..' in p.parts or p.parts[0] in ('.git', '.github', '.publication') or member.size > 5000000:
-                      raise SystemExit('Unsafe archive member')
+                      raise ValueError('Unsafe archive member: '+member.name)
                   cursor = root
                   for part in p.parts:
                       cursor = cursor / part
                       if cursor.is_symlink():
-                          raise SystemExit('Destination symlink rejected')
+                          raise ValueError('Destination symlink rejected: '+str(cursor))
               for member in members:
                   target = root / member.name
                   target.parent.mkdir(parents=True, exist_ok=True)
