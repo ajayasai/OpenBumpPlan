@@ -1,0 +1,40 @@
+{
+  "version": "0.4.0",
+  "base_head": "56c9d3c3842f2f512e8a7c2e058e9d72cd086ca6",
+  "parts": 3,
+  "archive_sha256": "c10e0fa19419cc40f20b2b49517eee352bd6c66474593ae640d76c257f6aff82",
+  "build_sha256": "cd3a6ba8666f7e538d51067cbcc9f756c73a7e1f7599476a0de4e288a54af004",
+  "members": [
+    "changes.patch",
+    "docs/V0.4.0.md",
+    "docs/VALIDATION-V0.4.0.md",
+    "docs/qualification-routing-v0.4.0.json",
+    "docs/release-manifest-v0.4.0.json",
+    "scripts/qualify-routing.mjs",
+    "scripts/safe_overlay.py",
+    "src/core/search-workspace.js",
+    "tests/browser_v04.py",
+    "tests/copper-contact.test.mjs",
+    "tests/oracles/routing-v031.mjs",
+    "tests/routing-scalable.test.mjs",
+    "tests/safe-overlay.test.mjs",
+    "tests/safe_overlay_test.py"
+  ],
+  "patched_files": [
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "README.md",
+    "examples/physical-review.json",
+    "examples/verified-review-bundle.json",
+    "package.json",
+    "scripts/publish-update.mjs",
+    "scripts/qualify-copper.mjs",
+    "src/app.js",
+    "src/core/copper.js",
+    "src/core/model.js",
+    "src/core/routing.js",
+    "tests/copper-fixtures.mjs",
+    "tests/copper-indexed.test.mjs",
+    "tests/publish-update.test.mjs"
+  ]
+}
