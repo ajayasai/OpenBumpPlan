@@ -30,6 +30,27 @@ jobs:
         run: |
           test "$GITHUB_REF_NAME" = 'upgrade/v0.3.1-indexed-copper'
           python .publication/importer.py --root . --manifest .publication/ready.json
+          python - <<'PY'
+          import json,pathlib,runpy,subprocess
+          root=pathlib.Path('.').resolve()
+          safe=runpy.run_path('.publication/importer.py')['safe_name']
+          m=json.loads((root/'.publication/ready.json').read_text())
+          patch=root/'changes.patch'
+          stat=subprocess.check_output(['git','apply','--numstat','-z',str(patch)]).decode().rstrip('\0')
+          paths=[entry.split('\t',2)[2] for entry in stat.split('\0')]
+          expected=m['patched_files']
+          if not 1<=len(paths)<=100 or len(paths)!=len(set(paths)) or len(expected)!=len(paths) or set(paths)!=set(expected):
+              raise ValueError('Unexpected patch target set')
+          for name in paths:
+              p=safe(name);cursor=root
+              for part in p.parts:
+                  cursor=cursor/part
+                  if cursor.is_symlink():raise ValueError('Patch destination symlink')
+              if not cursor.is_file():raise ValueError('Patch target must be an existing regular source file')
+          subprocess.run(['git','apply','--check',str(patch)],check=True)
+          subprocess.run(['git','apply',str(patch)],check=True)
+          patch.unlink()
+          PY
           cmp .publication/importer.py scripts/safe_overlay.py
           mkdir -p validation-artifacts
           npm run build
