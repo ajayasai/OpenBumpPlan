@@ -1,0 +1,120 @@
+name: Qualify v0.4 routing replay release
+on:
+  push:
+    branches: ['upgrade/v0.4.0-routing-replay']
+    paths: ['.publication-v04/ready.json']
+permissions:
+  contents: write
+concurrency:
+  group: openbumpplan-v04-routing-replay
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reject changed runtime inputs before bounded overlay and patch application
+        run: |
+          test "$GITHUB_REF_NAME" = 'upgrade/v0.4.0-routing-replay'
+          python - <<'PY'
+          import hashlib,json,pathlib,runpy,subprocess
+          root=pathlib.Path('.').resolve()
+          helper=runpy.run_path('.publication/importer.py')
+          m=json.loads((root/'.publication-v04/ready.json').read_text())
+          expected=set(m['patched_files']) | (set(m['members'])-{'changes.patch'})
+          if set(m['expected_before'])!=expected:raise ValueError('Incomplete before-state manifest')
+          for name,digest in m['expected_before'].items():
+              p=helper['safe_name'](name)
+              if p.parts[0].startswith('.publication'):raise ValueError('Bootstrap write rejected')
+              cursor=root
+              for part in p.parts:
+                  cursor=cursor/part
+                  if cursor.is_symlink():raise ValueError('Destination symlink')
+              if digest is None:
+                  if cursor.exists():raise ValueError('New source path already exists: '+name)
+              elif not cursor.is_file() or hashlib.sha256(cursor.read_bytes()).hexdigest()!=digest:
+                  raise ValueError('Runtime source changed; refusing overwrite: '+name)
+          helper['apply_overlay'](root,root/'.publication-v04/ready.json')
+          patch=root/'changes.patch'
+          entries=subprocess.check_output(['git','apply','--numstat','-z',str(patch)]).decode().rstrip('\0').split('\0')
+          paths=[entry.split('\t',2)[2] for entry in entries]
+          if len(paths)!=len(set(paths)) or set(paths)!=set(m['patched_files']):raise ValueError('Unexpected patch targets')
+          subprocess.run(['git','apply','--check',str(patch)],check=True)
+          subprocess.run(['git','apply',str(patch)],check=True)
+          patch.unlink()
+          PY
+          mkdir -p validation-artifacts
+          npm run build
+          python - <<'PY'
+          import hashlib,json,pathlib
+          m=json.loads(pathlib.Path('.publication-v04/ready.json').read_text())
+          assert json.loads(pathlib.Path('package.json').read_text())['version']==m['version']=='0.4.0'
+          assert hashlib.sha256(pathlib.Path('dist/openbumpplan.html').read_bytes()).hexdigest()==m['build_sha256']
+          PY
+          npm run verify:release
+      - name: Node 22 tests, security suite and independently bound example replay
+        run: |
+          npm test | tee validation-artifacts/node22.tap
+          python -B -m unittest discover -s tests -p safe_overlay_test.py -v 2>&1 | tee validation-artifacts/security.log
+          node scripts/cli.mjs verify-bundle examples/physical-review.json --project examples/routing-laboratory.json --technology examples/copper-technology.json
+      - name: Actual route-generation and copper qualification
+        run: |
+          npm run qualify:routing -- validation-artifacts/qualification-routing.json | tee validation-artifacts/routing.log
+          npm run qualify:copper -- validation-artifacts/qualification-copper.json | tee validation-artifacts/copper.log
+          npm run qualify:v03 -- validation-artifacts/qualification-assignment.json | tee validation-artifacts/assignment.log
+      - name: Rebuild and test the actual exported ZIP
+        run: |
+          python scripts/package-release.py --output "$RUNNER_TEMP/OpenBumpPlan-v0.4.0-source.zip" | tee validation-artifacts/clean-package.log
+          python - <<'PY'
+          import hashlib,json,os,pathlib
+          m=json.loads(pathlib.Path('.publication-v04/ready.json').read_text())
+          assert hashlib.sha256((pathlib.Path(os.environ['RUNNER_TEMP'])/'OpenBumpPlan-v0.4.0-source.zip').read_bytes()).hexdigest()==m['source_zip_sha256']
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Node 24 regression suite
+        run: npm test | tee validation-artifacts/node24.tap
+      - name: Install browser harness
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Actual 4096-route standalone and native-origin qualification
+        run: |
+          CHROMIUM=$(python -c 'from playwright.sync_api import sync_playwright; p=sync_playwright().start(); print(p.chromium.executable_path); p.stop()')
+          python -u -B scripts/qualify-browser.py --suite new --mode both --chromium "$CHROMIUM" --output "$RUNNER_TEMP/v04-browser"
+          cp -r "$RUNNER_TEMP/v04-browser" validation-artifacts/browser
+      - name: Publish qualified ordinary source without rewriting history
+        run: |
+          npm run verify:release
+          cp .publication-v04/ready.json validation-artifacts/transfer-manifest.json
+          cp dist/openbumpplan.html validation-artifacts/
+          rm -r .publication-v04
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- . ':!.github' ':!.publication' ':!validation-artifacts'
+          git diff --cached --check
+          git commit -m 'Publish tested v0.4.0 generated routing, contact safety and replay release'
+          git push origin HEAD:upgrade/v0.4.0-routing-replay
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v04-routing-replay-qualification
+          retention-days: 30
+          path: |
+            validation-artifacts/
+            ${{ runner.temp }}/OpenBumpPlan-v0.4.0-source.zip
+            ${{ runner.temp }}/v04-browser/
