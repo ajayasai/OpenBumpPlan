@@ -2,7 +2,7 @@
   "manifest": {
     "type": "openbumpplan-review",
     "schemaVersion": 1,
-    "engineVersion": "0.3.1",
+    "engineVersion": "0.4.0",
     "digestAlgorithm": "SHA-256",
     "digests": {
       "project": "b7cba919f5e13a2549b6b8eb01f645429239fa805c9e5dacd3503c7fbc736909",
@@ -342,5 +342,5 @@
     },
     "copperVerification": null
   },
-  "manifestSHA256": "269a678398cde7b4b38815344a035d4352c96a80a474d97fd302c11dda7441a2"
+  "manifestSHA256": "86a3f784891b4f603f23aedb761c46331a4a7b6e179f2bebfe06c1580e7cae9d"
 }

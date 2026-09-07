@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { VERSION, stableStringify } from '../src/core/model.js';
 import { verifyCopper } from '../src/core/copper.js';
 import { verifyCopper as previousCopper } from '../tests/oracles/copper-v030.mjs';
-import { verifyRoutes } from '../src/core/routing.js';
+import { verifyRoutes, MAX_ROUTING_ASSIGNMENTS } from '../src/core/routing.js';
 import { createReviewBundle, verifyReviewBundle } from '../src/core/evidence.js';
 import { copperArray } from '../tests/copper-fixtures.mjs';
 
@@ -35,7 +35,7 @@ for (const [routeCount, cellCount] of [[64,64],[256,256],[512,512],[512,4096],[1
     }
   }
   let endToEnd = null;
-  if (routeCount <= 512) {
+  if (routeCount <= MAX_ROUTING_ASSIGNMENTS) {
     assert.equal(verifyRoutes(project,witness).ok,true);
     const routing = {...witness,technology};
     const bundle = await createReviewBundle(project,{routing});
@@ -48,7 +48,7 @@ for (const [routeCount, cellCount] of [[64,64],[256,256],[512,512],[512,4096],[1
   }
   const row = {
     routes:routeCount,sites:project.ports.length,inputSHA256:digest(input),
-    scope:routeCount<=512?'supported-grid-and-review':'supplied-witness-copper-only; exceeds the 512-route grid/router limit',
+    scope:routeCount<=MAX_ROUTING_ASSIGNMENTS?'supplied-witness-grid-copper-and-review; generation measured separately':'supplied-witness-copper-only',
     budgets,previous:{ok:previous.ok,complete:previous.complete,comparisons:previous.comparisons,rawMilliseconds:samples.previous,medianMilliseconds:median(samples.previous)},
     current:{ok:current.ok,complete:current.complete,comparisons:current.comparisons,spatialVisits:current.spatialVisits,rawMilliseconds:samples.current,medianMilliseconds:median(samples.current)},
     semanticAgreement:previous.complete?true:null,

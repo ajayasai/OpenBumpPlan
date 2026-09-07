@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 — generated routing scale and correctness hardening
+
+- Raise actual route generation and independent grid-check capacity from 512 to 4,096 assignments, without raising grid, expansion or witness-work limits.
+- Reuse generation-stamped A* arrays rather than allocating/clearing a full grid per net; preserve old paths and diagnostics on 80 randomized differential cases.
+- Reject contact/overlap for all nonnegative copper clearances, including tiny positive values that previously allowed contact.
+- Expose explicit grid bounds and terminal layers in the browser; bind results to engineering-control values as well as project state.
+- Add bounded XZ overlay decoding, 21 security regression tests, 4 real-browser scenarios and actual 4,096-route review replay.
+- Retain raw route-generation measurements and clearly distinguish favorable synthetic capacity from industrial qualification.
+- Regenerate current example review evidence with version 0.4.0; do not silently accept older engine-bound approvals.
+
 ## 0.3.1 — conservative spatial copper verification
 
 - Replace whole-board obstacle and pad-pair scans with deterministic two-dimensional BVH candidate filtering; preserve the independent continuous narrow phase, tolerances, physical assumptions and diagnostic order.

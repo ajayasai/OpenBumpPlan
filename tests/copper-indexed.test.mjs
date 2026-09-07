@@ -57,11 +57,11 @@ test('512 routes and 8192 sites pass full grid, copper and review replay without
  assert.equal((await verifyReviewBundle(review,{expectedTechnology:technology})).valid,true);
 });
 
-test('4096 supplied route witnesses pass independent copper verification; routing cap is unchanged',()=>{
+test('4096 supplied route witnesses pass both copper and expanded grid verification',()=>{
  const {project,witness,technology}=copperArray(4096);
  const checked=verifyCopper(project,witness,technology);
  assert.equal(checked.ok,true);assert.equal(checked.complete,true);assert.equal(checked.metrics.routed,4096);
- assert.equal(verifyRoutes(project,witness).ok,false); // Do not claim expanded router capacity.
+ assert.equal(verifyRoutes(project,witness).ok,true); // Actual generation is tested separately.
 });
 
 test('narrow-phase and spatial-work limits independently fail closed',()=>{

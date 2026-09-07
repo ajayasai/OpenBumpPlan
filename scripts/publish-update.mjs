@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Guarded publication of the prepared v0.3.1 overlay. Never force-pushes.
+/** Guarded publication of the prepared versioned overlay. Never force-pushes.
  * The archive manifest is an integrity record, not a digital publisher signature.
  * --verify-only checks local files without invoking GitHub or Git. */
 import fs from 'node:fs';
@@ -12,7 +12,7 @@ import { VERSION } from '../src/core/model.js';
 
 export const UPDATE_REPOSITORY = 'ajayasai/OpenBumpPlan';
 export const UPDATE_BASE = '7e87673bd63b601045c1d5a50e5448051ec759ef';
-export const UPDATE_BRANCH = `release/v${VERSION}-indexed-copper`;
+export const UPDATE_BRANCH = `release/v${VERSION}-scalable-routing`;
 export const MANIFEST_PATH = `docs/release-manifest-v${VERSION}.json`;
 export const REQUIRED_RELEASE_FILES = ['index.html','package.json','src/core/model.js','src/core/solver.js','src/core/routing.js','src/core/evidence.js','src/core/hash.js','dist/index.html','dist/openbumpplan.html','src/core/scalable.js','src/core/coupled-search.js','src/core/coupled-proof.js','src/core/copper.js','src/core/spatial-index.js','docs/release-validation.json'];
 const MAX_BYTES = 10_000_000;
@@ -111,7 +111,7 @@ export function main(args=process.argv.slice(2)) {
     run('git',['config','user.name','ajayasai'],{cwd:checkout});
     run('git',['config','user.email','11918904+ajayasai@users.noreply.github.com'],{cwd:checkout});
     run('git',['add','--',...publishFiles.map(e=>e.path)],{cwd:checkout});
-    run('git',['commit','-m',`Add OpenBumpPlan v${VERSION} indexed copper checks and reproducible release evidence`],{cwd:checkout});
+    run('git',['commit','-m',`Add OpenBumpPlan v${VERSION} scalable routing and independently replayable review evidence`],{cwd:checkout});
     const commit=run('git',['rev-parse','HEAD'],{cwd:checkout,capture:true});
     run('git',['push','origin',`HEAD:${UPDATE_BRANCH}`],{cwd:checkout});pushed=true;
     const remote=run('git',['ls-remote','origin',`refs/heads/${UPDATE_BRANCH}`],{cwd:checkout,capture:true}).split(/\s/)[0];

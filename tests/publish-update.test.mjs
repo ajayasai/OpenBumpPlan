@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {VERSION} from '../src/core/model.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -9,7 +10,7 @@ function fixture(fn) {
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'openbumpplan-manifest-test-'));
   const names=REQUIRED_RELEASE_FILES;
   const files=names.map(p=>{fs.mkdirSync(path.dirname(path.join(root,p)),{recursive:true});fs.writeFileSync(path.join(root,p),p);return {path:p,bytes:Buffer.byteLength(p),sha256:createHash('sha256').update(p).digest('hex')};});
-  try {return fn(root,{version:'0.3.1',repository:UPDATE_REPOSITORY,baseCommit:UPDATE_BASE,files});}
+  try {return fn(root,{version:VERSION,repository:UPDATE_REPOSITORY,baseCommit:UPDATE_BASE,files});}
   finally {fs.rmSync(root,{recursive:true,force:true});}
 }
 test('publication manifest verifies exact prepared bytes without network or writes',()=>fixture((root,m)=>assert.equal(verifyUpdateManifest(root,m).files,REQUIRED_RELEASE_FILES.length)));

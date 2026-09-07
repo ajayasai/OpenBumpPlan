@@ -1,6 +1,6 @@
 {
   "name": "openbumpplan",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "description": "Local-first die/package bump and ball-map planning, checks, optimization, and review",
   "type": "module",
@@ -19,6 +19,7 @@
     "publish:update": "node scripts/publish-update.mjs",
     "verify:release": "node scripts/publish-update.mjs --verify-only",
     "qualify:v03": "node scripts/qualify-v03.mjs",
-    "qualify:copper": "node scripts/qualify-copper.mjs"
+    "qualify:copper": "node scripts/qualify-copper.mjs",
+    "qualify:routing": "node scripts/qualify-routing.mjs"
   }
 }

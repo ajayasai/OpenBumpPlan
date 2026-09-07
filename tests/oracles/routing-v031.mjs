@@ -1,9 +1,7 @@
-import { assertProject, clone, effectiveSignals, worldPoint, transformPoint, stableStringify } from './model.js';
-import { analyze } from './rules.js';
-import { EPS, manhattan } from './geometry.js';
-import { SearchWorkspace } from './search-workspace.js';
-
-export const MAX_ROUTING_ASSIGNMENTS = 4096;
+/** Frozen v0.3.1 routing implementation. Only relative imports are relocated. */
+import { assertProject, clone, effectiveSignals, worldPoint, transformPoint, stableStringify } from '../../src/core/model.js';
+import { analyze } from '../../src/core/rules.js';
+import { EPS, manhattan } from '../../src/core/geometry.js';
 
 export function routingDesignKey(project) {
   const p = clone(project); delete p.audit; delete p.revision;
@@ -20,7 +18,7 @@ function context(project, fromKind, toKind, options = {}) {
   if (!project.rules.allowedStagePairs.some(([a,b]) => a === fromKind && b === toKind)) throw new Error('Routing requires an allowed stage.');
   const ctx = effectiveSignals(project);
   const edges = project.connections.filter(e => ctx.ports.get(e.from).kind === fromKind && ctx.ports.get(e.to).kind === toKind);
-  if (!edges.length || edges.length > MAX_ROUTING_ASSIGNMENTS) throw new Error(`Routing requires 1 to ${MAX_ROUTING_ASSIGNMENTS} assignments in the selected stage.`);
+  if (!edges.length || edges.length > 512) throw new Error('Routing requires 1 to 512 assignments in the selected stage.');
   const pitch = finite(options.pitch ?? 100,'pitch',0.001,1e7);
   const layers = finite(options.layers ?? 2,'layers',1,8,true);
   const clearance = finite(options.clearance ?? 0,'clearance',0,pitch*8);
@@ -66,10 +64,7 @@ function context(project, fromKind, toKind, options = {}) {
   }
   function staticBlocked(n,e) {
     const cell=n%plane;
-    if (blockedCells.has(cell)) return true;
-    const owners=siteOwners.get(cell);
-    if (owners) for (const id of owners) if(id!==e.from&&id!==e.to) return true;
-    return false;
+    return blockedCells.has(cell) || [...(siteOwners.get(cell)||[])].some(id=>id!==e.from&&id!==e.to);
   }
   const radius = Math.ceil(clearance/pitch);
   function halo(n) {
@@ -90,19 +85,17 @@ class MinHeap {
 function pathSearch(c, edge, occupied, budget, penalty = null) {
   const [start,goal]=c.endpoints.get(edge.id), [gx,gy,gz]=c.coords(goal), {pitch,viaCost,columns,rows,layers}=c.config;
   if(c.staticBlocked(start,edge)||c.staticBlocked(goal,edge)||!penalty&&(occupied.has(start)||occupied.has(goal)))return {path:null,reason:'blocked-terminal'};
-  if(budget.expansions>=budget.maxExpansions||performance.now()-budget.started>=budget.timeLimitMs)return {path:null,reason:'search-budget'};
-  const workspace=c.workspace??=new SearchWorkspace(c.count);
-  const epoch=workspace.begin(),dist=workspace.distance,prev=workspace.previous,seen=workspace.seen,closed=workspace.closed,heap=new MinHeap();
+  const dist=new Float64Array(c.count).fill(Infinity), prev=new Int32Array(c.count).fill(-1), closed=new Uint8Array(c.count), heap=new MinHeap();
   const h=n=>{const [x,y,z]=c.coords(n);return (Math.abs(x-gx)+Math.abs(y-gy))*pitch+Math.abs(z-gz)*viaCost;};
-  workspace.touch(start,0,-1);heap.push([h(start),start,0]);
+  dist[start]=0;heap.push([h(start),start,0]);
   while(heap.size){
     if(budget.expansions>=budget.maxExpansions||performance.now()-budget.started>=budget.timeLimitMs)return {path:null,reason:'search-budget'};
-    const [,n,g]=heap.pop();if(closed[n]===epoch||seen[n]!==epoch||g!==dist[n])continue;closed[n]=epoch;budget.expansions++;
+    const [,n,g]=heap.pop();if(closed[n]||g!==dist[n])continue;closed[n]=1;budget.expansions++;
     if(n===goal){const path=[];for(let v=goal;v!==-1;v=prev[v])path.push(c.coords(v));return {path:path.reverse(),reason:null};}
     const [x,y,z]=c.coords(n), neighbours=[];
     if(x)neighbours.push([n-1,pitch]);if(x+1<columns)neighbours.push([n+1,pitch]);if(y)neighbours.push([n-columns,pitch]);if(y+1<rows)neighbours.push([n+columns,pitch]);
     if(z)neighbours.push([n-c.plane,viaCost]);if(z+1<layers)neighbours.push([n+c.plane,viaCost]);
-    for(const [v,cost]of neighbours){if(closed[v]===epoch||c.staticBlocked(v,edge)||!penalty&&occupied.has(v))continue;const ng=g+cost+(penalty?penalty(v):0);if(seen[v]!==epoch||ng<dist[v]){workspace.touch(v,ng,n);heap.push([ng+h(v),v,ng]);}}
+    for(const [v,cost]of neighbours){if(closed[v]||c.staticBlocked(v,edge)||!penalty&&occupied.has(v))continue;const ng=g+cost+(penalty?penalty(v):0);if(ng<dist[v]){dist[v]=ng;prev[v]=n;heap.push([ng+h(v),v,ng]);}}
   }
   return {path:null,reason:'no-path-with-current-reservations'};
 }
@@ -133,7 +126,7 @@ export function routeStage(project,fromKind='pad',toKind='ball',options={}) {
     if(attemptedOrders===1||routes.length>best.routes.length||routes.length===best.routes.length&&routeMetrics(routes,c.config.pitch).wireLength<routeMetrics(best.routes,c.config.pitch).wireLength)best={routes,failures};
     if(!failures.length||budget.expansions>=maxExpansions||performance.now()-budget.started>=timeLimitMs)break;
   }
-  Object.assign(result,best,{metrics:routeMetrics(best.routes,c.config.pitch),expansions:budget.expansions,attemptedOrders,searchStats:c.workspace?.stats()??null,elapsedMs:performance.now()-budget.started});
+  Object.assign(result,best,{metrics:routeMetrics(best.routes,c.config.pitch),expansions:budget.expansions,attemptedOrders,elapsedMs:performance.now()-budget.started});
   const verification=verifyRoutes(project,result);result.verification=verification;result.verified=verification.ok;
   result.status=verification.ok?'routed':best.failures.length?'partial':'constraint-failed';
   result.message=verification.ok?'All selected-stage routes independently checked on the declared conservative grid. Not electrical or manufacturing signoff.':
@@ -241,6 +234,6 @@ export function routeNegotiated(project,fromKind='pad',toKind='ball',options={})
     if(check.ok||routes.length>best.routes.length||routes.length===best.routes.length&&check.issues.length<bestIssues){best=candidate;bestIssues=check.issues.length;}
     if(check.ok)break;
   }
-  return {...best,strategy:'negotiated-congestion',negotiationIterations:iterations,expansions:budget.expansions,negotiationSearchStats:c.workspace?.stats()??null,elapsedMs:performance.now()-started,
+  return {...best,strategy:'negotiated-congestion',negotiationIterations:iterations,expansions:budget.expansions,elapsedMs:performance.now()-started,
     message:best.verified?'A congestion-repaired route witness passed an independent grid check. No electrical or manufacturing signoff is implied.':'Negotiation budget exhausted without a valid complete witness. This is NOT a proof of unroutability.'};
 }

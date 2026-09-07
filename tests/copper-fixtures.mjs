@@ -6,7 +6,8 @@ export const fineTechnology = {units:'um', traceWidth:0.2, viaDiameter:0.3, padD
 
 /** Analytically constructed L routes, not optimizer-generated success cases.
  * Every site has its own 8x8 cell; reserved sites exercise obstacle indexing.
- * More than 512 routes are COPPER-ONLY tests, outside the router's declared cap.
+ * These are supplied witnesses, not generated-route qualification. The separate
+ * routing qualification exercises actual A* generation up to 4096 nets.
  */
 export function copperArray(routeCount, cellCount = routeCount) {
   if (!Number.isInteger(routeCount) || routeCount < 1 || !Number.isInteger(cellCount) ||

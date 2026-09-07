@@ -4,27 +4,30 @@
 
 Local-first planning for **IC pads → microbumps → interposer sites → package balls → PCB sites**. Edit, constrain, optimize, review and export without uploading design data.
 
-**v0.3.1 · MIT license · engineering alpha.** This release retains scalable certified assignments, hard-constraint search with proof replay, congestion-repair routing and continuous finite-width copper checks. It is **not** a qualified foundry, electrical or thermal signoff tool, and superiority over commercial EDA products has **not** been demonstrated.
+**v0.4.0 · MIT license · engineering alpha.** The route generator and independent grid checker now accept up to **4,096 assignments**, with the same grid and search-work ceilings. It is **not** qualified foundry, electrical, thermal or mechanical signoff. Superiority over commercial EDA products has not been demonstrated.
 
-## New in v0.3.1: scalable continuous copper verification
+## New in v0.4.0: actual route generation at larger scale
 
-The independent copper checker now uses a conservative two-dimensional bounding-volume index before its unchanged capsule/disc distance calculation. Widths, clearances, keep-outs, layer checks and acceptance tolerances are **not relaxed**. A separate bounded spatial-work counter prevents pathological index traversal from receiving an all-clear result.
+Reusable, generation-stamped A* search arrays replace allocation and whole-grid clearing for every attempted net. The route algorithm retains its neighbour and tie order; 80 fixed randomized cases produce the same paths and diagnostics as a frozen v0.3.1 implementation. This does not remove worst-case routing difficulty or increase the existing grid limit.
 
-Five measured local runs on constructed, separated L-route fixtures:
+Five alternating-order local measurements after warm-up, against **OpenBumpPlan v0.3.1**, on synthetic separated routes:
 
-| Routes / sites | Preceding verifier | v0.3.1 | Interpretation |
-|---|---|---|---|
-| 64 / 128 | 7.418 ms median | 6.217 ms median | 1.19x; both complete |
-| 256 / 512 | 29.850 ms median | 28.643 ms median | 1.04x; both complete |
-| 512 / 1,024 | 133.533 ms median | 44.413 ms median | 3.01x; both complete |
-| 512 / 8,192 | Incomplete at 2,000,001 comparisons | Complete; 344.309 ms median | Full grid and review replay also pass |
-| 4,096 / 8,192 | Incomplete | Complete; 546.007 ms median | **Supplied-witness copper-only**, not router capacity |
+| Actual generated routes / sites | v0.3.1 median | v0.4.0 median | Ratio |
+|---|---:|---:|---:|
+| 64 / 128 | 18.925 ms | 15.475 ms | 1.22x |
+| 256 / 512 | 50.252 ms | 27.017 ms | 1.86x |
+| 512 / 1,024 | 80.538 ms | 38.484 ms | 2.09x |
+| 512 / 8,192 | 426.184 ms | 276.202 ms | 1.54x |
 
-These are synthetic comparisons with the frozen preceding OpenBumpPlan checker, not commercial tools. The large incomplete runs are **not speedup comparisons**; the new version may take longer because it finishes the work. The router and grid witness checker still support at most **512 assignments**. Raw samples, input hashes, work counts and exact protocol: [copper qualification](docs/qualification-copper-v0.3.1.json). [Algorithm and release notes](docs/V0.3.1.md).
+The new version also **generates 4,096 routes**, checks grid occupancy and continuous copper geometry, and replays the project/technology-bound review. That synthetic single-layer case takes 1.348 s median for generation plus grid/copper checks locally. Review creation/replay is measured separately. The old router rejects more than 512 assignments, so there is no equivalent-work speedup ratio at 4,096. This is not evidence for congested industrial designs or commercial-tool superiority. [Raw protocol, samples and hashes](docs/qualification-routing-v0.4.0.json).
+
+The browser exposes explicit grid origins, dimensions and terminal layers. Changing engineering controls invalidates the previous result and disables stale review export. Independent clearance checking now rejects copper contact even for tiny positive clearance values. Archive decoding has pre-expansion output and decoder-memory limits, with 21 Python security regressions.
+
+[Engineering details](docs/V0.4.0.md) · [Validation boundaries](docs/VALIDATION-V0.4.0.md) · [Historical indexed-checker qualification](docs/qualification-copper-v0.3.1.json)
 
 ## Run
 
-Use Node.js 22 or newer. No npm installation or runtime dependencies:
+Use Node.js 22 or newer. No npm installation or runtime dependencies. Running the complete test suite additionally requires Python 3 (standard library only):
 
 ```sh
 git clone https://github.com/ajayasai/OpenBumpPlan.git
@@ -34,7 +37,7 @@ npm start
 
 Open **http://127.0.0.1:4173**. `dist/openbumpplan.html` also bundles the app, styles and workers into one offline file. File-origin browser policies may restrict workers/storage; the local server is the preferred fallback. Export JSON for durable backups. `private: true` in `package.json` prevents accidental npm publication; the GitHub repository is public.
 
-**v0.3.1 validation:** 741 Node tests and 31 standalone Chromium scenarios pass locally; the extracted source package rebuilds and passes all 741 tests again. Local native-origin navigation was blocked by administrator policy, not bypassed. [Exact validation scope](docs/VALIDATION-V0.3.1.md).
+**v0.4.0 validation:** 868 Node tests, including a wrapper for 21 Python security tests, and 35 standalone Chromium scenarios pass locally. Native-localhost browser navigation is blocked by administrator policy in this environment and is not counted as passed. Remote results must be read from the actual GitHub Actions run. [Exact scope](docs/VALIDATION-V0.4.0.md).
 
 ## What is materially different in v0.3
 
@@ -105,7 +108,9 @@ npm test
 npm run build
 npm run qualify:v03
 npm run qualify:copper
+npm run qualify:routing
 npm run verify:release
+python tests/browser_v04.py --chromium /path/to/chromium --output-dir /tmp/openbump-browser
 python tests/browser_test.py --chromium /path/to/chromium
 python tests/engineering_browser_test.py --chromium /path/to/chromium
 python tests/browser_v03.py --chromium /path/to/chromium
