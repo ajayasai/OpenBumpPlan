@@ -1,0 +1,161 @@
+name: Qualify and publish indexed copper upgrade
+on:
+  push:
+    branches: ['upgrade/v0.3.1-indexed-copper']
+    paths: ['.publication/copper-ready.json', '.github/workflows/qualify-indexed-copper.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: qualify-indexed-copper
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify both archives and apply the exact bounded upgrade
+        run: |
+          test "$GITHUB_REF_NAME" = 'upgrade/v0.3.1-indexed-copper'
+          python - <<'PY'
+          import base64, hashlib, io, json, lzma, os, pathlib, subprocess, tarfile
+          root=pathlib.Path('.').resolve()
+          def safe(name):
+              p=pathlib.PurePosixPath(name)
+              if p.is_absolute() or p.as_posix()!=name or '..' in p.parts or not p.parts or p.parts[0] in ('.git','.github','.publication'):
+                  raise ValueError('Unsafe archive or patch path: '+name)
+              cursor=root
+              for part in p.parts:
+                  cursor=cursor/part
+                  if cursor.is_symlink(): raise ValueError('Destination symlink: '+name)
+              return root/name
+          def load(manifest_name,prefix):
+              m=json.loads((root/'.publication'/manifest_name).read_text())
+              parts=sorted((root/'.publication').glob(prefix+'[0-9][0-9].b64'))
+              if len(parts)!=m['parts'] or not 1<=len(parts)<=30: raise ValueError('Incorrect transfer chunk count')
+              data=base64.b64decode(''.join(p.read_text().strip() for p in parts),validate=True)
+              if len(data)>500000 or hashlib.sha256(data).hexdigest()!=m['archive_sha256']: raise ValueError('Archive checksum mismatch')
+              decoder=lzma.LZMADecompressor(memlimit=128*1024*1024)
+              expanded=decoder.decompress(data,max_length=10000001)
+              if not decoder.eof or decoder.unused_data or len(expanded)>10000000: raise ValueError('Archive decompression limit or trailing stream')
+              with tarfile.open(fileobj=io.BytesIO(expanded),mode='r:') as archive:
+                  members=archive.getmembers()
+                  names=[x.name for x in members]
+                  if len(names)>500 or len(names)!=len(set(names)) or len(m['members'])!=len(names) or set(names)!=set(m['members']): raise ValueError('Archive member set mismatch')
+                  contents={}
+                  for member in members:
+                      safe(member.name)
+                      if not member.isfile() or member.size>5000000: raise ValueError('Non-regular or oversized archive member')
+                      contents[member.name]=archive.extractfile(member).read()
+              return m,contents
+          base,base_files=load('ready.json','part-')
+          upgrade,added=load('copper-ready.json','copper-')
+          if upgrade['base_archive_sha256']!=base['archive_sha256'] or upgrade['version']!='0.3.1': raise ValueError('Unexpected upgrade base/version')
+          for name,data in base_files.items():
+              p=safe(name);p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
+          patch=pathlib.Path(os.environ['RUNNER_TEMP'])/'indexed-copper.patch'
+          patch.write_bytes(added.pop('changes.patch'))
+          stat=subprocess.check_output(['git','apply','--numstat','-z',str(patch)]).decode().rstrip('\0')
+          paths=[entry.split('\t',2)[2] for entry in stat.split('\0')]
+          if len(paths)!=len(upgrade['patched_files']) or set(paths)!=set(upgrade['patched_files']): raise ValueError('Unexpected patch target set')
+          for name in paths: safe(name)
+          subprocess.run(['git','apply','--check',str(patch)],check=True)
+          subprocess.run(['git','apply',str(patch)],check=True)
+          for name,data in added.items():
+              p=safe(name)
+              if p.exists(): raise ValueError('New archive path already exists: '+name)
+              p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
+          if json.loads((root/'package.json').read_text())['version']!='0.3.1': raise ValueError('Engine version mismatch')
+          print(f'Verified and applied {len(base_files)} base files, {len(paths)} patches and {len(added)} new files')
+          PY
+          mkdir -p validation-artifacts
+          tar --exclude=./.git --exclude=./.publication --exclude=./validation-artifacts -czf "$RUNNER_TEMP/v031-expanded-source.tar.gz" .
+      - name: Verify exact build, release manifest and all Node tests
+        run: |
+          npm run build
+          python - <<'PY'
+          import hashlib,json,pathlib
+          expected=json.loads(pathlib.Path('.publication/copper-ready.json').read_text())['build_sha256']
+          assert hashlib.sha256(pathlib.Path('dist/openbumpplan.html').read_bytes()).hexdigest()==expected, 'Standalone build differs'
+          PY
+          npm run verify:release
+          npm test | tee validation-artifacts/node22.tap
+          node scripts/cli.mjs verify-coupled examples/pair-bottleneck.json examples/coupled-proof.json
+          node scripts/cli.mjs verify-copper examples/routing-laboratory.json examples/physical-routes.json --technology examples/copper-technology.json
+          node scripts/cli.mjs verify-bundle examples/physical-review.json --project examples/routing-laboratory.json --technology examples/copper-technology.json
+      - name: Reproduce both qualification protocols without rewriting retained evidence
+        run: |
+          cp docs/qualification-v0.3.0.json "$RUNNER_TEMP/retained-v03.json"
+          npm run qualify:v03 | tee validation-artifacts/assignment-routing.log
+          cp docs/qualification-v0.3.0.json validation-artifacts/qualification-v03.json
+          mv "$RUNNER_TEMP/retained-v03.json" docs/qualification-v0.3.0.json
+          npm run qualify:copper -- validation-artifacts/qualification-copper.json | tee validation-artifacts/copper.log
+      - name: Qualify the actual exported source package from a clean extraction
+        run: |
+          python scripts/package-release.py --output "$RUNNER_TEMP/OpenBumpPlan-0.3.1-source.zip" | tee validation-artifacts/clean-package.tap
+      - name: Install browser test dependencies
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Test bundled workers, downloads and real-origin persistence
+        run: |
+          python - <<'PY'
+          import json,pathlib,shutil,subprocess,time
+          from playwright.sync_api import sync_playwright
+          docs=pathlib.Path('docs');dest=pathlib.Path('validation-artifacts/browser');dest.mkdir(parents=True)
+          with sync_playwright() as p: chromium=p.chromium.executable_path
+          plan=[('planning','browser_test.py',False),('engineering','engineering_browser_test.py',False),('copper','browser_v03.py',False),('engineering-native','engineering_browser_test.py',True),('copper-native','browser_v03.py',True)]
+          results=[]
+          for name,script,native in plan:
+              saved={p.relative_to(docs):p.read_bytes() for p in docs.rglob('*') if p.is_file()}
+              output=dest/name;output.mkdir()
+              start=time.monotonic()
+              try:
+                  args=['python','tests/'+script,'--chromium',chromium]+(['--native'] if native else [])
+                  with (output/'run.log').open('w') as log: result=subprocess.run(args,stdout=log,stderr=subprocess.STDOUT)
+                  for p in docs.rglob('*'):
+                      if p.is_file() and (p.relative_to(docs) not in saved or p.read_bytes()!=saved[p.relative_to(docs)]):
+                          target=output/p.relative_to(docs);target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,target)
+                  results.append({'name':name,'exitCode':result.returncode,'seconds':time.monotonic()-start})
+                  (dest/'summary.json').write_text(json.dumps(results,indent=2)+'\n')
+                  print(results[-1],flush=True)
+                  if result.returncode: raise RuntimeError('Browser qualification failed: '+name)
+              finally:
+                  for p in docs.rglob('*'):
+                      if p.is_file() and p.relative_to(docs) not in saved: p.unlink()
+                  for p,data in saved.items(): (docs/p).write_bytes(data)
+          PY
+      - name: Publish only the completely qualified source to its review branch
+        run: |
+          npm run verify:release
+          cp .publication/copper-ready.json validation-artifacts/transfer-manifest.json
+          cp dist/openbumpplan.html validation-artifacts/
+          rm -r .publication
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- . ':!.github' ':!validation-artifacts'
+          git diff --cached --check
+          git commit -m 'Publish v0.3.1 verified source: indexed copper checks and clean-package validation'
+          git push origin HEAD:upgrade/v0.3.1-indexed-copper
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: indexed-copper-v0.3.1-qualification
+          retention-days: 30
+          path: |
+            validation-artifacts/
+            ${{ runner.temp }}/OpenBumpPlan-0.3.1-source.zip
+            ${{ runner.temp }}/v031-expanded-source.tar.gz

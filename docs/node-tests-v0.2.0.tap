@@ -1,0 +1,2270 @@
+
+> openbumpplan@0.2.0 test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# Subtest: CLI solve materializes a checked coupled solution and scoped report
+ok 1 - CLI solve materializes a checked coupled solution and scoped report
+  ---
+  duration_ms: 220.981524
+  type: 'test'
+  ...
+# Subtest: CLI unknown/infeasible search does not create a pretend solution file
+ok 2 - CLI unknown/infeasible search does not create a pretend solution file
+  ---
+  duration_ms: 90.402753
+  type: 'test'
+  ...
+# Subtest: CLI route/verify/SVG pipeline returns independently checked witnesses
+ok 3 - CLI route/verify/SVG pipeline returns independently checked witnesses
+  ---
+  duration_ms: 175.468666
+  type: 'test'
+  ...
+# Subtest: CLI route failure writes diagnostic evidence but exits nonzero
+ok 4 - CLI route failure writes diagnostic evidence but exits nonzero
+  ---
+  duration_ms: 245.070964
+  type: 'test'
+  ...
+# Subtest: CLI bundle supports pinned-current-design validation
+ok 5 - CLI bundle supports pinned-current-design validation
+  ---
+  duration_ms: 367.828374
+  type: 'test'
+  ...
+# Subtest: CLI signed bundle accepts only the externally supplied trusted key
+ok 6 - CLI signed bundle accepts only the externally supplied trusted key
+  ---
+  duration_ms: 242.682087
+  type: 'test'
+  ...
+# Subtest: CLI signer rejects omitted private key
+ok 7 - CLI signer rejects omitted private key
+  ---
+  duration_ms: 62.539415
+  type: 'test'
+  ...
+# Subtest: CLI invalid numerical options return a usage error
+ok 8 - CLI invalid numerical options return a usage error
+  ---
+  duration_ms: 139.092236
+  type: 'test'
+  ...
+# Subtest: CLI rejects invalid route configuration before writing output
+ok 9 - CLI rejects invalid route configuration before writing output
+  ---
+  duration_ms: 98.190365
+  type: 'test'
+  ...
+# Subtest: CLI bundle tampering returns check failure rather than a green exit
+ok 10 - CLI bundle tampering returns check failure rather than a green exit
+  ---
+  duration_ms: 90.059268
+  type: 'test'
+  ...
+# Subtest: CLI corrupt JSON returns a usage error without a stack dump
+ok 11 - CLI corrupt JSON returns a usage error without a stack dump
+  ---
+  duration_ms: 104.41188
+  type: 'test'
+  ...
+# Subtest: CLI help documents the actual new commands
+ok 12 - CLI help documents the actual new commands
+  ---
+  duration_ms: 62.654419
+  type: 'test'
+  ...
+# Subtest: SHA-256 uses known standard vector
+ok 13 - SHA-256 uses known standard vector
+  ---
+  duration_ms: 6.76891
+  type: 'test'
+  ...
+# Subtest: canonical hashes ignore object-key order, not values
+ok 14 - canonical hashes ignore object-key order, not values
+  ---
+  duration_ms: 2.305243
+  type: 'test'
+  ...
+# Subtest: review bundle is reproducible without wall-clock metadata
+ok 15 - review bundle is reproducible without wall-clock metadata
+  ---
+  duration_ms: 11.39333
+  type: 'test'
+  ...
+# Subtest: valid bundle independently reruns planning rules
+ok 16 - valid bundle independently reruns planning rules
+  ---
+  duration_ms: 3.444996
+  type: 'test'
+  ...
+# Subtest: hard-rule-failing design is valid evidence, not a passing design
+ok 17 - hard-rule-failing design is valid evidence, not a passing design
+  ---
+  duration_ms: 3.803521
+  type: 'test'
+  ...
+# Subtest: valid routing witness is included and reverified
+ok 18 - valid routing witness is included and reverified
+  ---
+  duration_ms: 7.016202
+  type: 'test'
+  ...
+# Subtest: partial route cannot be promoted into an approved bundle
+ok 19 - partial route cannot be promoted into an approved bundle
+  ---
+  duration_ms: 1.941707
+  type: 'test'
+  ...
+# Subtest: stale route cannot be bundled after a design change
+ok 20 - stale route cannot be bundled after a design change
+  ---
+  duration_ms: 1.60564
+  type: 'test'
+  ...
+# Subtest: expected project SHA catches replay of an otherwise valid old bundle
+ok 21 - expected project SHA catches replay of an otherwise valid old bundle
+  ---
+  duration_ms: 6.563065
+  type: 'test'
+  ...
+# Subtest: payload tampering detected: project
+ok 22 - payload tampering detected: project
+  ---
+  duration_ms: 4.759149
+  type: 'test'
+  ...
+# Subtest: payload tampering detected: validation
+ok 23 - payload tampering detected: validation
+  ---
+  duration_ms: 5.287171
+  type: 'test'
+  ...
+# Subtest: payload tampering detected: routing
+ok 24 - payload tampering detected: routing
+  ---
+  duration_ms: 5.357454
+  type: 'test'
+  ...
+# Subtest: payload tampering detected: routingVerification
+ok 25 - payload tampering detected: routingVerification
+  ---
+  duration_ms: 11.978133
+  type: 'test'
+  ...
+# Subtest: manifest pass-flag tampering detected
+ok 26 - manifest pass-flag tampering detected
+  ---
+  duration_ms: 3.381752
+  type: 'test'
+  ...
+# Subtest: rehashing fabricated stored validation does not bypass independent rerun
+ok 27 - rehashing fabricated stored validation does not bypass independent rerun
+  ---
+  duration_ms: 9.499492
+  type: 'test'
+  ...
+# Subtest: unknown engine version cannot silently reuse a previous check
+ok 28 - unknown engine version cannot silently reuse a previous check
+  ---
+  duration_ms: 1.038364
+  type: 'test'
+  ...
+# Subtest: unexpected payload entries rejected
+ok 29 - unexpected payload entries rejected
+  ---
+  duration_ms: 1.007508
+  type: 'test'
+  ...
+# Subtest: missing digest rejected
+ok 30 - missing digest rejected
+  ---
+  duration_ms: 8.743191
+  type: 'test'
+  ...
+# Subtest: valid Ed25519 signature authenticates against external trusted key
+ok 31 - valid Ed25519 signature authenticates against external trusted key
+  ---
+  duration_ms: 9.092925
+  type: 'test'
+  ...
+# Subtest: wrong trusted key cannot be replaced with an embedded key
+ok 32 - wrong trusted key cannot be replaced with an embedded key
+  ---
+  duration_ms: 7.750378
+  type: 'test'
+  ...
+# Subtest: a signed old design still fails expected-project freshness
+ok 33 - a signed old design still fails expected-project freshness
+  ---
+  duration_ms: 10.74595
+  type: 'test'
+  ...
+# Subtest: replacing payloads and every unkeyed hash cannot forge a signature
+ok 34 - replacing payloads and every unkeyed hash cannot forge a signature
+  ---
+  duration_ms: 8.377938
+  type: 'test'
+  ...
+# Subtest: signature body tampering is rejected
+ok 35 - signature body tampering is rejected
+  ---
+  duration_ms: 7.460045
+  type: 'test'
+  ...
+# Subtest: malformed signature is rejected
+ok 36 - malformed signature is rejected
+  ---
+  duration_ms: 13.506403
+  type: 'test'
+  ...
+# Subtest: missing signature cannot be called authenticated
+ok 37 - missing signature cannot be called authenticated
+  ---
+  duration_ms: 15.016763
+  type: 'test'
+  ...
+# Subtest: signer refuses a hard-rule-failing project
+ok 38 - signer refuses a hard-rule-failing project
+  ---
+  duration_ms: 2.087905
+  type: 'test'
+  ...
+# Subtest: signer refuses corrupted bundle
+ok 39 - signer refuses corrupted bundle
+  ---
+  duration_ms: 2.427608
+  type: 'test'
+  ...
+# Subtest: non-Ed25519 signing key rejected
+ok 40 - non-Ed25519 signing key rejected
+  ---
+  duration_ms: 3.162323
+  type: 'test'
+  ...
+# Subtest: canonical signature payload is independent of manifest property insertion order
+ok 41 - canonical signature payload is independent of manifest property insertion order
+  ---
+  duration_ms: 4.86968
+  type: 'test'
+  ...
+# Subtest: signature failure clears routing pass flags (malformed key)
+ok 42 - signature failure clears routing pass flags (malformed key)
+  ---
+  duration_ms: 10.281095
+  type: 'test'
+  ...
+# Subtest: signature failure clears routing pass flags (wrong key)
+ok 43 - signature failure clears routing pass flags (wrong key)
+  ---
+  duration_ms: 9.466498
+  type: 'test'
+  ...
+# Subtest: Manhattan metric
+ok 44 - Manhattan metric
+  ---
+  duration_ms: 1.349533
+  type: 'test'
+  ...
+# Subtest: Euclidean metric
+ok 45 - Euclidean metric
+  ---
+  duration_ms: 0.148628
+  type: 'test'
+  ...
+# Subtest: proper crossing
+ok 46 - proper crossing
+  ---
+  duration_ms: 0.264383
+  type: 'test'
+  ...
+# Subtest: endpoint touching excluded
+ok 47 - endpoint touching excluded
+  ---
+  duration_ms: 0.23777
+  type: 'test'
+  ...
+# Subtest: collinear overlap separate from crossing
+ok 48 - collinear overlap separate from crossing
+  ---
+  duration_ms: 0.170294
+  type: 'test'
+  ...
+# Subtest: collinear nonoverlap
+ok 49 - collinear nonoverlap
+  ---
+  duration_ms: 0.166309
+  type: 'test'
+  ...
+# Subtest: zero-length assignment excluded
+ok 50 - zero-length assignment excluded
+  ---
+  duration_ms: 0.147429
+  type: 'test'
+  ...
+# Subtest: rectangle boundary inclusive
+ok 51 - rectangle boundary inclusive
+  ---
+  duration_ms: 0.223446
+  type: 'test'
+  ...
+# Subtest: same-stage crossings counted
+ok 52 - same-stage crossings counted
+  ---
+  duration_ms: 9.498573
+  type: 'test'
+  ...
+# Subtest: different-stage projected crossing ignored
+ok 53 - different-stage projected crossing ignored
+  ---
+  duration_ms: 0.450353
+  type: 'test'
+  ...
+# Subtest: same-net crossing ignored
+ok 54 - same-net crossing ignored
+  ---
+  duration_ms: 0.197464
+  type: 'test'
+  ...
+# Subtest: budget exhaustion explicitly incomplete
+ok 55 - budget exhaustion explicitly incomplete
+  ---
+  duration_ms: 0.092336
+  type: 'test'
+  ...
+# Subtest: spatial index agrees with brute force including negative coordinates
+ok 56 - spatial index agrees with brute force including negative coordinates
+  ---
+  duration_ms: 4.595275
+  type: 'test'
+  ...
+# Subtest: sweep agrees with exhaustive pair checking
+ok 57 - sweep agrees with exhaustive pair checking
+  ---
+  duration_ms: 12.400986
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 0 bytes
+ok 58 - portable SHA-256 equals Node/OpenSSL: 0 bytes
+  ---
+  duration_ms: 2.021214
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 1 bytes
+ok 59 - portable SHA-256 equals Node/OpenSSL: 1 bytes
+  ---
+  duration_ms: 0.480008
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 2 bytes
+ok 60 - portable SHA-256 equals Node/OpenSSL: 2 bytes
+  ---
+  duration_ms: 2.066299
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 3 bytes
+ok 61 - portable SHA-256 equals Node/OpenSSL: 3 bytes
+  ---
+  duration_ms: 0.594009
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 7 bytes
+ok 62 - portable SHA-256 equals Node/OpenSSL: 7 bytes
+  ---
+  duration_ms: 0.312129
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 31 bytes
+ok 63 - portable SHA-256 equals Node/OpenSSL: 31 bytes
+  ---
+  duration_ms: 0.458173
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 55 bytes
+ok 64 - portable SHA-256 equals Node/OpenSSL: 55 bytes
+  ---
+  duration_ms: 0.251506
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 56 bytes
+ok 65 - portable SHA-256 equals Node/OpenSSL: 56 bytes
+  ---
+  duration_ms: 0.155337
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 57 bytes
+ok 66 - portable SHA-256 equals Node/OpenSSL: 57 bytes
+  ---
+  duration_ms: 0.362857
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 63 bytes
+ok 67 - portable SHA-256 equals Node/OpenSSL: 63 bytes
+  ---
+  duration_ms: 0.561876
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 64 bytes
+ok 68 - portable SHA-256 equals Node/OpenSSL: 64 bytes
+  ---
+  duration_ms: 0.207731
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 65 bytes
+ok 69 - portable SHA-256 equals Node/OpenSSL: 65 bytes
+  ---
+  duration_ms: 0.112865
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 119 bytes
+ok 70 - portable SHA-256 equals Node/OpenSSL: 119 bytes
+  ---
+  duration_ms: 0.240455
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 120 bytes
+ok 71 - portable SHA-256 equals Node/OpenSSL: 120 bytes
+  ---
+  duration_ms: 0.855705
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 127 bytes
+ok 72 - portable SHA-256 equals Node/OpenSSL: 127 bytes
+  ---
+  duration_ms: 0.145139
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 128 bytes
+ok 73 - portable SHA-256 equals Node/OpenSSL: 128 bytes
+  ---
+  duration_ms: 0.160926
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 129 bytes
+ok 74 - portable SHA-256 equals Node/OpenSSL: 129 bytes
+  ---
+  duration_ms: 0.18233
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 255 bytes
+ok 75 - portable SHA-256 equals Node/OpenSSL: 255 bytes
+  ---
+  duration_ms: 1.065618
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 256 bytes
+ok 76 - portable SHA-256 equals Node/OpenSSL: 256 bytes
+  ---
+  duration_ms: 0.214684
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 1024 bytes
+ok 77 - portable SHA-256 equals Node/OpenSSL: 1024 bytes
+  ---
+  duration_ms: 1.735859
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 65537 bytes
+ok 78 - portable SHA-256 equals Node/OpenSSL: 65537 bytes
+  ---
+  duration_ms: 31.186897
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 equals Node/OpenSSL: 1000000 bytes
+ok 79 - portable SHA-256 equals Node/OpenSSL: 1000000 bytes
+  ---
+  duration_ms: 108.33601
+  type: 'test'
+  ...
+# Subtest: portable UTF-8 SHA abc
+ok 80 - portable UTF-8 SHA abc
+  ---
+  duration_ms: 0.193991
+  type: 'test'
+  ...
+# Subtest: portable UTF-8 SHA தமிழ் 日本語 😀
+ok 81 - portable UTF-8 SHA தமிழ் 日本語 😀
+  ---
+  duration_ms: 0.14386
+  type: 'test'
+  ...
+# Subtest: portable UTF-8 SHA aaaaaaaaaaaaaaa
+ok 82 - portable UTF-8 SHA aaaaaaaaaaaaaaa
+  ---
+  duration_ms: 35.826569
+  type: 'test'
+  ...
+# Subtest: portable UTF-8 SHA �
+ok 83 - portable UTF-8 SHA �
+  ---
+  duration_ms: 0.176046
+  type: 'test'
+  ...
+# Subtest: portable UTF-8 SHA  
+ok 84 - portable UTF-8 SHA  
+  ---
+  duration_ms: 0.095838
+  type: 'test'
+  ...
+# Subtest: fallback rejects non-byte inputs
+ok 85 - fallback rejects non-byte inputs
+  ---
+  duration_ms: 0.541572
+  type: 'test'
+  ...
+# Subtest: CSV handles BOM, CRLF, embedded comma, quotes, and newline
+ok 86 - CSV handles BOM, CRLF, embedded comma, quotes, and newline
+  ---
+  duration_ms: 1.537418
+  type: 'test'
+  ...
+# Subtest: malformed CSV rejected: "a,a\\n1,2"
+ok 87 - malformed CSV rejected: "a,a\\n1,2"
+  ---
+  duration_ms: 0.434324
+  type: 'test'
+  ...
+# Subtest: malformed CSV rejected: "a,b\\n1"
+ok 88 - malformed CSV rejected: "a,b\\n1"
+  ---
+  duration_ms: 0.120754
+  type: 'test'
+  ...
+# Subtest: malformed CSV rejected: "a,b\\n1,2,3"
+ok 89 - malformed CSV rejected: "a,b\\n1,2,3"
+  ---
+  duration_ms: 0.089152
+  type: 'test'
+  ...
+# Subtest: malformed CSV rejected: "a\\n\\"unterminated"
+ok 90 - malformed CSV rejected: "a\\n\\"unterminated"
+  ---
+  duration_ms: 0.253085
+  type: 'test'
+  ...
+# Subtest: malformed CSV rejected: "a\\nb\\"c"
+ok 91 - malformed CSV rejected: "a\\nb\\"c"
+  ---
+  duration_ms: 0.087926
+  type: 'test'
+  ...
+# Subtest: malformed CSV rejected: "a\\n\\"b\\"x"
+ok 92 - malformed CSV rejected: "a\\n\\"b\\"x"
+  ---
+  duration_ms: 0.122616
+  type: 'test'
+  ...
+# Subtest: unit conversion mm to um
+ok 93 - unit conversion mm to um
+  ---
+  duration_ms: 0.437193
+  type: 'test'
+  ...
+# Subtest: unit conversion nm to um
+ok 94 - unit conversion nm to um
+  ---
+  duration_ms: 0.582687
+  type: 'test'
+  ...
+# Subtest: missing numeric coordinates rejected
+ok 95 - missing numeric coordinates rejected
+  ---
+  duration_ms: 0.583998
+  type: 'test'
+  ...
+# Subtest: unknown CSV columns rejected
+ok 96 - unknown CSV columns rejected
+  ---
+  duration_ms: 0.241042
+  type: 'test'
+  ...
+# Subtest: duplicate imported IDs rejected
+ok 97 - duplicate imported IDs rejected
+  ---
+  duration_ms: 0.130559
+  type: 'test'
+  ...
+# Subtest: boolean text false is false
+ok 98 - boolean text false is false
+  ---
+  duration_ms: 0.082647
+  type: 'test'
+  ...
+# Subtest: unknown boolean rejected
+ok 99 - unknown boolean rejected
+  ---
+  duration_ms: 0.131323
+  type: 'test'
+  ...
+# Subtest: CSV export/import retains formula-leading and apostrophe text safely
+ok 100 - CSV export/import retains formula-leading and apostrophe text safely
+  ---
+  duration_ms: 1.984461
+  type: 'test'
+  ...
+# Subtest: assignment CSV roundtrip ignores informational columns
+ok 101 - assignment CSV roundtrip ignores informational columns
+  ---
+  duration_ms: 2.448812
+  type: 'test'
+  ...
+# Subtest: array generation has unique multiletter row labels
+ok 102 - array generation has unique multiletter row labels
+  ---
+  duration_ms: 0.354858
+  type: 'test'
+  ...
+# Subtest: array reserves requested labels
+ok 103 - array reserves requested labels
+  ---
+  duration_ms: 0.088389
+  type: 'test'
+  ...
+# Subtest: array resource cap enforced
+ok 104 - array resource cap enforced
+  ---
+  duration_ms: 0.093228
+  type: 'test'
+  ...
+# Subtest: LEF parses pin RECT centres, not obstruction or DBU scaling
+ok 105 - LEF parses pin RECT centres, not obstruction or DBU scaling
+  ---
+  duration_ms: 0.760269
+  type: 'test'
+  ...
+# Subtest: LEF multiple macros require explicit selection
+ok 106 - LEF multiple macros require explicit selection
+  ---
+  duration_ms: 0.153419
+  type: 'test'
+  ...
+# Subtest: LEF selects explicit macro
+ok 107 - LEF selects explicit macro
+  ---
+  duration_ms: 0.344577
+  type: 'test'
+  ...
+# Subtest: LEF nonzero origin fails explicitly
+ok 108 - LEF nonzero origin fails explicitly
+  ---
+  duration_ms: 0.276201
+  type: 'test'
+  ...
+# Subtest: LEF polygons fail explicitly
+ok 109 - LEF polygons fail explicitly
+  ---
+  duration_ms: 0.160056
+  type: 'test'
+  ...
+# Subtest: LEF iterated geometry fails explicitly
+ok 110 - LEF iterated geometry fails explicitly
+  ---
+  duration_ms: 0.109611
+  type: 'test'
+  ...
+# Subtest: LEF never silently drops a shapeless pin
+ok 111 - LEF never silently drops a shapeless pin
+  ---
+  duration_ms: 0.096081
+  type: 'test'
+  ...
+# Subtest: LEF multiple rectangles produce an approximation warning
+ok 112 - LEF multiple rectangles produce an approximation warning
+  ---
+  duration_ms: 0.268941
+  type: 'test'
+  ...
+# Subtest: JSON unsupported version rejected
+ok 113 - JSON unsupported version rejected
+  ---
+  duration_ms: 0.234516
+  type: 'test'
+  ...
+# Subtest: canonical project validates
+ok 114 - canonical project validates
+  ---
+  duration_ms: 3.453243
+  type: 'test'
+  ...
+# Subtest: rejects unknown version
+ok 115 - rejects unknown version
+  ---
+  duration_ms: 1.215556
+  type: 'test'
+  ...
+# Subtest: rejects noncanonical units
+ok 116 - rejects noncanonical units
+  ---
+  duration_ms: 0.489629
+  type: 'test'
+  ...
+# Subtest: rejects duplicate port IDs
+ok 117 - rejects duplicate port IDs
+  ---
+  duration_ms: 0.463853
+  type: 'test'
+  ...
+# Subtest: rejects dangling endpoints
+ok 118 - rejects dangling endpoints
+  ---
+  duration_ms: 1.714005
+  type: 'test'
+  ...
+# Subtest: rejects nonfinite coordinates
+ok 119 - rejects nonfinite coordinates
+  ---
+  duration_ms: 0.404976
+  type: 'test'
+  ...
+# Subtest: rejects unknown roles
+ok 120 - rejects unknown roles
+  ---
+  duration_ms: 0.394012
+  type: 'test'
+  ...
+# Subtest: rejects unknown die
+ok 121 - rejects unknown die
+  ---
+  duration_ms: 0.386048
+  type: 'test'
+  ...
+# Subtest: rejects incomplete pair metadata
+ok 122 - rejects incomplete pair metadata
+  ---
+  duration_ms: 2.081587
+  type: 'test'
+  ...
+# Subtest: rejects negative spacing
+ok 123 - rejects negative spacing
+  ---
+  duration_ms: 0.744315
+  type: 'test'
+  ...
+# Subtest: rejects unknown rule typo
+ok 124 - rejects unknown rule typo
+  ---
+  duration_ms: 0.644079
+  type: 'test'
+  ...
+# Subtest: rejects invalid stage rule
+ok 125 - rejects invalid stage rule
+  ---
+  duration_ms: 0.539277
+  type: 'test'
+  ...
+# Subtest: rejects noninteger clock quota
+ok 126 - rejects noninteger clock quota
+  ---
+  duration_ms: 0.471441
+  type: 'test'
+  ...
+# Subtest: rejects invalid ground ratio
+ok 127 - rejects invalid ground ratio
+  ---
+  duration_ms: 0.535979
+  type: 'test'
+  ...
+# Subtest: rejects unbounded geometry budget
+ok 128 - rejects unbounded geometry budget
+  ---
+  duration_ms: 0.303917
+  type: 'test'
+  ...
+# Subtest: rejects unsafe control character
+ok 129 - rejects unsafe control character
+  ---
+  duration_ms: 0.231729
+  type: 'test'
+  ...
+# Subtest: transform inverse R0 mirror=false
+ok 130 - transform inverse R0 mirror=false
+  ---
+  duration_ms: 1.308552
+  type: 'test'
+  ...
+# Subtest: transform inverse R0 mirror=true
+ok 131 - transform inverse R0 mirror=true
+  ---
+  duration_ms: 0.110414
+  type: 'test'
+  ...
+# Subtest: transform inverse R90 mirror=false
+ok 132 - transform inverse R90 mirror=false
+  ---
+  duration_ms: 0.06602
+  type: 'test'
+  ...
+# Subtest: transform inverse R90 mirror=true
+ok 133 - transform inverse R90 mirror=true
+  ---
+  duration_ms: 0.067484
+  type: 'test'
+  ...
+# Subtest: transform inverse R180 mirror=false
+ok 134 - transform inverse R180 mirror=false
+  ---
+  duration_ms: 0.05936
+  type: 'test'
+  ...
+# Subtest: transform inverse R180 mirror=true
+ok 135 - transform inverse R180 mirror=true
+  ---
+  duration_ms: 0.184307
+  type: 'test'
+  ...
+# Subtest: transform inverse R270 mirror=false
+ok 136 - transform inverse R270 mirror=false
+  ---
+  duration_ms: 0.073725
+  type: 'test'
+  ...
+# Subtest: transform inverse R270 mirror=true
+ok 137 - transform inverse R270 mirror=true
+  ---
+  duration_ms: 0.057149
+  type: 'test'
+  ...
+# Subtest: signal metadata propagates through all stages
+ok 138 - signal metadata propagates through all stages
+  ---
+  duration_ms: 1.572789
+  type: 'test'
+  ...
+# Subtest: declared target metadata does not silently disappear
+ok 139 - declared target metadata does not silently disappear
+  ---
+  duration_ms: 0.289488
+  type: 'test'
+  ...
+# Subtest: connect refuses occupied target without explicit replacement
+ok 140 - connect refuses occupied target without explicit replacement
+  ---
+  duration_ms: 1.082076
+  type: 'test'
+  ...
+# Subtest: connect replaces mappings atomically in the mutable candidate
+ok 141 - connect replaces mappings atomically in the mutable candidate
+  ---
+  duration_ms: 0.290338
+  type: 'test'
+  ...
+# Subtest: locked edge cannot be replaced
+ok 142 - locked edge cannot be replaced
+  ---
+  duration_ms: 0.323752
+  type: 'test'
+  ...
+# Subtest: locked target cannot be disconnected
+ok 143 - locked target cannot be disconnected
+  ---
+  duration_ms: 0.333817
+  type: 'test'
+  ...
+# Subtest: backward connections are refused
+ok 144 - backward connections are refused
+  ---
+  duration_ms: 0.213126
+  type: 'test'
+  ...
+# Subtest: review fingerprint ignores revision/audit and array order
+ok 145 - review fingerprint ignores revision/audit and array order
+  ---
+  duration_ms: 12.37216
+  type: 'test'
+  ...
+# Subtest: fingerprint changes with geometry
+ok 146 - fingerprint changes with geometry
+  ---
+  duration_ms: 0.76858
+  type: 'test'
+  ...
+# Subtest: normalizer does not modify input
+ok 147 - normalizer does not modify input
+  ---
+  duration_ms: 0.355594
+  type: 'test'
+  ...
+# Subtest: Hungarian known minimum
+ok 148 - Hungarian known minimum
+  ---
+  duration_ms: 1.623139
+  type: 'test'
+  ...
+# Subtest: Hungarian supports rectangular and negative finite costs
+ok 149 - Hungarian supports rectangular and negative finite costs
+  ---
+  duration_ms: 0.548719
+  type: 'test'
+  ...
+# Subtest: Hungarian empty source set
+ok 150 - Hungarian empty source set
+  ---
+  duration_ms: 0.657526
+  type: 'test'
+  ...
+# Subtest: Hungarian insufficient targets is infeasible
+ok 151 - Hungarian insufficient targets is infeasible
+  ---
+  duration_ms: 0.115803
+  type: 'test'
+  ...
+# Subtest: Hungarian masked impossible matching is infeasible
+ok 152 - Hungarian masked impossible matching is infeasible
+  ---
+  duration_ms: 0.108062
+  type: 'test'
+  ...
+# Subtest: Hungarian rejects NaN costs
+ok 153 - Hungarian rejects NaN costs
+  ---
+  duration_ms: 1.495098
+  type: 'test'
+  ...
+# Subtest: Hungarian matches exhaustive optimum for 120 seeded masked matrices
+ok 154 - Hungarian matches exhaustive optimum for 120 seeded masked matrices
+  ---
+  duration_ms: 3.217979
+  type: 'test'
+  ...
+# Subtest: demo stage improves without new hard errors
+ok 155 - demo stage improves without new hard errors
+  ---
+  duration_ms: 71.825828
+  type: 'test'
+  ...
+# Subtest: optimizer is deterministic
+ok 156 - optimizer is deterministic
+  ---
+  duration_ms: 64.544325
+  type: 'test'
+  ...
+# Subtest: optimizer never mutates original
+ok 157 - optimizer never mutates original
+  ---
+  duration_ms: 10.89792
+  type: 'test'
+  ...
+# Subtest: locked mappings survive optimizer
+ok 158 - locked mappings survive optimizer
+  ---
+  duration_ms: 39.732215
+  type: 'test'
+  ...
+# Subtest: locked sites survive optimizer
+ok 159 - locked sites survive optimizer
+  ---
+  duration_ms: 41.544834
+  type: 'test'
+  ...
+# Subtest: differential pair remains legal
+ok 160 - differential pair remains legal
+  ---
+  duration_ms: 1.704757
+  type: 'test'
+  ...
+# Subtest: failed construction leaves original mappings intact, no infeasibility claim
+ok 161 - failed construction leaves original mappings intact, no infeasibility claim
+  ---
+  duration_ms: 0.751364
+  type: 'test'
+  ...
+# Subtest: analysis-incomplete input is not optimized as if checked
+ok 162 - analysis-incomplete input is not optimized as if checked
+  ---
+  duration_ms: 5.629974
+  type: 'test'
+  ...
+# Subtest: optimizer source cap is explicit
+ok 163 - optimizer source cap is explicit
+  ---
+  duration_ms: 16.467842
+  type: 'test'
+  ...
+# Subtest: optimizer refuses invalid stage
+ok 164 - optimizer refuses invalid stage
+  ---
+  duration_ms: 0.317047
+  type: 'test'
+  ...
+# Subtest: optimizer validates search budgets
+ok 165 - optimizer validates search budgets
+  ---
+  duration_ms: 0.225457
+  type: 'test'
+  ...
+# Subtest: publication manifest verifies exact prepared bytes without network or writes
+ok 166 - publication manifest verifies exact prepared bytes without network or writes
+  ---
+  duration_ms: 10.122477
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses wrong repository
+ok 167 - publication manifest refuses wrong repository
+  ---
+  duration_ms: 5.089147
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses wrong base
+ok 168 - publication manifest refuses wrong base
+  ---
+  duration_ms: 2.057981
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses wrong version
+ok 169 - publication manifest refuses wrong version
+  ---
+  duration_ms: 1.736655
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses duplicate
+ok 170 - publication manifest refuses duplicate
+  ---
+  duration_ms: 2.305139
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses missing required file
+ok 171 - publication manifest refuses missing required file
+  ---
+  duration_ms: 1.644309
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses wrong bytes
+ok 172 - publication manifest refuses wrong bytes
+  ---
+  duration_ms: 1.456905
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses wrong digest
+ok 173 - publication manifest refuses wrong digest
+  ---
+  duration_ms: 1.624894
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses bad digest
+ok 174 - publication manifest refuses bad digest
+  ---
+  duration_ms: 1.858692
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses traversal
+ok 175 - publication manifest refuses traversal
+  ---
+  duration_ms: 2.095776
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses absolute path
+ok 176 - publication manifest refuses absolute path
+  ---
+  duration_ms: 2.626533
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses windows separator
+ok 177 - publication manifest refuses windows separator
+  ---
+  duration_ms: 1.358533
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses git internals
+ok 178 - publication manifest refuses git internals
+  ---
+  duration_ms: 1.145897
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses private key
+ok 179 - publication manifest refuses private key
+  ---
+  duration_ms: 1.152285
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses environment file
+ok 180 - publication manifest refuses environment file
+  ---
+  duration_ms: 0.875258
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses option-like path
+ok 181 - publication manifest refuses option-like path
+  ---
+  duration_ms: 0.687243
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses changed source bytes
+ok 182 - publication manifest refuses changed source bytes
+  ---
+  duration_ms: 1.31333
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses file symlinks
+ok 183 - publication manifest refuses file symlinks
+  ---
+  duration_ms: 1.353971
+  type: 'test'
+  ...
+# Subtest: publication manifest refuses parent-directory symlinks
+ok 184 - publication manifest refuses parent-directory symlinks
+  ---
+  duration_ms: 0.892952
+  type: 'test'
+  ...
+# Subtest: failed strict transaction is atomic
+ok 185 - failed strict transaction is atomic
+  ---
+  duration_ms: 37.967383
+  type: 'test'
+  ...
+# Subtest: successful transaction can undo and redo exactly
+ok 186 - successful transaction can undo and redo exactly
+  ---
+  duration_ms: 24.773483
+  type: 'test'
+  ...
+# Subtest: branching after undo clears redo history
+ok 187 - branching after undo clears redo history
+  ---
+  duration_ms: 3.191504
+  type: 'test'
+  ...
+# Subtest: explicit draft mode permits reported invalid edits
+ok 188 - explicit draft mode permits reported invalid edits
+  ---
+  duration_ms: 1.192797
+  type: 'test'
+  ...
+# Subtest: semantic diff reports changed properties
+ok 189 - semantic diff reports changed properties
+  ---
+  duration_ms: 3.151149
+  type: 'test'
+  ...
+# Subtest: semantic diff detects upstream signal propagation
+ok 190 - semantic diff detects upstream signal propagation
+  ---
+  duration_ms: 2.17747
+  type: 'test'
+  ...
+# Subtest: semantic diff detects moved die without edited port coordinates
+ok 191 - semantic diff detects moved die without edited port coordinates
+  ---
+  duration_ms: 1.787311
+  type: 'test'
+  ...
+# Subtest: semantic diff ignores object property ordering
+ok 192 - semantic diff ignores object property ordering
+  ---
+  duration_ms: 1.901348
+  type: 'test'
+  ...
+# Subtest: SVG escapes user markup and XML quotes
+ok 193 - SVG escapes user markup and XML quotes
+  ---
+  duration_ms: 1.789624
+  type: 'test'
+  ...
+# Subtest: ICD HTML escapes hostile labels and scripts
+ok 194 - ICD HTML escapes hostile labels and scripts
+  ---
+  duration_ms: 14.219195
+  type: 'test'
+  ...
+# Subtest: ICD carries planning boundaries and approval fields
+ok 195 - ICD carries planning boundaries and approval fields
+  ---
+  duration_ms: 1.653192
+  type: 'test'
+  ...
+# Subtest: PDF is paginated vector/text data with valid xref start
+ok 196 - PDF is paginated vector/text data with valid xref start
+  ---
+  duration_ms: 3.578991
+  type: 'test'
+  ...
+# Subtest: PDF handles parentheses, backslashes, and non-ASCII text
+ok 197 - PDF handles parentheses, backslashes, and non-ASCII text
+  ---
+  duration_ms: 2.158148
+  type: 'test'
+  ...
+# Subtest: CLI clean check returns exit 0
+ok 198 - CLI clean check returns exit 0
+  ---
+  duration_ms: 83.926024
+  type: 'test'
+  ...
+# Subtest: CLI validation failure returns exit 1
+ok 199 - CLI validation failure returns exit 1
+  ---
+  duration_ms: 121.217582
+  type: 'test'
+  ...
+# Subtest: CLI malformed input returns exit 2
+ok 200 - CLI malformed input returns exit 2
+  ---
+  duration_ms: 82.161984
+  type: 'test'
+  ...
+# Subtest: CLI PDF export writes actual PDF bytes
+ok 201 - CLI PDF export writes actual PDF bytes
+  ---
+  duration_ms: 84.51473
+  type: 'test'
+  ...
+# Subtest: CLI JSON check includes complete metrics
+ok 202 - CLI JSON check includes complete metrics
+  ---
+  duration_ms: 61.102382
+  type: 'test'
+  ...
+# Subtest: one straight route has exact Manhattan length and no vias
+ok 203 - one straight route has exact Manhattan length and no vias
+  ---
+  duration_ms: 12.076472
+  type: 'test'
+  ...
+# Subtest: same-layer crossing at grid boundaries cannot be falsely declared routed
+ok 204 - same-layer crossing at grid boundaries cannot be falsely declared routed
+  ---
+  duration_ms: 20.963194
+  type: 'test'
+  ...
+# Subtest: two layers resolve orthogonal crossing with a checked via path
+ok 205 - two layers resolve orthogonal crossing with a checked via path
+  ---
+  duration_ms: 3.886453
+  type: 'test'
+  ...
+# Subtest: routing does not change placement or mapping
+ok 206 - routing does not change placement or mapping
+  ---
+  duration_ms: 3.90457
+  type: 'test'
+  ...
+# Subtest: a narrow keepout between grid nodes is conservatively rasterized
+ok 207 - a narrow keepout between grid nodes is conservatively rasterized
+  ---
+  duration_ms: 2.381035
+  type: 'test'
+  ...
+# Subtest: a full barrier is not silently traversed
+ok 208 - a full barrier is not silently traversed
+  ---
+  duration_ms: 3.158093
+  type: 'test'
+  ...
+# Subtest: nonzero clearance produces a checked wider detour
+ok 209 - nonzero clearance produces a checked wider detour
+  ---
+  duration_ms: 5.258648
+  type: 'test'
+  ...
+# Subtest: reserved, unconnected sites still block route geometry
+ok 210 - reserved, unconnected sites still block route geometry
+  ---
+  duration_ms: 1.970026
+  type: 'test'
+  ...
+# Subtest: unassigned any-role candidate points do not masquerade as copper
+ok 211 - unassigned any-role candidate points do not masquerade as copper
+  ---
+  duration_ms: 4.83588
+  type: 'test'
+  ...
+# Subtest: endpoint layers are obeyed
+ok 212 - endpoint layers are obeyed
+  ---
+  duration_ms: 2.440004
+  type: 'test'
+  ...
+# Subtest: zero via cost remains safe and terminating
+ok 213 - zero via cost remains safe and terminating
+  ---
+  duration_ms: 2.599866
+  type: 'test'
+  ...
+# Subtest: search budget cannot return a fabricated clearance pass
+ok 214 - search budget cannot return a fabricated clearance pass
+  ---
+  duration_ms: 1.483382
+  type: 'test'
+  ...
+# Subtest: planning-invalid input is not routed into a green status
+ok 215 - planning-invalid input is not routed into a green status
+  ---
+  duration_ms: 0.708982
+  type: 'test'
+  ...
+# Subtest: off-grid positions are rejected, not snapped
+ok 216 - off-grid positions are rejected, not snapped
+  ---
+  duration_ms: 0.837134
+  type: 'test'
+  ...
+# Subtest: out-of-grid endpoints are rejected
+ok 217 - out-of-grid endpoints are rejected
+  ---
+  duration_ms: 0.448389
+  type: 'test'
+  ...
+# Subtest: memory safety grid bound is checked before allocation
+ok 218 - memory safety grid bound is checked before allocation
+  ---
+  duration_ms: 0.359241
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"pitch":0}
+ok 219 - invalid routing controls {"pitch":0}
+  ---
+  duration_ms: 0.596822
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"pitch":null}
+ok 220 - invalid routing controls {"pitch":null}
+  ---
+  duration_ms: 0.383187
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"layers":0}
+ok 221 - invalid routing controls {"layers":0}
+  ---
+  duration_ms: 0.246983
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"layers":1.5}
+ok 222 - invalid routing controls {"layers":1.5}
+  ---
+  duration_ms: 0.212139
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"layers":9}
+ok 223 - invalid routing controls {"layers":9}
+  ---
+  duration_ms: 0.349179
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"clearance":-1}
+ok 224 - invalid routing controls {"clearance":-1}
+  ---
+  duration_ms: 0.242472
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"viaCost":-1}
+ok 225 - invalid routing controls {"viaCost":-1}
+  ---
+  duration_ms: 0.208487
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"startLayer":2,"layers":2}
+ok 226 - invalid routing controls {"startLayer":2,"layers":2}
+  ---
+  duration_ms: 0.2137
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"columns":0}
+ok 227 - invalid routing controls {"columns":0}
+  ---
+  duration_ms: 0.264257
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"rows":0}
+ok 228 - invalid routing controls {"rows":0}
+  ---
+  duration_ms: 0.279592
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"maxExpansions":0}
+ok 229 - invalid routing controls {"maxExpansions":0}
+  ---
+  duration_ms: 1.170243
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"orderTrials":4}
+ok 230 - invalid routing controls {"orderTrials":4}
+  ---
+  duration_ms: 0.381972
+  type: 'test'
+  ...
+# Subtest: invalid routing controls {"timeLimitMs":0}
+ok 231 - invalid routing controls {"timeLimitMs":0}
+  ---
+  duration_ms: 0.557858
+  type: 'test'
+  ...
+# Subtest: route verifier rejects stale geometry
+ok 232 - route verifier rejects stale geometry
+  ---
+  duration_ms: 1.688565
+  type: 'test'
+  ...
+# Subtest: route verifier rejects stale constraints even without coordinate edits
+ok 233 - route verifier rejects stale constraints even without coordinate edits
+  ---
+  duration_ms: 1.287634
+  type: 'test'
+  ...
+# Subtest: revision bookkeeping alone does not invalidate physical routes
+ok 234 - revision bookkeeping alone does not invalidate physical routes
+  ---
+  duration_ms: 4.480773
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects missing route
+ok 235 - independent verifier rejects missing route
+  ---
+  duration_ms: 2.826681
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects duplicate route
+ok 236 - independent verifier rejects duplicate route
+  ---
+  duration_ms: 1.346522
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects unknown connection
+ok 237 - independent verifier rejects unknown connection
+  ---
+  duration_ms: 1.602682
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects empty path
+ok 238 - independent verifier rejects empty path
+  ---
+  duration_ms: 3.32142
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects wrong terminal
+ok 239 - independent verifier rejects wrong terminal
+  ---
+  duration_ms: 2.304955
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects jump over occupied cells
+ok 240 - independent verifier rejects jump over occupied cells
+  ---
+  duration_ms: 1.317285
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects negative cell
+ok 241 - independent verifier rejects negative cell
+  ---
+  duration_ms: 1.403776
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects out of range layer
+ok 242 - independent verifier rejects out of range layer
+  ---
+  duration_ms: 1.383072
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects fractional cell
+ok 243 - independent verifier rejects fractional cell
+  ---
+  duration_ms: 1.665624
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects NaN cell
+ok 244 - independent verifier rejects NaN cell
+  ---
+  duration_ms: 1.672312
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects non-array path
+ok 245 - independent verifier rejects non-array path
+  ---
+  duration_ms: 1.190369
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects non-array node
+ok 246 - independent verifier rejects non-array node
+  ---
+  duration_ms: 1.340547
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects fabricated metric
+ok 247 - independent verifier rejects fabricated metric
+  ---
+  duration_ms: 1.240576
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects wrong schema
+ok 248 - independent verifier rejects wrong schema
+  ---
+  duration_ms: 1.385654
+  type: 'test'
+  ...
+# Subtest: independent verifier rejects loop
+ok 249 - independent verifier rejects loop
+  ---
+  duration_ms: 1.779381
+  type: 'test'
+  ...
+# Subtest: search-independent verifier detects route-route collision
+ok 250 - search-independent verifier detects route-route collision
+  ---
+  duration_ms: 2.188322
+  type: 'test'
+  ...
+# Subtest: verifier checks routed length, not only endpoint Manhattan length
+ok 251 - verifier checks routed length, not only endpoint Manhattan length
+  ---
+  duration_ms: 2.023197
+  type: 'test'
+  ...
+# Subtest: SVG export escapes user-controlled project names and route labels
+ok 252 - SVG export escapes user-controlled project names and route labels
+  ---
+  duration_ms: 1.885239
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 1
+ok 253 - A* agrees with independent BFS: seed 1
+  ---
+  duration_ms: 2.783183
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 2
+ok 254 - A* agrees with independent BFS: seed 2
+  ---
+  duration_ms: 1.621353
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 3
+ok 255 - A* agrees with independent BFS: seed 3
+  ---
+  duration_ms: 1.30778
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 4
+ok 256 - A* agrees with independent BFS: seed 4
+  ---
+  duration_ms: 4.341557
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 5
+ok 257 - A* agrees with independent BFS: seed 5
+  ---
+  duration_ms: 1.214032
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 6
+ok 258 - A* agrees with independent BFS: seed 6
+  ---
+  duration_ms: 1.451698
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 7
+ok 259 - A* agrees with independent BFS: seed 7
+  ---
+  duration_ms: 2.069297
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 8
+ok 260 - A* agrees with independent BFS: seed 8
+  ---
+  duration_ms: 1.492335
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 9
+ok 261 - A* agrees with independent BFS: seed 9
+  ---
+  duration_ms: 1.036277
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 10
+ok 262 - A* agrees with independent BFS: seed 10
+  ---
+  duration_ms: 1.335234
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 11
+ok 263 - A* agrees with independent BFS: seed 11
+  ---
+  duration_ms: 1.125269
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 12
+ok 264 - A* agrees with independent BFS: seed 12
+  ---
+  duration_ms: 0.850197
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 13
+ok 265 - A* agrees with independent BFS: seed 13
+  ---
+  duration_ms: 1.210392
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 14
+ok 266 - A* agrees with independent BFS: seed 14
+  ---
+  duration_ms: 0.846019
+  type: 'test'
+  ...
+# Subtest: A* agrees with independent BFS: seed 15
+ok 267 - A* agrees with independent BFS: seed 15
+  ---
+  duration_ms: 1.136746
+  type: 'test'
+  ...
+# Subtest: baseline fixture is clean
+ok 268 - baseline fixture is clean
+  ---
+  duration_ms: 5.868588
+  type: 'test'
+  ...
+# Subtest: empty design cannot pass review
+ok 269 - empty design cannot pass review
+  ---
+  duration_ms: 0.499322
+  type: 'test'
+  ...
+# Subtest: reports required unmapped site
+ok 270 - reports required unmapped site
+  ---
+  duration_ms: 9.14198
+  type: 'test'
+  ...
+# Subtest: reports reserved site
+ok 271 - reports reserved site
+  ---
+  duration_ms: 2.344318
+  type: 'test'
+  ...
+# Subtest: reports no-connect site
+ok 272 - reports no-connect site
+  ---
+  duration_ms: 1.401481
+  type: 'test'
+  ...
+# Subtest: reports voltage mismatch
+ok 273 - reports voltage mismatch
+  ---
+  duration_ms: 0.550728
+  type: 'test'
+  ...
+# Subtest: reports net conflict
+ok 274 - reports net conflict
+  ---
+  duration_ms: 0.374443
+  type: 'test'
+  ...
+# Subtest: reports role mismatch
+ok 275 - reports role mismatch
+  ---
+  duration_ms: 0.225103
+  type: 'test'
+  ...
+# Subtest: reports excessive length
+ok 276 - reports excessive length
+  ---
+  duration_ms: 0.965074
+  type: 'test'
+  ...
+# Subtest: reports missing domain
+ok 277 - reports missing domain
+  ---
+  duration_ms: 0.632195
+  type: 'test'
+  ...
+# Subtest: reports missing net
+ok 278 - reports missing net
+  ---
+  duration_ms: 0.363196
+  type: 'test'
+  ...
+# Subtest: reports clock shielding
+ok 279 - reports clock shielding
+  ---
+  duration_ms: 1.018775
+  type: 'test'
+  ...
+# Subtest: reports ground coverage
+ok 280 - reports ground coverage
+  ---
+  duration_ms: 0.236907
+  type: 'test'
+  ...
+# Subtest: reports power coverage
+ok 281 - reports power coverage
+  ---
+  duration_ms: 0.282789
+  type: 'test'
+  ...
+# Subtest: reports ground fraction
+ok 282 - reports ground fraction
+  ---
+  duration_ms: 0.199978
+  type: 'test'
+  ...
+# Subtest: reports path truncation
+ok 283 - reports path truncation
+  ---
+  duration_ms: 0.223337
+  type: 'test'
+  ...
+# Subtest: reports forward stage rule
+ok 284 - reports forward stage rule
+  ---
+  duration_ms: 0.268663
+  type: 'test'
+  ...
+# Subtest: reports region ground quota
+ok 285 - reports region ground quota
+  ---
+  duration_ms: 0.330737
+  type: 'test'
+  ...
+# Subtest: reports region power quota
+ok 286 - reports region power quota
+  ---
+  duration_ms: 0.579941
+  type: 'test'
+  ...
+# Subtest: multiple incoming mappings rejected by DRC
+ok 287 - multiple incoming mappings rejected by DRC
+  ---
+  duration_ms: 0.347707
+  type: 'test'
+  ...
+# Subtest: physical site fanout rejected by DRC
+ok 288 - physical site fanout rejected by DRC
+  ---
+  duration_ms: 0.257522
+  type: 'test'
+  ...
+# Subtest: connected ground satisfies coverage
+ok 289 - connected ground satisfies coverage
+  ---
+  duration_ms: 0.429633
+  type: 'test'
+  ...
+# Subtest: unconnected ground does not fake shielding
+ok 290 - unconnected ground does not fake shielding
+  ---
+  duration_ms: 0.264348
+  type: 'test'
+  ...
+# Subtest: domain-matched supply required for power coverage
+ok 291 - domain-matched supply required for power coverage
+  ---
+  duration_ms: 0.491983
+  type: 'test'
+  ...
+# Subtest: pair baseline satisfies adjacency and skew
+ok 292 - pair baseline satisfies adjacency and skew
+  ---
+  duration_ms: 0.328711
+  type: 'test'
+  ...
+# Subtest: pair adjacency enforced
+ok 293 - pair adjacency enforced
+  ---
+  duration_ms: 0.438736
+  type: 'test'
+  ...
+# Subtest: pair skew enforced
+ok 294 - pair skew enforced
+  ---
+  duration_ms: 0.396432
+  type: 'test'
+  ...
+# Subtest: target pair polarity constraints enforced
+ok 295 - target pair polarity constraints enforced
+  ---
+  duration_ms: 0.256818
+  type: 'test'
+  ...
+# Subtest: incomplete pair still blocks review
+ok 296 - incomplete pair still blocks review
+  ---
+  duration_ms: 0.499687
+  type: 'test'
+  ...
+# Subtest: different voltage domains must meet physical spacing
+ok 297 - different voltage domains must meet physical spacing
+  ---
+  duration_ms: 0.413662
+  type: 'test'
+  ...
+# Subtest: outside die
+ok 298 - outside die
+  ---
+  duration_ms: 0.407318
+  type: 'test'
+  ...
+# Subtest: edge keep-out
+ok 299 - edge keep-out
+  ---
+  duration_ms: 0.559636
+  type: 'test'
+  ...
+# Subtest: corner keep-out
+ok 300 - corner keep-out
+  ---
+  duration_ms: 0.379006
+  type: 'test'
+  ...
+# Subtest: occupied rectangle keep-out rejected
+ok 301 - occupied rectangle keep-out rejected
+  ---
+  duration_ms: 0.254353
+  type: 'test'
+  ...
+# Subtest: unoccupied candidate in keep-out is allowed
+ok 302 - unoccupied candidate in keep-out is allowed
+  ---
+  duration_ms: 0.93397
+  type: 'test'
+  ...
+# Subtest: duplicate physical sites reported
+ok 303 - duplicate physical sites reported
+  ---
+  duration_ms: 0.385183
+  type: 'test'
+  ...
+# Subtest: exhausted budget can never produce clean review
+ok 304 - exhausted budget can never produce clean review
+  ---
+  duration_ms: 1.640814
+  type: 'test'
+  ...
+# Subtest: reserved JS property names are safe connection identifiers
+ok 305 - reserved JS property names are safe connection identifiers
+  ---
+  duration_ms: 0.247101
+  type: 'test'
+  ...
+# Subtest: regression gate blocks newly introduced hard errors
+ok 306 - regression gate blocks newly introduced hard errors
+  ---
+  duration_ms: 0.403795
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 1
+ok 307 - exact objective matches independent permutation enumeration: seed 1
+  ---
+  duration_ms: 36.428075
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 2
+ok 308 - exact objective matches independent permutation enumeration: seed 2
+  ---
+  duration_ms: 10.777342
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 3
+ok 309 - exact objective matches independent permutation enumeration: seed 3
+  ---
+  duration_ms: 4.450654
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 4
+ok 310 - exact objective matches independent permutation enumeration: seed 4
+  ---
+  duration_ms: 4.19994
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 5
+ok 311 - exact objective matches independent permutation enumeration: seed 5
+  ---
+  duration_ms: 3.713018
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 6
+ok 312 - exact objective matches independent permutation enumeration: seed 6
+  ---
+  duration_ms: 5.719743
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 7
+ok 313 - exact objective matches independent permutation enumeration: seed 7
+  ---
+  duration_ms: 4.031384
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 8
+ok 314 - exact objective matches independent permutation enumeration: seed 8
+  ---
+  duration_ms: 4.973411
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 9
+ok 315 - exact objective matches independent permutation enumeration: seed 9
+  ---
+  duration_ms: 5.151222
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 10
+ok 316 - exact objective matches independent permutation enumeration: seed 10
+  ---
+  duration_ms: 4.652193
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 11
+ok 317 - exact objective matches independent permutation enumeration: seed 11
+  ---
+  duration_ms: 6.290327
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 12
+ok 318 - exact objective matches independent permutation enumeration: seed 12
+  ---
+  duration_ms: 5.416846
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 13
+ok 319 - exact objective matches independent permutation enumeration: seed 13
+  ---
+  duration_ms: 6.179149
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 14
+ok 320 - exact objective matches independent permutation enumeration: seed 14
+  ---
+  duration_ms: 6.214872
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 15
+ok 321 - exact objective matches independent permutation enumeration: seed 15
+  ---
+  duration_ms: 4.395451
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 16
+ok 322 - exact objective matches independent permutation enumeration: seed 16
+  ---
+  duration_ms: 3.389433
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 17
+ok 323 - exact objective matches independent permutation enumeration: seed 17
+  ---
+  duration_ms: 7.643563
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 18
+ok 324 - exact objective matches independent permutation enumeration: seed 18
+  ---
+  duration_ms: 3.451435
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 19
+ok 325 - exact objective matches independent permutation enumeration: seed 19
+  ---
+  duration_ms: 5.093521
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 20
+ok 326 - exact objective matches independent permutation enumeration: seed 20
+  ---
+  duration_ms: 6.839412
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 21
+ok 327 - exact objective matches independent permutation enumeration: seed 21
+  ---
+  duration_ms: 6.737689
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 22
+ok 328 - exact objective matches independent permutation enumeration: seed 22
+  ---
+  duration_ms: 6.165837
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 23
+ok 329 - exact objective matches independent permutation enumeration: seed 23
+  ---
+  duration_ms: 6.081564
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 24
+ok 330 - exact objective matches independent permutation enumeration: seed 24
+  ---
+  duration_ms: 5.711904
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 25
+ok 331 - exact objective matches independent permutation enumeration: seed 25
+  ---
+  duration_ms: 6.158586
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 26
+ok 332 - exact objective matches independent permutation enumeration: seed 26
+  ---
+  duration_ms: 6.68809
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 27
+ok 333 - exact objective matches independent permutation enumeration: seed 27
+  ---
+  duration_ms: 13.297238
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 28
+ok 334 - exact objective matches independent permutation enumeration: seed 28
+  ---
+  duration_ms: 5.748163
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 29
+ok 335 - exact objective matches independent permutation enumeration: seed 29
+  ---
+  duration_ms: 5.873746
+  type: 'test'
+  ...
+# Subtest: exact objective matches independent permutation enumeration: seed 30
+ok 336 - exact objective matches independent permutation enumeration: seed 30
+  ---
+  duration_ms: 7.840756
+  type: 'test'
+  ...
+# Subtest: input is never mutated
+ok 337 - input is never mutated
+  ---
+  duration_ms: 2.264305
+  type: 'test'
+  ...
+# Subtest: differential pair coupling is included in exact objective
+ok 338 - differential pair coupling is included in exact objective
+  ---
+  duration_ms: 1.647115
+  type: 'test'
+  ...
+# Subtest: ECO objective and change budget 0/0
+ok 339 - ECO objective and change budget 0/0
+  ---
+  duration_ms: 6.279965
+  type: 'test'
+  ...
+# Subtest: ECO objective and change budget 0/1
+ok 340 - ECO objective and change budget 0/1
+  ---
+  duration_ms: 7.978336
+  type: 'test'
+  ...
+# Subtest: ECO objective and change budget 0/2
+ok 341 - ECO objective and change budget 0/2
+  ---
+  duration_ms: 7.782438
+  type: 'test'
+  ...
+# Subtest: ECO objective and change budget 0/4
+ok 342 - ECO objective and change budget 0/4
+  ---
+  duration_ms: 4.966175
+  type: 'test'
+  ...
+# Subtest: ECO objective and change budget 100/0
+ok 343 - ECO objective and change budget 100/0
+  ---
+  duration_ms: 5.814741
+  type: 'test'
+  ...
+# Subtest: ECO objective and change budget 100/1
+ok 344 - ECO objective and change budget 100/1
+  ---
+  duration_ms: 5.503571
+  type: 'test'
+  ...
+# Subtest: ECO objective and change budget 100/2
+ok 345 - ECO objective and change budget 100/2
+  ---
+  duration_ms: 4.606072
+  type: 'test'
+  ...
+# Subtest: ECO objective and change budget 100/4
+ok 346 - ECO objective and change budget 100/4
+  ---
+  duration_ms: 6.189772
+  type: 'test'
+  ...
+# Subtest: ECO objective and change budget 1000/0
+ok 347 - ECO objective and change budget 1000/0
+  ---
+  duration_ms: 3.521136
+  type: 'test'
+  ...
+# Subtest: ECO objective and change budget 1000/1
+ok 348 - ECO objective and change budget 1000/1
+  ---
+  duration_ms: 3.891732
+  type: 'test'
+  ...
+# Subtest: ECO objective and change budget 1000/2
+ok 349 - ECO objective and change budget 1000/2
+  ---
+  duration_ms: 3.824273
+  type: 'test'
+  ...
+# Subtest: ECO objective and change budget 1000/4
+ok 350 - ECO objective and change budget 1000/4
+  ---
+  duration_ms: 2.848553
+  type: 'test'
+  ...
+# Subtest: Hall witness exhibits fewer candidate targets than sources
+ok 351 - Hall witness exhibits fewer candidate targets than sources
+  ---
+  duration_ms: 0.254459
+  type: 'test'
+  ...
+# Subtest: Hall witness covers a nontrivial alternating tree
+ok 352 - Hall witness covers a nontrivial alternating tree
+  ---
+  duration_ms: 0.345235
+  type: 'test'
+  ...
+# Subtest: full matching has no Hall conflict
+ok 353 - full matching has no Hall conflict
+  ---
+  duration_ms: 0.131489
+  type: 'test'
+  ...
+# Subtest: no targets gives Hall deficiency
+ok 354 - no targets gives Hall deficiency
+  ---
+  duration_ms: 0.163254
+  type: 'test'
+  ...
+# Subtest: exact engine attaches named Hall explanation
+ok 355 - exact engine attaches named Hall explanation
+  ---
+  duration_ms: 0.460095
+  type: 'test'
+  ...
+# Subtest: timeout is never called infeasible
+ok 356 - timeout is never called infeasible
+  ---
+  duration_ms: 0.418277
+  type: 'test'
+  ...
+# Subtest: bounded search retains feasible incumbent and valid lower bound
+ok 357 - bounded search retains feasible incumbent and valid lower bound
+  ---
+  duration_ms: 3.89291
+  type: 'test'
+  ...
+# Subtest: a locked mapping cannot be moved
+ok 358 - a locked mapping cannot be moved
+  ---
+  duration_ms: 0.771078
+  type: 'test'
+  ...
+# Subtest: a locked target prevents reassignment of its current source
+ok 359 - a locked target prevents reassignment of its current source
+  ---
+  duration_ms: 5.09756
+  type: 'test'
+  ...
+# Subtest: selected sourceIds scope freezes every other mapping
+ok 360 - selected sourceIds scope freezes every other mapping
+  ---
+  duration_ms: 1.374489
+  type: 'test'
+  ...
+# Subtest: target-inferred electrical role is not incorrectly ruled out
+ok 361 - target-inferred electrical role is not incorrectly ruled out
+  ---
+  duration_ms: 0.704108
+  type: 'test'
+  ...
+# Subtest: downstream locked logical signal is preserved
+ok 362 - downstream locked logical signal is preserved
+  ---
+  duration_ms: 11.496657
+  type: 'test'
+  ...
+# Subtest: fully enumerated pair-infeasible design is not mistaken for a Hall conflict
+ok 363 - fully enumerated pair-infeasible design is not mistaken for a Hall conflict
+  ---
+  duration_ms: 4.011123
+  type: 'test'
+  ...
+# Subtest: incomplete initial checks fail closed
+ok 364 - incomplete initial checks fail closed
+  ---
+  duration_ms: 3.439889
+  type: 'test'
+  ...
+# Subtest: invalid solver options rejected {"maxNodes":0}
+ok 365 - invalid solver options rejected {"maxNodes":0}
+  ---
+  duration_ms: 0.699902
+  type: 'test'
+  ...
+# Subtest: invalid solver options rejected {"maxNodes":null}
+ok 366 - invalid solver options rejected {"maxNodes":null}
+  ---
+  duration_ms: 0.144421
+  type: 'test'
+  ...
+# Subtest: invalid solver options rejected {"timeLimitMs":0}
+ok 367 - invalid solver options rejected {"timeLimitMs":0}
+  ---
+  duration_ms: 0.11192
+  type: 'test'
+  ...
+# Subtest: invalid solver options rejected {"timeLimitMs":null}
+ok 368 - invalid solver options rejected {"timeLimitMs":null}
+  ---
+  duration_ms: 0.108584
+  type: 'test'
+  ...
+# Subtest: invalid solver options rejected {"maxChanges":-1}
+ok 369 - invalid solver options rejected {"maxChanges":-1}
+  ---
+  duration_ms: 0.101732
+  type: 'test'
+  ...
+# Subtest: invalid solver options rejected {"changePenalty":-1}
+ok 370 - invalid solver options rejected {"changePenalty":-1}
+  ---
+  duration_ms: 0.170143
+  type: 'test'
+  ...
+# Subtest: invalid solver options rejected {"changePenalty":null}
+ok 371 - invalid solver options rejected {"changePenalty":null}
+  ---
+  duration_ms: 0.171473
+  type: 'test'
+  ...
+# Subtest: invalid solver options rejected {"sourceIds":["no-such-id"]}
+ok 372 - invalid solver options rejected {"sourceIds":["no-such-id"]}
+  ---
+  duration_ms: 0.29087
+  type: 'test'
+  ...
+# Subtest: invalid solver options rejected {"sourceIds":["s","s"]}
+ok 373 - invalid solver options rejected {"sourceIds":["s","s"]}
+  ---
+  duration_ms: 1.389758
+  type: 'test'
+  ...
+# Subtest: oversized search rejects before materializing quadratic candidate costs
+ok 374 - oversized search rejects before materializing quadratic candidate costs
+  ---
+  duration_ms: 0.806831
+  type: 'test'
+  ...
+# Subtest: forbidden stages rejected
+ok 375 - forbidden stages rejected
+  ---
+  duration_ms: 0.458239
+  type: 'test'
+  ...
+# Subtest: coupled search solves a constructive pair-first greedy bottleneck
+ok 376 - coupled search solves a constructive pair-first greedy bottleneck
+  ---
+  duration_ms: 58.902265
+  type: 'test'
+  ...
+1..376
+# tests 376
+# suites 0
+# pass 376
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2054.586998

@@ -1,0 +1,290 @@
+{
+  "type": "openbumpplan-copper-qualification",
+  "version": "0.3.1",
+  "algorithm": "aabb-bvh-v1",
+  "environment": {
+    "node": "v22.16.0",
+    "platform": "linux",
+    "architecture": "x64",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C"
+  },
+  "sourceSHA256": {
+    "src/core/copper.js": "377f47f5c003e4d460d7aaf2de96ffc38b4c2f444eb886c2369b168dfe91b9f7",
+    "src/core/spatial-index.js": "a4948e85fbe237ece398ebefc037e8ff92c6ece5872445891e094ae92b827d18",
+    "tests/oracles/copper-v030.mjs": "3099b0f61ecbcfd0740be577c93ddcbebea2f1b0d70c2a3cc93d95f87c460897",
+    "tests/copper-fixtures.mjs": "8e7bfb0d4686e538198d7c2035f01c74986a8702c4c68ba165e3a9a28bc1503f",
+    "scripts/qualify-copper.mjs": "1a3d08b0399ade7e909caca940a9bfc475d0544662e3df28e2352ce805872f2f"
+  },
+  "protocol": {
+    "samples": 5,
+    "warmups": 1,
+    "clock": "performance.now; shared single process; alternating execution order",
+    "measuredOperation": "verifyCopper, including project validation and geometry construction; fixture generation and full review replay excluded from timers",
+    "workload": "Explicit, non-crossing L-shaped supplied witnesses on separated 8x8 cells; additional reserved pads in the 8192-site case. Not router-generated completions.",
+    "limits": "Same 2,000,000 narrow-phase cap for both versions; new checker additionally caps spatial work. Timings for incomplete old runs are not speedups or equivalent work.",
+    "interpretation": "Synthetic evidence against the frozen preceding OpenBumpPlan verifier, not commercial EDA, manufacturing signoff, worst-case complexity or browser-latency evidence."
+  },
+  "cases": [
+    {
+      "routes": 64,
+      "sites": 128,
+      "inputSHA256": "30f455abdb57139aa4566a15406961bc0faf01412e12949dbb75254afb1b9382",
+      "scope": "supported-grid-and-review",
+      "budgets": {
+        "maxComparisons": 2000000,
+        "maxSpatialVisits": 10000000
+      },
+      "previous": {
+        "ok": true,
+        "complete": true,
+        "comparisons": 21056,
+        "rawMilliseconds": [
+          10.595258000000001,
+          6.558261000000002,
+          6.474469999999997,
+          7.417850000000016,
+          7.987169999999992
+        ],
+        "medianMilliseconds": 7.417850000000016
+      },
+      "current": {
+        "ok": true,
+        "complete": true,
+        "comparisons": 0,
+        "spatialVisits": 8832,
+        "rawMilliseconds": [
+          8.342718000000005,
+          10.957408000000001,
+          5.73852100000002,
+          6.21694500000001,
+          5.592371999999983
+        ],
+        "medianMilliseconds": 6.21694500000001
+      },
+      "semanticAgreement": true,
+      "speedupWhenBothComplete": 1.1931664185544515,
+      "endToEnd": {
+        "gridPass": true,
+        "reviewReplayPass": true
+      }
+    },
+    {
+      "routes": 256,
+      "sites": 512,
+      "inputSHA256": "03282a731a49afdd45442576ae73f2f4db82fb1f52bb5d91df6aad36bb922b69",
+      "scope": "supported-grid-and-review",
+      "budgets": {
+        "maxComparisons": 2000000,
+        "maxSpatialVisits": 10000000
+      },
+      "previous": {
+        "ok": true,
+        "complete": true,
+        "comparisons": 334080,
+        "rawMilliseconds": [
+          39.32865099999998,
+          28.85002800000001,
+          26.49650700000001,
+          29.849718000000053,
+          38.12678800000003
+        ],
+        "medianMilliseconds": 29.849718000000053
+      },
+      "current": {
+        "ok": true,
+        "complete": true,
+        "comparisons": 0,
+        "spatialVisits": 44544,
+        "rawMilliseconds": [
+          35.70748499999996,
+          28.642732999999964,
+          19.920575999999983,
+          20.51572200000004,
+          39.36912599999994
+        ],
+        "medianMilliseconds": 28.642732999999964
+      },
+      "semanticAgreement": true,
+      "speedupWhenBothComplete": 1.0421393098207525,
+      "endToEnd": {
+        "gridPass": true,
+        "reviewReplayPass": true
+      }
+    },
+    {
+      "routes": 512,
+      "sites": 1024,
+      "inputSHA256": "5010dd1a0a2a1264d49582f05cb6405d2c8a8b5db7f2797104d66d39f4a9971e",
+      "scope": "supported-grid-and-review",
+      "budgets": {
+        "maxComparisons": 2000000,
+        "maxSpatialVisits": 10000000
+      },
+      "previous": {
+        "ok": true,
+        "complete": true,
+        "comparisons": 1329940,
+        "rawMilliseconds": [
+          105.18563900000015,
+          139.49492299999997,
+          107.140717,
+          178.716365,
+          133.53271100000006
+        ],
+        "medianMilliseconds": 133.53271100000006
+      },
+      "current": {
+        "ok": true,
+        "complete": true,
+        "comparisons": 0,
+        "spatialVisits": 115552,
+        "rawMilliseconds": [
+          51.303177000000005,
+          44.47445599999992,
+          44.41263700000013,
+          42.49658099999988,
+          41.532167999999956
+        ],
+        "medianMilliseconds": 44.41263700000013
+      },
+      "semanticAgreement": true,
+      "speedupWhenBothComplete": 3.006637750422243,
+      "endToEnd": {
+        "gridPass": true,
+        "reviewReplayPass": true
+      }
+    },
+    {
+      "routes": 512,
+      "sites": 8192,
+      "inputSHA256": "df9114ea19d14362da4b4d53849e3c9be4e55e7243892b36635083564238d63c",
+      "scope": "supported-grid-and-review",
+      "budgets": {
+        "maxComparisons": 2000000,
+        "maxSpatialVisits": 10000000
+      },
+      "previous": {
+        "ok": false,
+        "complete": false,
+        "comparisons": 2000001,
+        "rawMilliseconds": [
+          211.43431299999975,
+          166.58947799999987,
+          157.11601100000007,
+          166.451951,
+          157.60306200000014
+        ],
+        "medianMilliseconds": 166.451951
+      },
+      "current": {
+        "ok": true,
+        "complete": true,
+        "comparisons": 0,
+        "spatialVisits": 496640,
+        "rawMilliseconds": [
+          344.30901300000005,
+          343.0196390000001,
+          363.56641899999977,
+          320.06387799999993,
+          345.7135959999996
+        ],
+        "medianMilliseconds": 344.30901300000005
+      },
+      "semanticAgreement": null,
+      "speedupWhenBothComplete": null,
+      "endToEnd": {
+        "gridPass": true,
+        "reviewReplayPass": true
+      }
+    },
+    {
+      "routes": 1024,
+      "sites": 2048,
+      "inputSHA256": "db0f5edb93097b16f81b40749b3f3c57a2fc18bd67c19abfa4b6e5dddeecd147",
+      "scope": "supplied-witness-copper-only; exceeds the 512-route grid/router limit",
+      "budgets": {
+        "maxComparisons": 2000000,
+        "maxSpatialVisits": 10000000
+      },
+      "previous": {
+        "ok": false,
+        "complete": false,
+        "comparisons": 2000001,
+        "rawMilliseconds": [
+          137.18502400000034,
+          124.29188199999953,
+          125.21834100000069,
+          155.0303989999993,
+          132.68253600000025
+        ],
+        "medianMilliseconds": 132.68253600000025
+      },
+      "current": {
+        "ok": true,
+        "complete": true,
+        "comparisons": 0,
+        "spatialVisits": 215040,
+        "rawMilliseconds": [
+          95.27350999999999,
+          92.0906930000001,
+          98.33441799999946,
+          95.41660300000058,
+          94.8329649999996
+        ],
+        "medianMilliseconds": 95.27350999999999
+      },
+      "semanticAgreement": null,
+      "speedupWhenBothComplete": null,
+      "endToEnd": null
+    },
+    {
+      "routes": 4096,
+      "sites": 8192,
+      "inputSHA256": "33a7e93fa8a12ab23555b0e3ebc695d3f949a3824d60cc54fdee8d901a014982",
+      "scope": "supplied-witness-copper-only; exceeds the 512-route grid/router limit",
+      "budgets": {
+        "maxComparisons": 2000000,
+        "maxSpatialVisits": 10000000
+      },
+      "previous": {
+        "ok": false,
+        "complete": false,
+        "comparisons": 2000001,
+        "rawMilliseconds": [
+          316.4951689999998,
+          220.9489790000007,
+          220.8177480000013,
+          229.26842600000055,
+          227.3173650000008
+        ],
+        "medianMilliseconds": 227.3173650000008
+      },
+      "current": {
+        "ok": true,
+        "complete": true,
+        "comparisons": 0,
+        "spatialVisits": 1007616,
+        "rawMilliseconds": [
+          586.4385979999988,
+          546.0067889999991,
+          550.1915119999994,
+          538.4650500000007,
+          537.7018259999986
+        ],
+        "medianMilliseconds": 546.0067889999991
+      },
+      "semanticAgreement": null,
+      "speedupWhenBothComplete": null,
+      "endToEnd": null
+    }
+  ],
+  "adversarial": {
+    "dense": {
+      "semanticAgreement": true,
+      "issues": 3588,
+      "accepted": false
+    },
+    "spatialBudgetFailsClosed": true,
+    "narrowBudgetFailsClosed": true
+  }
+}

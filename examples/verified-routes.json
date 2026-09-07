@@ -1,0 +1,134 @@
+{
+  "type": "openbumpplan-route-witness",
+  "schemaVersion": 1,
+  "designKey": "{\"connections\":[{\"from\":\"LEFT\",\"id\":\"horizontal\",\"locked\":false,\"net\":\"\",\"to\":\"RIGHT\"},{\"from\":\"BOTTOM\",\"id\":\"vertical\",\"locked\":false,\"net\":\"\",\"to\":\"TOP\"}],\"description\":\"Synthetic two-net crossing. Coverage requirements are disabled only to isolate geometric routing tests. Not a production constraint deck.\",\"dies\":[],\"keepouts\":[],\"name\":\"Routing laboratory / synthetic crossing\",\"ports\":[{\"dieId\":\"\",\"domain\":\"V1\",\"id\":\"LEFT\",\"kind\":\"pad\",\"label\":\"LEFT\",\"locked\":false,\"net\":\"DATA_A\",\"pair\":\"\",\"polarity\":\"\",\"required\":true,\"role\":\"signal\",\"x\":0,\"y\":30},{\"dieId\":\"\",\"domain\":\"V1\",\"id\":\"RIGHT\",\"kind\":\"ball\",\"label\":\"RIGHT\",\"locked\":false,\"net\":\"DATA_A\",\"pair\":\"\",\"polarity\":\"\",\"required\":false,\"role\":\"signal\",\"x\":60,\"y\":30},{\"dieId\":\"\",\"domain\":\"V1\",\"id\":\"BOTTOM\",\"kind\":\"pad\",\"label\":\"BOTTOM\",\"locked\":false,\"net\":\"DATA_B\",\"pair\":\"\",\"polarity\":\"\",\"required\":true,\"role\":\"signal\",\"x\":30,\"y\":0},{\"dieId\":\"\",\"domain\":\"V1\",\"id\":\"TOP\",\"kind\":\"ball\",\"label\":\"TOP\",\"locked\":false,\"net\":\"DATA_B\",\"pair\":\"\",\"polarity\":\"\",\"required\":false,\"role\":\"signal\",\"x\":30,\"y\":60}],\"regions\":[],\"rules\":{\"allowedStagePairs\":[[\"pad\",\"bump\"],[\"pad\",\"ball\"],[\"bump\",\"interposer\"],[\"bump\",\"ball\"],[\"interposer\",\"ball\"],[\"ball\",\"pcb\"]],\"clockGroundMin\":0,\"clockShieldRadius\":750,\"crossingWeight\":150,\"geometryBudget\":1000000,\"groundRadius\":0,\"maxCrossings\":0,\"maxLength\":200,\"minDomainSpacing\":0,\"minGroundRatio\":0,\"pairMaxDistance\":650,\"pairMaxSkew\":150,\"powerRadius\":1400,\"requireCompletePaths\":false,\"requirePowerForSignals\":false,\"terminalKind\":\"ball\"},\"schemaVersion\":1,\"units\":\"um\"}",
+  "config": {
+    "fromKind": "pad",
+    "toKind": "ball",
+    "pitch": 10,
+    "layers": 2,
+    "clearance": 0,
+    "viaCost": 10,
+    "startLayer": 0,
+    "endLayer": 0,
+    "originX": 0,
+    "originY": 0,
+    "columns": 7,
+    "rows": 7
+  },
+  "routes": [
+    {
+      "connectionId": "horizontal",
+      "path": [
+        [
+          0,
+          3,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ],
+        [
+          4,
+          3,
+          0
+        ],
+        [
+          5,
+          3,
+          0
+        ],
+        [
+          6,
+          3,
+          0
+        ]
+      ]
+    },
+    {
+      "connectionId": "vertical",
+      "path": [
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0
+        ],
+        [
+          3,
+          2,
+          0
+        ],
+        [
+          3,
+          2,
+          1
+        ],
+        [
+          3,
+          3,
+          1
+        ],
+        [
+          3,
+          4,
+          1
+        ],
+        [
+          3,
+          5,
+          1
+        ],
+        [
+          3,
+          6,
+          1
+        ],
+        [
+          3,
+          6,
+          0
+        ]
+      ]
+    }
+  ],
+  "failures": [],
+  "metrics": {
+    "routed": 2,
+    "wireLength": 120,
+    "vias": 2
+  },
+  "verified": true,
+  "expansions": 25,
+  "attemptedOrders": 1,
+  "elapsedMs": 1.1047829999999976,
+  "verification": {
+    "ok": true,
+    "issues": [],
+    "metrics": {
+      "routed": 2,
+      "wireLength": 120,
+      "vias": 2
+    },
+    "checkedNodes": 16,
+    "complete": true
+  },
+  "status": "routed",
+  "message": "All selected-stage routes independently checked on the declared conservative grid. Not electrical or manufacturing signoff."
+}

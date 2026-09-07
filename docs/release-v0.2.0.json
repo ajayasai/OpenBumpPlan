@@ -1,0 +1,53 @@
+{
+  "version": "0.2.0",
+  "preparedDate": "2026-09-05",
+  "publication": {
+    "status": "not-pushed",
+    "repository": "ajayasai/OpenBumpPlan",
+    "observedMain": "7e87673bd63b601045c1d5a50e5448051ec759ef",
+    "blocker": "Current connector exposes repository reads but no write/commit/ref actions; no authenticated CLI publishing path was available."
+  },
+  "tests": {
+    "node": {
+      "total": 376,
+      "passed": 376,
+      "failed": 0,
+      "report": "docs/node-tests-v0.2.0.tap"
+    },
+    "planningBrowser": {
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "report": "docs/planning-browser-v0.2.0.json"
+    },
+    "engineeringBrowser": {
+      "total": 11,
+      "passed": 11,
+      "failed": 0,
+      "report": "docs/engineering-browser-v0.2.0.json"
+    }
+  },
+  "browserMode": "Actual standalone HTML via Playwright set_content, real workers and downloads, fresh contexts; native navigation blocked by managed browser policy.",
+  "browserVersion": "144.0.7559.96",
+  "build": {
+    "path": "dist/openbumpplan.html",
+    "bytes": 222103,
+    "sha256": "6cbb526c0ba51dc98207592059bf1efdd9043a791f842b935cb7cb82ca50b478"
+  },
+  "baselineHeuristic": {
+    "gitBlobSHA1": "d8b8cdb2afdf5d4db42630e0aade9295a60ec95b",
+    "byteIdenticalToV0_1": true
+  },
+  "qualification": "docs/qualification-v0.2.0.json",
+  "unverified": [
+    "Native browser navigation and real-origin persistence",
+    "New remote GitHub CI",
+    "Remote publication helper clone/push/readback end-to-end",
+    "Node 24 CI matrix",
+    "Firefox/Safari and accessibility audit",
+    "Industrial-scale planning/routing and native vendor interoperability",
+    "Commercial head-to-head comparisons",
+    "Foundry physical DRC and electrical/thermal/mechanical signoff",
+    "External security/cryptographic review"
+  ]
+}

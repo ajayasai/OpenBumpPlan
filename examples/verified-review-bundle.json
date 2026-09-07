@@ -1,0 +1,346 @@
+{
+  "manifest": {
+    "type": "openbumpplan-review",
+    "schemaVersion": 1,
+    "engineVersion": "0.3.1",
+    "digestAlgorithm": "SHA-256",
+    "digests": {
+      "project": "b7cba919f5e13a2549b6b8eb01f645429239fa805c9e5dacd3503c7fbc736909",
+      "validation": "84fcaa6407b1213570b6b1fbbd5251afa2d36ec93a39cc505c7a484d943d42ba",
+      "routing": "c71aade0f04aec334e59086ee3e9edd51b2a8994306e45aafe18133038c2b69c",
+      "routingVerification": "7ee4c92cff66b2189e3593ce7c54ae67ea5873c70d249073db964e9d79e6e5fd",
+      "copperVerification": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+    },
+    "planningPass": true,
+    "warningCount": 1,
+    "routingPass": true,
+    "copperPass": null,
+    "scope": "Configured geometric planning rules and optional conservative routing-grid witness; NOT SI/PI/thermal or manufacturing signoff."
+  },
+  "payload": {
+    "project": {
+      "schemaVersion": 1,
+      "name": "Routing laboratory / synthetic crossing",
+      "revision": 0,
+      "units": "um",
+      "description": "Synthetic two-net crossing. Coverage requirements are disabled only to isolate geometric routing tests. Not a production constraint deck.",
+      "dies": [],
+      "ports": [
+        {
+          "label": "LEFT",
+          "dieId": "",
+          "net": "DATA_A",
+          "domain": "V1",
+          "role": "signal",
+          "pair": "",
+          "polarity": "",
+          "locked": false,
+          "required": true,
+          "id": "LEFT",
+          "kind": "pad",
+          "x": 0,
+          "y": 30
+        },
+        {
+          "label": "RIGHT",
+          "dieId": "",
+          "net": "DATA_A",
+          "domain": "V1",
+          "role": "signal",
+          "pair": "",
+          "polarity": "",
+          "locked": false,
+          "required": false,
+          "id": "RIGHT",
+          "kind": "ball",
+          "x": 60,
+          "y": 30
+        },
+        {
+          "label": "BOTTOM",
+          "dieId": "",
+          "net": "DATA_B",
+          "domain": "V1",
+          "role": "signal",
+          "pair": "",
+          "polarity": "",
+          "locked": false,
+          "required": true,
+          "id": "BOTTOM",
+          "kind": "pad",
+          "x": 30,
+          "y": 0
+        },
+        {
+          "label": "TOP",
+          "dieId": "",
+          "net": "DATA_B",
+          "domain": "V1",
+          "role": "signal",
+          "pair": "",
+          "polarity": "",
+          "locked": false,
+          "required": false,
+          "id": "TOP",
+          "kind": "ball",
+          "x": 30,
+          "y": 60
+        }
+      ],
+      "connections": [
+        {
+          "net": "",
+          "locked": false,
+          "id": "horizontal",
+          "from": "LEFT",
+          "to": "RIGHT"
+        },
+        {
+          "net": "",
+          "locked": false,
+          "id": "vertical",
+          "from": "BOTTOM",
+          "to": "TOP"
+        }
+      ],
+      "keepouts": [],
+      "regions": [],
+      "rules": {
+        "maxLength": 200,
+        "minDomainSpacing": 0,
+        "pairMaxDistance": 650,
+        "pairMaxSkew": 150,
+        "clockShieldRadius": 750,
+        "clockGroundMin": 0,
+        "groundRadius": 0,
+        "powerRadius": 1400,
+        "requirePowerForSignals": false,
+        "minGroundRatio": 0,
+        "crossingWeight": 150,
+        "maxCrossings": 0,
+        "geometryBudget": 1000000,
+        "terminalKind": "ball",
+        "requireCompletePaths": false,
+        "allowedStagePairs": [
+          [
+            "pad",
+            "bump"
+          ],
+          [
+            "pad",
+            "ball"
+          ],
+          [
+            "bump",
+            "interposer"
+          ],
+          [
+            "bump",
+            "ball"
+          ],
+          [
+            "interposer",
+            "ball"
+          ],
+          [
+            "ball",
+            "pcb"
+          ]
+        ]
+      },
+      "audit": []
+    },
+    "validation": {
+      "complete": true,
+      "ready": false,
+      "errors": 0,
+      "warnings": 1,
+      "totalIssues": 1,
+      "detailsTruncated": false,
+      "issues": [
+        {
+          "code": "RATSNEST_CROSSING",
+          "severity": "warning",
+          "message": "1 same-stage straight-line crossing(s), above budget 0. This is not routed-layer DRC.",
+          "ports": [],
+          "ref": "",
+          "category": "constraint"
+        }
+      ],
+      "metrics": {
+        "ports": 4,
+        "connections": 2,
+        "unassigned": 0,
+        "totalLength": 120,
+        "maxLength": 60,
+        "meanLength": 60,
+        "crossings": 1,
+        "overlaps": 0,
+        "score": 270,
+        "scoreExact": true,
+        "stageTotals": {
+          "pad -> ball": 120
+        }
+      },
+      "lengths": {
+        "horizontal": 60,
+        "vertical": 60
+      },
+      "crossingExamples": [
+        {
+          "a": "vertical",
+          "b": "horizontal",
+          "type": "cross"
+        }
+      ],
+      "geometryComparisons": 5
+    },
+    "routing": {
+      "type": "openbumpplan-route-witness",
+      "schemaVersion": 1,
+      "designKey": "{\"connections\":[{\"from\":\"LEFT\",\"id\":\"horizontal\",\"locked\":false,\"net\":\"\",\"to\":\"RIGHT\"},{\"from\":\"BOTTOM\",\"id\":\"vertical\",\"locked\":false,\"net\":\"\",\"to\":\"TOP\"}],\"description\":\"Synthetic two-net crossing. Coverage requirements are disabled only to isolate geometric routing tests. Not a production constraint deck.\",\"dies\":[],\"keepouts\":[],\"name\":\"Routing laboratory / synthetic crossing\",\"ports\":[{\"dieId\":\"\",\"domain\":\"V1\",\"id\":\"LEFT\",\"kind\":\"pad\",\"label\":\"LEFT\",\"locked\":false,\"net\":\"DATA_A\",\"pair\":\"\",\"polarity\":\"\",\"required\":true,\"role\":\"signal\",\"x\":0,\"y\":30},{\"dieId\":\"\",\"domain\":\"V1\",\"id\":\"RIGHT\",\"kind\":\"ball\",\"label\":\"RIGHT\",\"locked\":false,\"net\":\"DATA_A\",\"pair\":\"\",\"polarity\":\"\",\"required\":false,\"role\":\"signal\",\"x\":60,\"y\":30},{\"dieId\":\"\",\"domain\":\"V1\",\"id\":\"BOTTOM\",\"kind\":\"pad\",\"label\":\"BOTTOM\",\"locked\":false,\"net\":\"DATA_B\",\"pair\":\"\",\"polarity\":\"\",\"required\":true,\"role\":\"signal\",\"x\":30,\"y\":0},{\"dieId\":\"\",\"domain\":\"V1\",\"id\":\"TOP\",\"kind\":\"ball\",\"label\":\"TOP\",\"locked\":false,\"net\":\"DATA_B\",\"pair\":\"\",\"polarity\":\"\",\"required\":false,\"role\":\"signal\",\"x\":30,\"y\":60}],\"regions\":[],\"rules\":{\"allowedStagePairs\":[[\"pad\",\"bump\"],[\"pad\",\"ball\"],[\"bump\",\"interposer\"],[\"bump\",\"ball\"],[\"interposer\",\"ball\"],[\"ball\",\"pcb\"]],\"clockGroundMin\":0,\"clockShieldRadius\":750,\"crossingWeight\":150,\"geometryBudget\":1000000,\"groundRadius\":0,\"maxCrossings\":0,\"maxLength\":200,\"minDomainSpacing\":0,\"minGroundRatio\":0,\"pairMaxDistance\":650,\"pairMaxSkew\":150,\"powerRadius\":1400,\"requireCompletePaths\":false,\"requirePowerForSignals\":false,\"terminalKind\":\"ball\"},\"schemaVersion\":1,\"units\":\"um\"}",
+      "config": {
+        "fromKind": "pad",
+        "toKind": "ball",
+        "pitch": 10,
+        "layers": 2,
+        "clearance": 0,
+        "viaCost": 10,
+        "startLayer": 0,
+        "endLayer": 0,
+        "originX": 0,
+        "originY": 0,
+        "columns": 7,
+        "rows": 7
+      },
+      "routes": [
+        {
+          "connectionId": "horizontal",
+          "path": [
+            [
+              0,
+              3,
+              0
+            ],
+            [
+              1,
+              3,
+              0
+            ],
+            [
+              2,
+              3,
+              0
+            ],
+            [
+              3,
+              3,
+              0
+            ],
+            [
+              4,
+              3,
+              0
+            ],
+            [
+              5,
+              3,
+              0
+            ],
+            [
+              6,
+              3,
+              0
+            ]
+          ]
+        },
+        {
+          "connectionId": "vertical",
+          "path": [
+            [
+              3,
+              0,
+              0
+            ],
+            [
+              3,
+              1,
+              0
+            ],
+            [
+              3,
+              2,
+              0
+            ],
+            [
+              3,
+              2,
+              1
+            ],
+            [
+              3,
+              3,
+              1
+            ],
+            [
+              3,
+              4,
+              1
+            ],
+            [
+              3,
+              5,
+              1
+            ],
+            [
+              3,
+              6,
+              1
+            ],
+            [
+              3,
+              6,
+              0
+            ]
+          ]
+        }
+      ],
+      "failures": [],
+      "metrics": {
+        "routed": 2,
+        "wireLength": 120,
+        "vias": 2
+      },
+      "verified": true,
+      "expansions": 25,
+      "attemptedOrders": 1,
+      "elapsedMs": 1.1047829999999976,
+      "verification": {
+        "ok": true,
+        "issues": [],
+        "metrics": {
+          "routed": 2,
+          "wireLength": 120,
+          "vias": 2
+        },
+        "checkedNodes": 16,
+        "complete": true
+      },
+      "status": "routed",
+      "message": "All selected-stage routes independently checked on the declared conservative grid. Not electrical or manufacturing signoff."
+    },
+    "routingVerification": {
+      "ok": true,
+      "issues": [],
+      "metrics": {
+        "routed": 2,
+        "wireLength": 120,
+        "vias": 2
+      },
+      "checkedNodes": 16,
+      "complete": true
+    },
+    "copperVerification": null
+  },
+  "manifestSHA256": "269a678398cde7b4b38815344a035d4352c96a80a474d97fd302c11dda7441a2"
+}

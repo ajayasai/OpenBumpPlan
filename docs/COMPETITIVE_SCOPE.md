@@ -1,3 +1,5 @@
+> Historical v0.1.0 record. For v0.2.0, see [current validation](VALIDATION-V0.2.0.md), [engineering semantics](V0.2.0.md), and [competitive evidence](COMPETITIVE-EVIDENCE.md).
+
 # Competitive scope, evidence, and roadmap
 
 ## What can honestly be claimed
