@@ -1,0 +1,318 @@
+{
+  "type": "openbumpplan-route-generation-qualification",
+  "version": "0.4.0",
+  "environment": {
+    "node": "v22.16.0",
+    "platform": "linux",
+    "architecture": "x64",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C"
+  },
+  "sourceSHA256": {
+    "src/core/routing.js": "8b01b8b7e145cb6f3bc7bdc4a4528d365b9d68662c91f507c574ff4107ccf5e6",
+    "src/core/search-workspace.js": "1d85c6875a52e45df1e548aed2d8554ea28bec21093e1c65c2bc534afad3fde6",
+    "src/core/copper.js": "6f9e22c4700b1d5374c77be950f307cff01e631f41d242991bcef2e851b6b7ec",
+    "tests/oracles/routing-v031.mjs": "575f68dc412643debcf2ba10dafed6c533e3422aeb094c69016b39ed55ac7e24",
+    "tests/copper-fixtures.mjs": "d5c0040b135534f8dbec4e63b4585cd4d53a6f84ca7d146bfc0d6efceddcdad3",
+    "scripts/qualify-routing.mjs": "e3317a4d46932ee1ff839d7104ae725136d9359761a46526953b8709c046a123"
+  },
+  "protocol": {
+    "warmups": 1,
+    "samples": 5,
+    "comparisonOrder": "alternating; both implementations in one process",
+    "comparativeOperation": "routeStage including model checks, static obstacles, A* generation and independent grid verification; excludes fixture construction",
+    "capacityOperation": "routePhysical including negotiated-router entry, grid verification and continuous copper verification; bundle create/replay separately timed",
+    "fixtures": "Separated 8x8 cells with one 6-step local source-to-target route per active cell; additional reserved pads for the 8192-site comparison. No hand-supplied path enters generation.",
+    "allocationAccounting": "Previous scratch allocations are computed exactly as successful searches * grid cells * (8+4+1) bytes; new scratchBytes are actual typed-array lengths. Neither is peak process memory.",
+    "limits": "4096 assignments, 262144 grid cells, 1000000 witness nodes, 2000000 maximum search expansions. Dense congestion, long routes and industrial designs are not represented.",
+    "scope": "OpenBumpPlan v0.3.1 router vs new router, not commercial EDA or foundry/electrical/thermal signoff."
+  },
+  "comparisons": [
+    {
+      "routes": 64,
+      "sites": 128,
+      "gridCells": 4096,
+      "inputSHA256": "6da03cd82b9e568b0bf7022af37f5d93dc230af85e44d1b159ded3518be4a533",
+      "previous": {
+        "rawMilliseconds": [
+          31.474977999999993,
+          16.46545499999999,
+          89.63387500000005,
+          11.578287999999986,
+          18.92478399999999
+        ],
+        "medianMilliseconds": 18.92478399999999,
+        "scratchAllocationBytesAcrossSearches": 3407872
+      },
+      "current": {
+        "rawMilliseconds": [
+          29.69762300000002,
+          15.474925999999982,
+          28.17365700000005,
+          8.130048999999985,
+          7.571635000000015
+        ],
+        "medianMilliseconds": 15.474925999999982,
+        "searchStats": {
+          "algorithm": "generation-stamped-astar-v1",
+          "workspaces": 1,
+          "searches": 64,
+          "initializedNodes": 1728,
+          "fullResets": 0,
+          "scratchBytes": 81920
+        }
+      },
+      "speedup": 1.2229321161212667,
+      "samePathsAndChecks": true,
+      "metrics": {
+        "routed": 64,
+        "wireLength": 384,
+        "vias": 0
+      }
+    },
+    {
+      "routes": 256,
+      "sites": 512,
+      "gridCells": 16384,
+      "inputSHA256": "e693895e27f7a94c04d7e997e0eb3479a937abbed4f4f53e06e2e26b9b580e3e",
+      "previous": {
+        "rawMilliseconds": [
+          196.18886399999997,
+          59.96346500000004,
+          39.3632080000001,
+          50.252042000000074,
+          40.928089
+        ],
+        "medianMilliseconds": 50.252042000000074,
+        "scratchAllocationBytesAcrossSearches": 54525952
+      },
+      "current": {
+        "rawMilliseconds": [
+          46.16689299999996,
+          27.016961000000038,
+          24.879392999999936,
+          28.980970999999954,
+          19.844999000000143
+        ],
+        "medianMilliseconds": 27.016961000000038,
+        "searchStats": {
+          "algorithm": "generation-stamped-astar-v1",
+          "workspaces": 1,
+          "searches": 256,
+          "initializedNodes": 6912,
+          "fullResets": 0,
+          "scratchBytes": 327680
+        }
+      },
+      "speedup": 1.8600183047974939,
+      "samePathsAndChecks": true,
+      "metrics": {
+        "routed": 256,
+        "wireLength": 1536,
+        "vias": 0
+      }
+    },
+    {
+      "routes": 512,
+      "sites": 1024,
+      "gridCells": 33856,
+      "inputSHA256": "6973c466585203a78eac7cc73ed53660d3eaabbea6a20246b536fae93b425dfe",
+      "previous": {
+        "rawMilliseconds": [
+          116.38151399999992,
+          79.86412599999994,
+          75.709202,
+          122.69299000000001,
+          80.53772299999991
+        ],
+        "medianMilliseconds": 80.53772299999991,
+        "scratchAllocationBytesAcrossSearches": 225345536
+      },
+      "current": {
+        "rawMilliseconds": [
+          39.71775199999979,
+          38.33462600000007,
+          37.10454699999991,
+          38.48371599999996,
+          40.05712399999993
+        ],
+        "medianMilliseconds": 38.48371599999996,
+        "searchStats": {
+          "algorithm": "generation-stamped-astar-v1",
+          "workspaces": 1,
+          "searches": 512,
+          "initializedNodes": 13824,
+          "fullResets": 0,
+          "scratchBytes": 677120
+        }
+      },
+      "speedup": 2.0927740709862843,
+      "samePathsAndChecks": true,
+      "metrics": {
+        "routed": 512,
+        "wireLength": 3072,
+        "vias": 0
+      }
+    },
+    {
+      "routes": 512,
+      "sites": 8192,
+      "gridCells": 262144,
+      "inputSHA256": "b0951c9863f5ba1a6ec43d90028a81eb3297a9068e7f10ddab36fcf6833d666c",
+      "previous": {
+        "rawMilliseconds": [
+          1030.8155940000001,
+          426.1840380000003,
+          450.5359610000005,
+          379.5736459999998,
+          395.0017080000007
+        ],
+        "medianMilliseconds": 426.1840380000003,
+        "scratchAllocationBytesAcrossSearches": 1744830464
+      },
+      "current": {
+        "rawMilliseconds": [
+          483.03984699999955,
+          276.2017310000001,
+          176.02636299999995,
+          574.2306639999997,
+          209.36301099999946
+        ],
+        "medianMilliseconds": 276.2017310000001,
+        "searchStats": {
+          "algorithm": "generation-stamped-astar-v1",
+          "workspaces": 1,
+          "searches": 512,
+          "initializedNodes": 13824,
+          "fullResets": 0,
+          "scratchBytes": 5242880
+        }
+      },
+      "speedup": 1.5430172593668507,
+      "samePathsAndChecks": true,
+      "metrics": {
+        "routed": 512,
+        "wireLength": 3072,
+        "vias": 0
+      }
+    }
+  ],
+  "capacity": [
+    {
+      "routes": 1024,
+      "sites": 2048,
+      "gridCells": 65536,
+      "inputSHA256": "e085abd398303ac5d136a59c2ede95911b2d1c7959fc2497338fc1cba9944604",
+      "previous": {
+        "supported": false,
+        "reason": "512-assignment limit; no equivalent-work timing"
+      },
+      "current": {
+        "rawMilliseconds": [
+          311.7827269999998,
+          362.2237210000012,
+          290.8163140000015,
+          246.80656999999883,
+          246.4200290000008
+        ],
+        "medianMilliseconds": 290.8163140000015,
+        "metrics": {
+          "routed": 1024,
+          "wireLength": 6144,
+          "vias": 0
+        },
+        "expansions": 14336,
+        "searchStats": {
+          "algorithm": "generation-stamped-astar-v1",
+          "workspaces": 1,
+          "searches": 1024,
+          "initializedNodes": 27648,
+          "fullResets": 0,
+          "scratchBytes": 1310720
+        },
+        "gridPass": true,
+        "copperPass": true,
+        "reviewReplayPass": true,
+        "reviewCreateAndReplayMilliseconds": 728.0904329999994
+      },
+      "speedup": null
+    },
+    {
+      "routes": 2048,
+      "sites": 4096,
+      "gridCells": 135424,
+      "inputSHA256": "1a3e82d095292e21eb80b640c40871da0e013354cbc17296499ba4b74d06b9a4",
+      "previous": {
+        "supported": false,
+        "reason": "512-assignment limit; no equivalent-work timing"
+      },
+      "current": {
+        "rawMilliseconds": [
+          971.2236329999996,
+          617.8641289999996,
+          627.9776770000008,
+          687.9638300000006,
+          790.5266140000003
+        ],
+        "medianMilliseconds": 687.9638300000006,
+        "metrics": {
+          "routed": 2048,
+          "wireLength": 12288,
+          "vias": 0
+        },
+        "expansions": 28672,
+        "searchStats": {
+          "algorithm": "generation-stamped-astar-v1",
+          "workspaces": 1,
+          "searches": 2048,
+          "initializedNodes": 55296,
+          "fullResets": 0,
+          "scratchBytes": 2708480
+        },
+        "gridPass": true,
+        "copperPass": true,
+        "reviewReplayPass": true,
+        "reviewCreateAndReplayMilliseconds": 1611.7731049999984
+      },
+      "speedup": null
+    },
+    {
+      "routes": 4096,
+      "sites": 8192,
+      "gridCells": 262144,
+      "inputSHA256": "0860872738703d3e33e55095954ad037268e0a8eb974fce66b15c41840fdbc95",
+      "previous": {
+        "supported": false,
+        "reason": "512-assignment limit; no equivalent-work timing"
+      },
+      "current": {
+        "rawMilliseconds": [
+          1337.2336399999986,
+          1471.3830259999995,
+          1367.556661999999,
+          1347.6379789999992,
+          1223.6687380000003
+        ],
+        "medianMilliseconds": 1347.6379789999992,
+        "metrics": {
+          "routed": 4096,
+          "wireLength": 24576,
+          "vias": 0
+        },
+        "expansions": 57344,
+        "searchStats": {
+          "algorithm": "generation-stamped-astar-v1",
+          "workspaces": 1,
+          "searches": 4096,
+          "initializedNodes": 110592,
+          "fullResets": 0,
+          "scratchBytes": 5242880
+        },
+        "gridPass": true,
+        "copperPass": true,
+        "reviewReplayPass": true,
+        "reviewCreateAndReplayMilliseconds": 2576.4739450000015
+      },
+      "speedup": null
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "type": "openbumpplan-route-witness",
+  "schemaVersion": 1,
+  "designKey": "{\"connections\":[{\"from\":\"LEFT\",\"id\":\"horizontal\",\"locked\":false,\"net\":\"\",\"to\":\"RIGHT\"},{\"from\":\"BOTTOM\",\"id\":\"vertical\",\"locked\":false,\"net\":\"\",\"to\":\"TOP\"}],\"description\":\"Synthetic two-net crossing. Coverage requirements are disabled only to isolate geometric routing tests. Not a production constraint deck.\",\"dies\":[],\"keepouts\":[],\"name\":\"Routing laboratory / synthetic crossing\",\"ports\":[{\"dieId\":\"\",\"domain\":\"V1\",\"id\":\"LEFT\",\"kind\":\"pad\",\"label\":\"LEFT\",\"locked\":false,\"net\":\"DATA_A\",\"pair\":\"\",\"polarity\":\"\",\"required\":true,\"role\":\"signal\",\"x\":0,\"y\":30},{\"dieId\":\"\",\"domain\":\"V1\",\"id\":\"RIGHT\",\"kind\":\"ball\",\"label\":\"RIGHT\",\"locked\":false,\"net\":\"DATA_A\",\"pair\":\"\",\"polarity\":\"\",\"required\":false,\"role\":\"signal\",\"x\":60,\"y\":30},{\"dieId\":\"\",\"domain\":\"V1\",\"id\":\"BOTTOM\",\"kind\":\"pad\",\"label\":\"BOTTOM\",\"locked\":false,\"net\":\"DATA_B\",\"pair\":\"\",\"polarity\":\"\",\"required\":true,\"role\":\"signal\",\"x\":30,\"y\":0},{\"dieId\":\"\",\"domain\":\"V1\",\"id\":\"TOP\",\"kind\":\"ball\",\"label\":\"TOP\",\"locked\":false,\"net\":\"DATA_B\",\"pair\":\"\",\"polarity\":\"\",\"required\":false,\"role\":\"signal\",\"x\":30,\"y\":60}],\"regions\":[],\"rules\":{\"allowedStagePairs\":[[\"pad\",\"bump\"],[\"pad\",\"ball\"],[\"bump\",\"interposer\"],[\"bump\",\"ball\"],[\"interposer\",\"ball\"],[\"ball\",\"pcb\"]],\"clockGroundMin\":0,\"clockShieldRadius\":750,\"crossingWeight\":150,\"geometryBudget\":1000000,\"groundRadius\":0,\"maxCrossings\":0,\"maxLength\":200,\"minDomainSpacing\":0,\"minGroundRatio\":0,\"pairMaxDistance\":650,\"pairMaxSkew\":150,\"powerRadius\":1400,\"requireCompletePaths\":false,\"requirePowerForSignals\":false,\"terminalKind\":\"ball\"},\"schemaVersion\":1,\"units\":\"um\"}",
+  "config": {
+    "fromKind": "pad",
+    "toKind": "ball",
+    "pitch": 10,
+    "layers": 2,
+    "clearance": 3,
+    "viaCost": 10,
+    "startLayer": 0,
+    "endLayer": 0,
+    "originX": -30,
+    "originY": -30,
+    "columns": 13,
+    "rows": 13
+  },
+  "routes": [
+    {
+      "connectionId": "horizontal",
+      "path": [
+        [
+          3,
+          6,
+          0
+        ],
+        [
+          4,
+          6,
+          0
+        ],
+        [
+          5,
+          6,
+          0
+        ],
+        [
+          6,
+          6,
+          0
+        ],
+        [
+          7,
+          6,
+          0
+        ],
+        [
+          8,
+          6,
+          0
+        ],
+        [
+          9,
+          6,
+          0
+        ]
+      ]
+    },
+    {
+      "connectionId": "vertical",
+      "path": [
+        [
+          6,
+          3,
+          0
+        ],
+        [
+          6,
+          4,
+          0
+        ],
+        [
+          6,
+          4,
+          1
+        ],
+        [
+          6,
+          5,
+          1
+        ],
+        [
+          6,
+          6,
+          1
+        ],
+        [
+          6,
+          7,
+          1
+        ],
+        [
+          6,
+          8,
+          1
+        ],
+        [
+          6,
+          9,
+          1
+        ],
+        [
+          6,
+          9,
+          0
+        ]
+      ]
+    }
+  ],
+  "failures": [],
+  "metrics": {
+    "routed": 2,
+    "wireLength": 120,
+    "vias": 2
+  },
+  "verified": true,
+  "expansions": 23,
+  "attemptedOrders": 1,
+  "elapsedMs": 1.5374320000000026,
+  "verification": {
+    "ok": true,
+    "issues": [],
+    "metrics": {
+      "routed": 2,
+      "wireLength": 120,
+      "vias": 2
+    },
+    "checkedNodes": 16,
+    "complete": true
+  },
+  "status": "routed-physical",
+  "message": "Both the grid witness and independent continuous copper geometry checks pass for the declared technology. This is not foundry or electrical signoff.",
+  "strategy": "negotiated-congestion",
+  "negotiationIterations": 0,
+  "technology": {
+    "units": "um",
+    "traceWidth": 1,
+    "viaDiameter": 2,
+    "padDiameter": 2,
+    "clearance": 1
+  },
+  "copperVerification": {
+    "ok": true,
+    "complete": true,
+    "technology": {
+      "units": "um",
+      "traceWidth": 1,
+      "viaDiameter": 2,
+      "padDiameter": 2,
+      "clearance": 1
+    },
+    "scope": "Declared round-capped trace widths, circular pads/vias and axis-aligned keepouts on each routing layer; no electrical/thermal/foundry signoff.",
+    "metrics": {
+      "routed": 2,
+      "wireLength": 120,
+      "vias": 2
+    },
+    "primitives": 7,
+    "comparisons": 0,
+    "spatialVisits": 117,
+    "algorithm": "aabb-bvh-v1",
+    "totalIssues": 0,
+    "issues": []
+  }
+}

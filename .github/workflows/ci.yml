@@ -1,22 +1,71 @@
-name: Planning engine checks
+name: Certified planning and geometry checks
 on:
   push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
+defaults:
+  run:
+    shell: bash
 jobs:
-  test:
+  engine:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm test | tee node-tests.tap
+      - run: npm run build
+      - run: git diff --exit-code -- dist/
+      - run: npm run verify:release
+      - run: npm run qualify:v03
+      - run: npm run qualify:copper -- qualification-copper.json
+      - run: node scripts/cli.mjs verify-coupled examples/pair-bottleneck.json examples/coupled-proof.json
+      - run: node scripts/cli.mjs verify-copper examples/routing-laboratory.json examples/physical-routes.json --technology examples/copper-technology.json
+      - run: node scripts/cli.mjs verify-bundle examples/physical-review.json --project examples/routing-laboratory.json --technology examples/copper-technology.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: engine-node-${{ matrix.node }}
+          path: |
+            node-tests.tap
+            qualification-copper.json
+            docs/qualification-v0.3.0.json
+            dist/
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm test
-      - run: npm run build
-      - run: node scripts/cli.mjs check examples/chiplet-demo.json
-      - run: node scripts/cli.mjs check examples/chiplet-optimized.json --fail-on warning
-      - uses: actions/upload-artifact@v4
+      - uses: actions/setup-python@v5
         with:
-          name: openbumpplan-offline
-          path: dist/
+          python-version: '3.12'
+      - run: npm run build
+      - run: npm run verify:release
+      - run: python -m pip install playwright==1.57.0
+      - run: python -m playwright install --with-deps chromium
+      - name: Standalone and actual localhost-origin workflows
+        run: |
+          CHROMIUM_PATH=$(python -c 'from playwright.sync_api import sync_playwright; p=sync_playwright().start(); print(p.chromium.executable_path); p.stop()')
+          python tests/browser_test.py --chromium "$CHROMIUM_PATH"
+          python tests/engineering_browser_test.py --chromium "$CHROMIUM_PATH"
+          python tests/browser_v03.py --chromium "$CHROMIUM_PATH"
+          python tests/engineering_browser_test.py --native --chromium "$CHROMIUM_PATH"
+          python tests/browser_v03.py --native --chromium "$CHROMIUM_PATH"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-evidence
+          path: |
+            docs/*browser*.json
+            docs/*studio*.png

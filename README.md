@@ -1,100 +1,129 @@
 # OpenBumpPlan
 
-**A local-first die/package bump and ball-map planning studio.**
+**Open-source bump planning with replayable optimization proofs and independently checked routing geometry.**
 
-Plan and review **IC pads → microbumps → interposer sites → package balls → PCB sites** in one inspectable, versioned project. Import coordinates, rearrange mappings, check constraints, optimize a stage, compare revisions, and produce an interface-control document without uploading your design to a service.
+Local-first planning for **IC pads → microbumps → interposer sites → package balls → PCB sites**. Edit, constrain, optimize, review and export without uploading design data.
 
-**Version 0.1.0 · engineering alpha · MIT licensed.** This is working planning software, not a qualified routing, SI/PI, or manufacturing-signoff product. No superiority over commercial EDA systems has been established.
+**v0.4.0 · MIT license · engineering alpha.** The route generator and independent grid checker now accept up to **4,096 assignments**, with the same grid and search-work ceilings. It is **not** qualified foundry, electrical, thermal or mechanical signoff. Superiority over commercial EDA products has not been demonstrated.
 
-![The running planning studio after optimizing the included synthetic example](docs/studio-screenshot.png)
+## New in v0.4.0: actual route generation at larger scale
 
-## Start in a minute
+Reusable, generation-stamped A* search arrays replace allocation and whole-grid clearing for every attempted net. The route algorithm retains its neighbour and tie order; 80 fixed randomized cases produce the same paths and diagnostics as a frozen v0.3.1 implementation. This does not remove worst-case routing difficulty or increase the existing grid limit.
 
-The project has **no npm dependencies**. The build, engine, tests, and command-line tools use Node.js built-ins.
+Five alternating-order local measurements after warm-up, against **OpenBumpPlan v0.3.1**, on synthetic separated routes:
+
+| Actual generated routes / sites | v0.3.1 median | v0.4.0 median | Ratio |
+|---|---:|---:|---:|
+| 64 / 128 | 18.925 ms | 15.475 ms | 1.22x |
+| 256 / 512 | 50.252 ms | 27.017 ms | 1.86x |
+| 512 / 1,024 | 80.538 ms | 38.484 ms | 2.09x |
+| 512 / 8,192 | 426.184 ms | 276.202 ms | 1.54x |
+
+The new version also **generates 4,096 routes**, checks grid occupancy and continuous copper geometry, and replays the project/technology-bound review. That synthetic single-layer case takes 1.348 s median for generation plus grid/copper checks locally. Review creation/replay is measured separately. The old router rejects more than 512 assignments, so there is no equivalent-work speedup ratio at 4,096. This is not evidence for congested industrial designs or commercial-tool superiority. [Raw protocol, samples and hashes](docs/qualification-routing-v0.4.0.json).
+
+The browser exposes explicit grid origins, dimensions and terminal layers. Changing engineering controls invalidates the previous result and disables stale review export. Independent clearance checking now rejects copper contact even for tiny positive clearance values. Archive decoding has pre-expansion output and decoder-memory limits, with 21 Python security regressions.
+
+[Engineering details](docs/V0.4.0.md) · [Validation boundaries](docs/VALIDATION-V0.4.0.md) · [Historical indexed-checker qualification](docs/qualification-copper-v0.3.1.json)
+
+## Run
+
+Use Node.js 22 or newer. No npm installation or runtime dependencies. Running the complete test suite additionally requires Python 3 (standard library only):
 
 ```sh
-# Node.js 22 or newer:
 git clone https://github.com/ajayasai/OpenBumpPlan.git
 cd OpenBumpPlan
 npm start
 ```
 
-Open **http://127.0.0.1:4173**. The server is read-only and listens on loopback by default. It neither receives nor saves your project. The browser processes design data locally.
+Open **http://127.0.0.1:4173**. `dist/openbumpplan.html` also bundles the app, styles and workers into one offline file. File-origin browser policies may restrict workers/storage; the local server is the preferred fallback. Export JSON for durable backups. `private: true` in `package.json` prevents accidental npm publication; the GitHub repository is public.
 
-Alternatively, open **`dist/openbumpplan.html`** directly in a modern browser. It includes the application, styles, and optimization worker in one file. File-origin browser policies can restrict workers or storage; the local server is the fallback. Always export project JSON as your durable backup.
+**v0.4.0 validation:** 868 Node tests, including a wrapper for 21 Python security tests, and 35 standalone Chromium scenarios pass locally. Native-localhost browser navigation is blocked by administrator policy in this environment and is not counted as passed. Remote results must be read from the actual GitHub Actions run. [Exact scope](docs/VALIDATION-V0.4.0.md).
 
-No signup, license server, GPU, cloud account, or build step is needed to use the supplied standalone file. `package.json` has `private: true` solely to prevent accidental publication to the npm registry; it does **not** specify GitHub repository visibility.
+## What is materially different in v0.3
 
-## Included capabilities
-
-| Area | Implemented in this release |
+| Capability | Implemented behavior and boundary |
 |---|---|
-| Input | Project JSON, pad/bump/interposer/ball/PCB CSV, assignment CSV, explicit um/mm/nm conversion, limited LEF MACRO/PIN/PORT RECT importer with visible limitations |
-| Workspace | Physical XY and exploded-stack views, layer toggles, pan/zoom, labels, selection, die placement, 90-degree rotations, X mirroring, generated arrays, drag-to-move with snapping |
-| Mapping | Inspect inherited nets/domains, drag/click to connect, explicitly replace occupied assignments, lock sites and links, undo/redo |
-| Rules | Net/role/domain compatibility, voltage-domain spacing, differential-pair completeness/adjacency/polarity/length mismatch, clock ground-neighbor checks, power/ground coverage and quotas, reserved/NC positions, rectangular/edge/corner keep-outs, required endpoints and path continuity |
-| Geometry | Total and longest physical Manhattan distance, same-stage straight-ratsnest crossings, separately reported collinear overlaps, explicit incomplete-analysis status |
-| Optimization | Pair-aware placement, minimum-cost rectangular assignment, checked local swaps, locked-mapping preservation, regression gate, cancellable Web Worker |
-| Review | Structural and downstream-propagated revision differences, baseline overlay, machine-readable regression report, local revision history |
-| Deliverables | Ports and mappings CSV, project JSON, vector SVG, vector/text PDF, HTML and Markdown ICD, validation JSON, revision-diff JSON |
-| Automation | Dependency-free CLI, unit/property/integration tests, optional browser tests, synthetic benchmark harness, Dockerfile, GitHub Actions templates, public-repository publishing script |
+| Sparse certified assignment | Complete unary-compatible candidate graph, integer-cost minimum-cost flow, no nearest-k pruning. A separate checker verifies a complete matching and every residual reduced-cost inequality. |
+| Coupled search beyond 12 sources | Best-first sparse assignment subproblems, hard-rule rechecks, disjoint prefix partitions, and replayable proofs. Handles more than 12 movable sources; worst-case search remains exponential and explicitly bounded. |
+| Honest failure semantics | A stopped search is unknown or feasible-with-bound, never automatically infeasible or optimal. Valid Hall deficiencies explain some impossible scopes. Rejected mappings are not applied. |
+| Congestion repair | Negotiated-congestion rip-up/reroute after initial A* route orders fail. Temporary search collisions are never accepted as final routing evidence. |
+| Continuous copper validation | Round-capped trace widths, circular via/pad diameters, per-layer spacing and keepouts checked using continuous distances, separately from the grid rasterizer. Explicit technology inputs, not implied process signoff. |
+| Review integrity | SHA-256 binds findings and routes; physical bundles also bind and recheck declared technology. The CLI accepts an independently expected technology file and trusted Ed25519 public key. |
+| Real application integration | Cancellable workers, stale-result rejection, checked/undoable Apply, self-contained proof reports, routed SVGs, CLI commands and regression tests. |
 
-The names of the rules are not promises of electrical signoff: “clock shielding” checks nearby connected grounds, and “power distribution” checks geometric coverage and quotas. They do not calculate return-current paths, impedance, voltage drop, current capacity, or electromigration.
+The former 12-source permutation solver remains available for the **crossing-weighted objective** and explicit maximum-changes ECO limit. The new certified solvers minimize **rounded stage L1 + changed-target penalty**, not that crossing-weighted score. Do not compare the two objectives as if they were the same.
 
-## Try the included example
+## Measured qualification, not vendor marketing
 
-The startup project is synthetic: two chiplets, **122 sites**, **96 links**, all five stages, ground/power/clock signals, differential pairs, one rotated die, reserved/NC sites, and deliberate assignment crossings.
+The preceding v0.3.0 qualification recorded **562 Node tests** and **31 Chromium scenarios**: 12 planning, 11 earlier Engineering, and 8 new proof/copper workflows. The publication workflow additionally runs native-origin browser tests on GitHub's runner; consult the actual Actions result for remote status.
 
-1. Select a site in **Plan**. Its inspector shows declared and inherited information. Hide layers to disambiguate overlapping sites; use **Move** for geometry or **Connect** for mappings.
-2. With **interposer → ball** selected, click **Optimize stage**. On this example, the score changes **27,540 → 25,920** and crossings **2 → 0**, with no hard-rule errors.
-3. Open **Revisions** to see the changed mappings and downstream signals. Open **Interface document** to review the generated ICD. Export JSON and PDF.
+On **100 fixed synthetic single-layer routing instances**, complete checked witnesses increased from **71 to 88**, recovering **17** cases with **zero complete-to-incomplete regressions**. Both algorithms had identical total expansion/time ceilings; negotiation can spend more work and is not claimed to be universally faster.
 
-The optimizer minimizes a planning proxy:
+A favorable **4,096-source / 8,192-site** near-aligned grid with **20,224 candidate edges** solved and replay-verified in approximately **1.407 s median** over three local runs. This is an engine measurement—not interactive UI latency or a guarantee for difficult industrial constraints. A separate 24-movable-source example requires actual coupled constraint rejection and search, beyond the old permutation limit.
 
-```text
-score = sum of physical Manhattan lengths (um)
-      + crossingWeight * same-stage straight-ratsnest crossings
+[Raw results and input hashes](docs/qualification-v0.3.0.json) · [Validation](docs/VALIDATION-V0.3.0.md) · [Algorithm semantics and proof boundaries](docs/V0.3.0.md)
+
+## Try it
+
+In **Engineering**, choose **Load constrained example → Solve with coupled certificate → Apply checked mapping**. The proof is exported with its original input project. Solving alone never mutates the project.
+
+Choose **Load routing example → Route and check copper**. The displayed dimensions are **synthetic demonstration inputs**, not recommended manufacturing values. Export a route witness or a review bundle. Increasing widths beyond available spacing must produce a failure, not weakened rules.
+
+## CLI
+
+```sh
+# Coupled integer L1/ECO optimization, with a separately replayable proof.
+node scripts/cli.mjs solve-certified examples/pair-bottleneck.json solved.json --proof proof.json
+node scripts/cli.mjs verify-coupled examples/pair-bottleneck.json proof.json
+
+# Faster relaxation only: its candidate is rejected if coupled rules fail.
+node scripts/cli.mjs solve-linear project.json solved.json --proof matching.json
+node scripts/cli.mjs verify-assignment project.json matching.json
+
+# Geometric routing with explicit, externally supplied technology assumptions.
+node scripts/cli.mjs route-physical examples/routing-laboratory.json routes.json --pitch 10 --via-cost 10 --technology examples/copper-technology.json
+node scripts/cli.mjs verify-copper examples/routing-laboratory.json routes.json --technology examples/copper-technology.json
+
+# Bind review, geometry and technology; optionally authenticate with a trusted key.
+node scripts/cli.mjs bundle examples/routing-laboratory.json review.json --routes routes.json
+node scripts/cli.mjs verify-bundle review.json --project examples/routing-laboratory.json --technology examples/copper-technology.json
+node scripts/cli.mjs sign-bundle review.json signed.json --key /secure/reviewer-private.pem
+node scripts/cli.mjs verify-bundle signed.json --public-key /trusted/reviewer-public.pem --technology examples/copper-technology.json
+
+# Existing import/export, checks, revision and ECO workflows remain.
+node scripts/cli.mjs check examples/chiplet-demo.json
+node scripts/cli.mjs solve project.json eco.json --sources P1,P2 --max-changes 1 --change-penalty 100
+node scripts/cli.mjs route project.json routes.json --pitch 10 --negotiate
+node scripts/cli.mjs export solved.json interface.pdf
 ```
 
-Crossings are not routed-layer shorts, and L1 length is not electrical length. The linear assignment subproblem is exact; the full coupled problem with pairs, grounds, domains, crossings, and locks is **heuristic**, not globally optimal.
+Proof verification requires the **original pre-optimization project**: it determines candidate eligibility, locks and change penalties. Mathematical certificate validity does not authenticate its producer. `verify-assignment` checks the relaxed graph; `verify-coupled` also replays the configured hard constraints. A signature without a caller-supplied trusted key is not trusted.
 
-## Command-line use
+Exit 0: the requested operation/check succeeded; 1: no passing candidate or a failed gate; 2: invalid input/usage. Routing writes partial diagnostics with a failing exit code; never mistake their existence for a passed design.
+
+## Reproduce
 
 ```sh
 npm test
 npm run build
-npm run benchmark
-
-node scripts/cli.mjs check examples/chiplet-demo.json
-node scripts/cli.mjs check examples/chiplet-optimized.json --fail-on warning
-node scripts/cli.mjs optimize examples/chiplet-demo.json optimized.json --from interposer --to ball
-node scripts/cli.mjs diff examples/chiplet-demo.json optimized.json --gate --json
-node scripts/cli.mjs export optimized.json interface.pdf
-node scripts/cli.mjs export optimized.json assignments.csv --format connections
+npm run qualify:v03
+npm run qualify:copper
+npm run qualify:routing
+npm run verify:release
+python tests/browser_v04.py --chromium /path/to/chromium --output-dir /tmp/openbump-browser
+python tests/browser_test.py --chromium /path/to/chromium
+python tests/engineering_browser_test.py --chromium /path/to/chromium
+python tests/browser_v03.py --chromium /path/to/chromium
+python tests/engineering_browser_test.py --native --chromium /path/to/chromium
+python tests/browser_v03.py --native --chromium /path/to/chromium
 ```
 
-Check exit codes: **0** policy passed, **1** findings violate the chosen policy, **2** malformed input or command failure. The default permits warnings; `--fail-on warning` rejects them. Full JSON is the authoritative lossless project format.
+Python Playwright is a test-only dependency. Managed browsers that forbid localhost navigation cannot execute native mode; do not disable their administrator policy. CI runs the native modes on its own runner.
 
-## Validation and performance
+## Retained capabilities and important gaps
 
-The release includes **151 passing Node tests** and **12 passing Chromium integration scenarios**. Browser scenarios exercise the actual standalone build, including worker optimization, pointer dragging, reassignment, strict-edit rollback, import preview, downloads, and revision review. The browser harness uses `set_content` because the original delivery environment blocked file/localhost navigation; native navigation and real-origin storage persistence were not verified by this harness. See [validation details](docs/VALIDATION.md) and the machine-readable results.
+CSV/JSON import with explicit unit conversion; limited LEF MACRO/PIN/PORT RECT import; five-stage connectivity; die transforms; drag/reassign, locks and undo/redo; domain/pair/ground-neighbour/region rules; revision differences; SVG/PDF/JSON/CSV and interface-control exports.
 
-A favorable sparse synthetic case with **8,000 sites / 4,000 connections** took about **33.7 ms median** for engine analysis in the original delivery environment. That is **not** a large-scale interactive UI benchmark, a worst-case guarantee, or a commercial comparison. Dense geometry can exhaust the explicit analysis budget, in which case the application reports incompleteness rather than a clean result.
+JSON is authoritative. Full LEF/DEF/GDS/ODB++/IPC-2581/native-vendor round trips, route-dependent assignment co-optimization, electrically verified shielding, IR-drop/electromigration, SI/PI/thermal/mechanical signoff, foundry certification, multi-user authorization, and industrial design qualification remain unimplemented or unqualified. [Competitive evidence](docs/COMPETITIVE-EVIDENCE-V0.3.0.md) distinguishes shipped features from these gaps.
 
-## Public source and CI
-
-The public repository is **[ajayasai/OpenBumpPlan](https://github.com/ajayasai/OpenBumpPlan)**. The complete source, standalone build, synthetic examples, generated interface-control documents, tests, and MIT license are committed on `main`.
-
-[GitHub Actions](https://github.com/ajayasai/OpenBumpPlan/actions) runs the engine tests, rebuilds the offline app, checks the examples, and uploads the standalone app as a workflow artifact. The initial publication also reproduced all 12 Chromium workflow scenarios; see [the publication record](docs/PUBLICATION.md) for the immutable source commit and test run.
-
-To contribute, clone the repository, create a branch, make your changes, and run `npm test` and `npm run build` before opening a pull request. The historical `npm run publish:github` script creates a **new** repository and intentionally refuses this already-existing target; it is not an update command.
-
-Optional GitHub Pages deployment remains manual. See [publishing and deployment instructions](docs/PUBLISHING.md). No live Pages deployment is implied by publishing the source. Only synthetic examples are included; never commit proprietary imports, reports, or customized embedded demo data.
-
-## Scope and extension points
-
-Read [the exact data/rule semantics](docs/FORMAT.md), [architecture](docs/ARCHITECTURE.md), [competitive scope and roadmap](docs/COMPETITIVE_SCOPE.md), and [security boundaries](SECURITY.md).
-
-Important exclusions: native Cadence/Synopsys databases, full LEF/DEF/GDS/ODB++/IPC-2581 support, routing/escape/via synthesis, same-stage lateral connectivity, electrical fanout, Z-aware TSV/face alignment, SI/PI/thermal/mechanical analysis, current-aware power delivery, process-qualified DRC, tamper-proof approvals, real-time collaboration, and demonstrated industrial-scale capacity.
-
-Contributions should include a reproducible synthetic fixture and tests, not unsupported feature-parity or signoff claims. See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [MIT license](LICENSE), [security](SECURITY.md), [contributing](CONTRIBUTING.md), and [format](docs/FORMAT.md). The guarded publisher is a maintainer utility for this prepared base-commit overlay, not needed to run a clone. It publishes a review branch, never directly changes main, and requires the expected base commit. [Recovery of the blocked staged release](docs/RELEASE-RECOVERY.md).
