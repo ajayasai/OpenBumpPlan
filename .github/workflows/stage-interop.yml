@@ -1,0 +1,140 @@
+name: Qualify native interoperability upgrade
+on:
+  push:
+    branches: [upgrade/native-interoperability]
+    paths: ['.interop-transfer/ready.json', '.github/workflows/stage-interop.yml']
+permissions:
+  contents: write
+concurrency:
+  group: qualify-native-interoperability
+  cancel-in-progress: false
+jobs:
+  qualify:
+    if: "!contains(github.event.head_commit.message, '[qualified]')"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check bounded source transfer before writing or executing it
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import pathlib, json, base64, hashlib, zlib
+          root=pathlib.Path('.').resolve()
+          ready=json.loads((root/'.interop-transfer/ready.json').read_text())
+          parts=sorted((root/'.interop-transfer').glob('part-*.b64'))
+          if len(parts)!=ready['parts'] or not 1<=len(parts)<=10: raise ValueError('Chunk count mismatch')
+          encoded=''.join(p.read_text().strip() for p in parts)
+          if len(encoded)>200000: raise ValueError('Encoded transfer too large')
+          payload=base64.b64decode(encoded,validate=True)
+          if hashlib.sha256(payload).hexdigest()!=ready['sha256']: raise ValueError('Transfer checksum mismatch')
+          decoder=zlib.decompressobj(31)
+          decoded=decoder.decompress(payload,1000001)
+          if len(decoded)>1000000 or not decoder.eof or decoder.unused_data: raise ValueError('Bounded decompression failed')
+          files=json.loads(decoded)
+          if not isinstance(files,dict) or set(files)!=set(ready['files']) or len(files)>30: raise ValueError('Member mismatch')
+          for name,text in files.items():
+              p=pathlib.PurePosixPath(name)
+              if not isinstance(text,str) or p.is_absolute() or p.as_posix()!=name or any(x in ('..','.git','.github','.env') for x in p.parts): raise ValueError('Unsafe path')
+              if p.parts[0] not in ('src','scripts','tests','docs','interop.html'): raise ValueError('Unexpected source area')
+              cursor=root
+              for component in p.parts:
+                  cursor=cursor/component
+                  if cursor.is_symlink(): raise ValueError('Symlink destination')
+              if cursor.exists(): raise ValueError('Overlay cannot overwrite existing source: '+name)
+              if hashlib.sha256(text.encode()).hexdigest()!=ready['files'][name]: raise ValueError('Member checksum mismatch')
+          for name,text in files.items():
+              target=root/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_text(text)
+          print('Verified and materialized',len(files),'new source files')
+          PY
+      - name: Apply exact-base migration and build both applications
+        run: |
+          set -euo pipefail
+          node scripts/prepare-interop.mjs
+          npm run build
+          node scripts/refresh-release.mjs
+          npm run verify:release
+      - name: Run complete retained and new Node regression suites
+        run: |
+          set -euo pipefail
+          npm test | tee "$RUNNER_TEMP/node-tests.tap"
+          npm run qualify:v03
+          npm run qualify:copper
+          node scripts/cli.mjs verify-coupled examples/pair-bottleneck.json examples/coupled-proof.json
+          node scripts/cli.mjs verify-copper examples/routing-laboratory.json examples/physical-routes.json --technology examples/copper-technology.json
+          node scripts/cli.mjs verify-bundle examples/physical-review.json --project examples/routing-laboratory.json --technology examples/copper-technology.json
+      - name: Install independent native parser and browser oracle
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends kicad
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Verify with actual KiCad parser and native serialization
+        run: |
+          set -euo pipefail
+          /usr/bin/python3 tests/kicad_native_test.py
+      - name: Verify actual browser flows, downloads and native-origin storage
+        run: |
+          set -euo pipefail
+          CHROMIUM=$(python -c 'from playwright.sync_api import sync_playwright; p=sync_playwright().start(); print(p.chromium.executable_path); p.stop()')
+          python tests/browser_test.py --chromium "$CHROMIUM"
+          python tests/engineering_browser_test.py --chromium "$CHROMIUM"
+          python tests/browser_v03.py --chromium "$CHROMIUM"
+          python tests/interop_browser_test.py --chromium "$CHROMIUM"
+          python tests/engineering_browser_test.py --native --chromium "$CHROMIUM"
+          python tests/browser_v03.py --native --chromium "$CHROMIUM"
+          python tests/interop_browser_test.py --native --chromium "$CHROMIUM"
+      - name: Freeze tested source and verify a clean extracted package
+        run: |
+          set -euo pipefail
+          cp "$RUNNER_TEMP/node-tests.tap" docs/node-tests-v0.4.0.tap
+          rm -r .interop-transfer
+          node scripts/refresh-release.mjs
+          npm run verify:release
+          python - <<'PY'
+          import pathlib,json,zipfile,hashlib,os,subprocess
+          root=pathlib.Path('.').resolve();tmp=pathlib.Path(os.environ['RUNNER_TEMP'])
+          manifest=json.loads((root/'docs/release-manifest-v0.4.0.json').read_text())
+          members=[x['path'] for x in manifest['files']]+['docs/release-manifest-v0.4.0.json']
+          out=tmp/'OpenBumpPlan-v0.4.0.zip'
+          with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as z:
+              for name in sorted(members): z.writestr('OpenBumpPlan/'+name,(root/name).read_bytes())
+          clean=tmp/'clean-release'
+          with zipfile.ZipFile(out) as z: assert z.testzip() is None; z.extractall(clean)
+          cwd=clean/'OpenBumpPlan'
+          for command in [['npm','run','verify:release'],['npm','test'],['npm','run','build'],['npm','run','verify:release']]: subprocess.run(command,cwd=cwd,check=True)
+          print('CLEAN SOURCE ZIP SHA256',hashlib.sha256(out.read_bytes()).hexdigest())
+          PY
+      - name: Commit qualified source to staging, never force push
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- . ':!.github'
+          git diff --cached --check
+          git commit -m '[qualified] Publish v0.4.0 native terminal interchange, independent intent and contact regression fix'
+          git push origin HEAD:upgrade/native-interoperability
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-interoperability-evidence
+          path: |
+            docs/*interop*.json
+            docs/*native*.json
+            docs/*v0.4.0.tap
+            docs/interop-workbench.png
+            dist/
+            ${{ runner.temp }}/OpenBumpPlan-v0.4.0.zip
