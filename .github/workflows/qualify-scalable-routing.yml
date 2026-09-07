@@ -1,0 +1,116 @@
+name: Qualify and publish scalable routing v0.4
+on:
+  push:
+    branches: ['upgrade/v0.3.1-indexed-copper']
+    paths: ['.publication/ready.json']
+permissions:
+  contents: write
+concurrency:
+  group: openbumpplan-v04-publication
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply bounded checksummed source overlay
+        run: |
+          test "$GITHUB_REF_NAME" = 'upgrade/v0.3.1-indexed-copper'
+          python .publication/importer.py --root . --manifest .publication/ready.json
+          cmp .publication/importer.py scripts/safe_overlay.py
+          mkdir -p validation-artifacts
+          npm run build
+          python - <<'PY'
+          import hashlib,json,pathlib
+          m=json.loads(pathlib.Path('.publication/ready.json').read_text())
+          assert json.loads(pathlib.Path('package.json').read_text())['version']==m['version']=='0.4.0'
+          assert hashlib.sha256(pathlib.Path('dist/openbumpplan.html').read_bytes()).hexdigest()==m['build_sha256']
+          PY
+          npm run verify:release
+      - name: Node 22, archive security and example replay
+        run: |
+          npm test | tee validation-artifacts/node22.tap
+          python -m unittest discover -s tests -p safe_overlay_test.py -v 2>&1 | tee validation-artifacts/python-security.log
+          node scripts/cli.mjs verify-coupled examples/pair-bottleneck.json examples/coupled-proof.json
+          node scripts/cli.mjs verify-copper examples/routing-laboratory.json examples/physical-routes.json --technology examples/copper-technology.json
+          node scripts/cli.mjs verify-bundle examples/physical-review.json --project examples/routing-laboratory.json --technology examples/copper-technology.json
+      - name: Reproduce routing and copper protocols
+        run: |
+          npm run qualify:routing -- validation-artifacts/qualification-routing.json | tee validation-artifacts/routing.log
+          npm run qualify:copper -- validation-artifacts/qualification-copper.json | tee validation-artifacts/copper.log
+          cp docs/qualification-v0.3.0.json "$RUNNER_TEMP/historical-v03.json"
+          npm run qualify:v03 | tee validation-artifacts/v03-protocol.log
+          cp docs/qualification-v0.3.0.json validation-artifacts/v03-protocol.json
+          mv "$RUNNER_TEMP/historical-v03.json" docs/qualification-v0.3.0.json
+      - name: Test actual exported source after clean extraction
+        run: |
+          python scripts/package-release.py --output "$RUNNER_TEMP/OpenBumpPlan-v0.4.0-source.zip" | tee validation-artifacts/clean-package.tap
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Node 24 regression suite
+        run: npm test | tee validation-artifacts/node24.tap
+      - name: Install browser test dependencies
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Standalone and native-origin workers, downloads and persistence
+        run: |
+          python - <<'PY'
+          import json,pathlib,shutil,subprocess,time
+          from playwright.sync_api import sync_playwright
+          docs=pathlib.Path('docs');dest=pathlib.Path('validation-artifacts/browser');dest.mkdir(parents=True)
+          with sync_playwright() as p: chromium=p.chromium.executable_path
+          plan=[('planning','browser_test.py',False),('engineering','engineering_browser_test.py',False),('copper','browser_v03.py',False),('routing','browser_v04.py',False),('engineering-native','engineering_browser_test.py',True),('copper-native','browser_v03.py',True),('routing-native','browser_v04.py',True)]
+          results=[]
+          for name,script,native in plan:
+              saved={p.relative_to(docs):p.read_bytes() for p in docs.rglob('*') if p.is_file()}
+              output=dest/name;output.mkdir();start=time.monotonic()
+              try:
+                  args=['python','tests/'+script,'--chromium',chromium]+(['--native'] if native else [])
+                  with (output/'run.log').open('w') as log: result=subprocess.run(args,stdout=log,stderr=subprocess.STDOUT)
+                  for p in docs.rglob('*'):
+                      if p.is_file() and (p.relative_to(docs) not in saved or p.read_bytes()!=saved[p.relative_to(docs)]):
+                          target=output/p.relative_to(docs);target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,target)
+                  results.append({'name':name,'exitCode':result.returncode,'seconds':time.monotonic()-start})
+                  (dest/'summary.json').write_text(json.dumps(results,indent=2)+'\n')
+                  print(results[-1],flush=True)
+                  if result.returncode: raise RuntimeError('Browser qualification failed: '+name)
+              finally:
+                  for p in docs.rglob('*'):
+                      if p.is_file() and p.relative_to(docs) not in saved:p.unlink()
+                  for p,data in saved.items():(docs/p).write_bytes(data)
+          PY
+      - name: Publish only completely qualified ordinary source
+        run: |
+          npm run verify:release
+          cp .publication/ready.json validation-artifacts/transfer-manifest.json
+          cp dist/openbumpplan.html validation-artifacts/
+          rm -r .publication
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- . ':!.github' ':!validation-artifacts'
+          git diff --cached --check
+          git commit -m 'Publish v0.4.0 tested 4096-route generation, strict copper contact and bounded imports'
+          git push origin HEAD:upgrade/v0.3.1-indexed-copper
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scalable-routing-v0.4.0-qualification
+          retention-days: 30
+          path: |
+            validation-artifacts/
+            ${{ runner.temp }}/OpenBumpPlan-v0.4.0-source.zip
