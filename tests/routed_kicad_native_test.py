@@ -1,8 +1,6 @@
 """Independent KiCad native geometry, connectivity and DRC qualification.
-
-The oracle expands native tracks into unit edges and compares them with source
-route paths. It does not use exporter receipts or the JavaScript re-importer as
-its expected geometry. Requires the system KiCad pcbnew module and kicad-cli.
+The oracle expands native tracks into unit edges and compares source paths,
+not exporter receipts or the JavaScript re-importer. Requires KiCad 9+ pcbnew.
 """
 from collections import Counter
 import hashlib
@@ -13,7 +11,6 @@ import subprocess
 import tempfile
 import time
 import pcbnew
-
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = Path(os.environ.get('OPENBUMPPLAN_EVIDENCE_DIR', str(ROOT / 'docs')))
 OUTPUT.mkdir(parents=True, exist_ok=True)
@@ -36,16 +33,13 @@ for(const [n,startLayer,endLayer] of [[1,0,0],[8,1,1],[8,0,1],[8,1,0],[64,0,0]])
 }
 console.log(JSON.stringify(fixtures.map(d=>({...d,...exportRoutedKiCad(d.project,d.witness,d.technology,d.specification)}))));
 """
-
-
 def nm(um):
     value = round(um * 1000)
     assert abs(value - um * 1000) < .00001
     return value
 
-
 def source_geometry(case):
-    p, w, tech = case['project'], case['witness'], case['technology']
+    p, w = case['project'], case['witness']
     assert not p['dies'], 'Fixture requires explicit world-coordinate terminals'
     ports = {x['id']: x for x in p['ports']}
     nets = {x['id']: x['net'] for x in p['ports']}
@@ -63,12 +57,11 @@ def source_geometry(case):
                 expected_vias[(name, *xy(a))] += 1
             else:
                 ends = sorted([xy(a), xy(b)])
-                expected_tracks[(name, 0 if a[2] == 0 else 31, *ends[0], *ends[1])] += 1
+                expected_tracks[(name, int(pcbnew.F_Cu) if a[2] == 0 else int(pcbnew.B_Cu), *ends[0], *ends[1])] += 1
     pads = {x['id']: (nm(x['x']), -nm(x['y']), nets[x['id']],
-            0 if (c['startLayer'] if x['kind']==c['fromKind'] else c['endLayer']) == 0 else 31)
+            int(pcbnew.F_Cu) if (c['startLayer'] if x['kind']==c['fromKind'] else c['endLayer']) == 0 else int(pcbnew.B_Cu))
             for x in p['ports']}
     return pads, expected_tracks, expected_vias
-
 
 def inspect(board, case):
     pad_expect, edge_expect, via_expect = source_geometry(case)
@@ -90,7 +83,7 @@ def inspect(board, case):
             via_count += 1
             pos = item.GetPosition()
             vias[(name, pos.x, pos.y)] += 1
-            assert item.GetWidth() == nm(tech['viaDiameter'])
+            assert item.GetWidth(pcbnew.F_Cu) == item.GetWidth(pcbnew.B_Cu) == nm(tech['viaDiameter'])
             assert item.GetDrillValue() == nm(case['specification']['viaDrill'])
             assert item.IsOnLayer(pcbnew.F_Cu) and item.IsOnLayer(pcbnew.B_Cu)
         else:
@@ -106,7 +99,7 @@ def inspect(board, case):
             for i in range(distance//pitch):
                 ends = sorted([(a.x+i*sx, a.y+i*sy), (a.x+(i+1)*sx, a.y+(i+1)*sy)])
                 tracks[(name, int(item.GetLayer()), *ends[0], *ends[1])] += 1
-    assert tracks == edge_expect, 'Native track coverage differs from source witness'
+    assert tracks == edge_expect, f'Native track coverage differs: missing={edge_expect-tracks}, extra={tracks-edge_expect}'
     assert vias == via_expect, 'Native via coverage differs from source witness'
     assert board.GetCopperLayerCount() == 2
     assert board.GetDesignSettings().GetBoardThickness() == nm(case['specification']['boardThickness'])
@@ -124,14 +117,12 @@ def inspect(board, case):
     return {'pads':len(pads), 'segments':compact, 'vias':via_count,
             'unitTrackEdges':sum(tracks.values()), 'nativeUnconnected':unconnected, 'keepouts':len(zones)}
 
-
 def drc(file, out):
     result = subprocess.run(['kicad-cli','pcb','drc','--format','json','--severity-error',
         '--exit-code-violations','--output',str(out),str(file)],capture_output=True,text=True,timeout=90)
     if not out.exists():
         raise AssertionError(f'Native DRC produced no report: {result.stdout} {result.stderr}')
     return result.returncode, json.loads(out.read_text())
-
 
 cases = json.loads(subprocess.check_output(['node','--input-type=module','-e',GENERATE],cwd=ROOT,text=True,timeout=120))
 results = []
@@ -151,7 +142,6 @@ with tempfile.TemporaryDirectory(prefix='openbumpplan-native-routes-') as folder
         assert code == 0 and not report.get('violations') and not report.get('unconnected_items'), report
         results.append({'fixture':case['project']['name'],**metrics,'nativeResave':True,'nativeDRCErrorCount':0,
             'boardSHA256':hashlib.sha256(file.read_bytes()).hexdigest(),'seconds':round(time.perf_counter()-started,4)})
-    # Negative controls ensure the native oracle actually detects damaged layout.
     board = pcbnew.LoadBoard(str(folder/'route-0.kicad_pcb'))
     straight = next(t for t in board.GetTracks() if not isinstance(t,pcbnew.PCB_VIA) and t.GetNetname()=='HORIZONTAL')
     board.Remove(straight)
@@ -168,7 +158,6 @@ with tempfile.TemporaryDirectory(prefix='openbumpplan-native-routes-') as folder
     broken = folder/'broken-short.kicad_pcb';pcbnew.SaveBoard(str(broken),board)
     code, report = drc(broken, folder/'broken-short.json')
     assert code == 5 and any('short' in v['type'] or 'clearance' in v['type'] for v in report.get('violations',[])), report
-
 report = {'oracle':'KiCad native copper geometry, connectivity, serialization and CLI DRC',
     'version':pcbnew.Version(),'casesPassed':len(results),'casesFailed':0,
     'negativeControls':{'removedTrackDetected':True,'addedShortDetected':True},'cases':results,
