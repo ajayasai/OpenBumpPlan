@@ -1,0 +1,105 @@
+name: Publish pinned native handoff engineering preview
+on:
+  push:
+    branches: [release/native-handoff-v0.4.0]
+    paths: [.github/workflows/publish-native-release.yml]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: publish-native-handoff-v0.4.0
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 8657b74dc90a1f160157c520bbefca4b7d716a8f
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Require the exact merged PR and successful qualification/PR runs
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,subprocess
+          repo='repos/ajayasai/OpenBumpPlan/'
+          def get(endpoint): return json.loads(subprocess.check_output(['gh','api',repo+endpoint],text=True))
+          pr=get('pulls/3')
+          assert pr['merged'] and pr['head']['sha']=='fc2bded6f07efc134e736b387e7f3596d5a52784'
+          assert pr['merge_commit_sha']=='8657b74dc90a1f160157c520bbefca4b7d716a8f'
+          for run_id,sha in [(34308478459,'ca5e644b122b80be22435dca070205a6ef344223'),(34308837542,'fc2bded6f07efc134e736b387e7f3596d5a52784'),(34308837642,'fc2bded6f07efc134e736b387e7f3596d5a52784'),(34308837508,'fc2bded6f07efc134e736b387e7f3596d5a52784')]:
+              run=get(f'actions/runs/{run_id}')
+              assert run['head_sha']==sha and run['status']=='completed' and run['conclusion']=='success'
+          print('Pinned PR, qualification and all three PR workflows verified.')
+          PY
+      - name: Download the exact qualified artifact and compare every archive member to merged source
+        run: |
+          set -euo pipefail
+          gh run download 34308478459 --repo ajayasai/OpenBumpPlan --name native-handoff-release-and-evidence --dir "$RUNNER_TEMP/qualified"
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import os,json,zipfile,hashlib
+          root=Path('.').resolve();out=Path(os.environ['RUNNER_TEMP'])/'qualified';archive=out/'OpenBumpPlan-v0.4.0.zip'
+          assert hashlib.sha256(archive.read_bytes()).hexdigest()=='5a94e00a71571cbcf7ebd2655ce9ce2faa773a38353daefbf11e7f8ad06864fe'
+          manifest=json.loads((root/'docs/release-manifest-v0.4.0.json').read_text())
+          members={f['path'] for f in manifest['files']}|{'docs/release-manifest-v0.4.0.json'}
+          assert len(members)==198
+          with zipfile.ZipFile(archive) as z:
+              assert z.testzip() is None
+              assert len(z.infolist())==len(members) and set(z.namelist())=={'OpenBumpPlan/'+p for p in members}
+              assert sum(i.file_size for i in z.infolist())<50*1024*1024
+              for name in sorted(members):
+                  p=PurePosixPath(name);assert not p.is_absolute() and '..' not in p.parts
+                  assert z.read('OpenBumpPlan/'+name)==(root/name).read_bytes(),name
+          sums=[(archive,'5a94e00a71571cbcf7ebd2655ce9ce2faa773a38353daefbf11e7f8ad06864fe'),(root/'dist/index.html','832382cb4d9b9872162e17ca22256417c9bb9ce335e78e28fbae6dd66933709c'),(root/'dist/interop.html','9d18d6390075062f29bbf60fd98f1b9e29905b1a51f776f2feae893d7ead123e')]
+          for file,digest in sums: assert hashlib.sha256(file.read_bytes()).hexdigest()==digest
+          (out/'SHA256SUMS').write_text(''.join(f'{digest}  {file.name}\n' for file,digest in sums))
+          print('All 198 archive members equal the merged source; source and HTML hashes verified.')
+          PY
+      - name: Rebuild and rerun all Node tests from pinned merged source
+        run: |
+          set -euo pipefail
+          npm run verify:release
+          npm run build
+          git diff --exit-code -- dist/
+          npm test > "$RUNNER_TEMP/publish-tests.tap" 2>&1 || { grep -A40 '^not ok' "$RUNNER_TEMP/publish-tests.tap"; exit 1; }
+          tail -12 "$RUNNER_TEMP/publish-tests.tap"
+          npm run verify:release
+      - name: Publish new prerelease and exact tested assets, never overwrite a release
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
+          ## Checked native KiCad handoff — engineering preview
+
+          Source is merged into `main` through PR #3. This prerelease packages the exact source ZIP reconstructed and tested in qualification run 34308478459, not an untested staging snapshot.
+
+          ### Start
+          Extract **OpenBumpPlan-v0.4.0.zip** and open `OpenBumpPlan/dist/index.html` for the planner and `OpenBumpPlan/dist/interop.html` for native exchange. The interop workspace includes **05 / ROUTED HANDOFF**. The two individual HTML assets also work when kept in the same folder. No npm installation is required to open the bundled applications.
+
+          ### Added
+          - Checked actual KiCad tracks, circular SMD pads, through vias, keepouts and generated envelope outline for one selected two-layer routing stage.
+          - Source-bound native structure replay; stale sources and altered geometry cannot pass simply by recomputing file hashes.
+          - Guarded browser downloads, real file import, route preview and an exclusive-output command-line exporter.
+          - KiCad 7/10 terminal round-trip compatibility, including KiCad 10 named-net serialization; future unsupported format transforms are rejected.
+          - Independently supplied connectivity contracts, atomic mapping ECO previews and copper-contact regression checks from the recovered interoperability upgrade.
+
+          ### Observed qualification
+          **965 Node tests pass**, with zero failures or skips. Both builds and the retained solver/copper/CLI qualifications pass. Actual KiCad 7 and 10 parse the terminal fixtures including 10,000 terminals. **KiCad 10.0.6 passes all six synthetic routed geometry/connectivity/native-save/CLI-DRC fixtures**, and detects deliberately removed tracks and added cross-net shorts. Five bundled-browser suites and four HTTP/source-origin suites pass. The exact source ZIP passes clean extraction, full Node tests, byte-reproducible rebuild and release-manifest verification. All three PR CI workflows passed before merge.
+
+          Evidence and limitations are in `docs/release-qualification-v0.4.0.json`, `docs/routed-kicad-native-results.json`, browser reports, and `docs/ROUTED-HANDOFF.md`. The source ZIP includes reproducible native board examples in `examples/routed-handoff`.
+
+          ### Scope
+          Engineering preview, not manufacturing approval. The routed exporter supports one stage, two copper layers, uniform circular pads and full through vias. Its generated outline is a clearance envelope, NOT a package mechanical outline. Native DRC qualification uses error severity with test-default KiCad rules on synthetic fixtures, not a foundry rule deck. Electrical, thermal and mechanical signoff remain external. No commercial head-to-head benchmark or overall superiority claim is made. Separate 4,096-route-generation work in PR #2 is preserved but is not part of this release.
+
+          Qualified archive SHA-256: `5a94e00a71571cbcf7ebd2655ce9ce2faa773a38353daefbf11e7f8ad06864fe`.
+          NOTES
+          gh release create v0.4.0 "$RUNNER_TEMP/qualified/OpenBumpPlan-v0.4.0.zip" dist/index.html dist/interop.html "$RUNNER_TEMP/qualified/SHA256SUMS" docs/release-qualification-v0.4.0.json docs/routed-kicad-native-results.json --repo ajayasai/OpenBumpPlan --target 8657b74dc90a1f160157c520bbefca4b7d716a8f --prerelease --latest=false --title 'v0.4.0 — Checked native KiCad handoff (engineering preview)' --notes-file "$RUNNER_TEMP/release-notes.md"
