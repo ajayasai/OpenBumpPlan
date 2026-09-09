@@ -14,7 +14,7 @@ jobs:
       run:
         shell: bash
     env:
-      OPENBUMPPLAN_EVIDENCE_DIR: ${{ runner.temp }}/native-routed-evidence
+      OPENBUMPPLAN_EVIDENCE_DIR: /tmp/openbumpplan-native-routed-evidence
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -39,5 +39,5 @@ jobs:
         with:
           name: native-routed-evidence
           path: |
-            ${{ runner.temp }}/native-routed-evidence/
+            /tmp/openbumpplan-native-routed-evidence/
             ${{ runner.temp }}/node-tests.tap
