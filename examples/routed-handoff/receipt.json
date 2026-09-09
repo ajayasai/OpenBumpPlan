@@ -1,0 +1,38 @@
+{
+  "schema": "openbumpplan.routed-kicad/v1",
+  "projectSHA256": "2114ba35cf71a574e068c0e4ff70ab0660fbfb9440732897a540d2bbe890cddd",
+  "witnessSHA256": "a7aa6e5d18bb076855555281cdeffe4989162cc32ba7815e8a3d5382e3d0341a",
+  "technologySHA256": "347a5871ebdb6dcd7267ff5b7c73ed296dbd1d4f9c23800f0354c380febd8934",
+  "specification": {
+    "viaDrill": 300,
+    "boardThickness": 1600,
+    "edgeMargin": 1000
+  },
+  "stage": [
+    "pad",
+    "ball"
+  ],
+  "nativeCopperLayers": [
+    "F.Cu",
+    "B.Cu"
+  ],
+  "boardSHA256": "6650b4eff22cfdc49dc41250b747b34d6f9a344d288635eb018c75203e058812",
+  "counts": {
+    "pads": 5,
+    "segments": 4,
+    "vias": 2,
+    "keepouts": 1
+  },
+  "metrics": {
+    "wireLengthUm": 16000,
+    "viaTransitions": 2
+  },
+  "warnings": [
+    "One selected routing stage only; not a complete die/package/PCB manufacturing conversion.",
+    "Uniform circular pads and trace/via dimensions come from the explicitly supplied simplified technology, not a foundry deck.",
+    "Through vias connect F.Cu and B.Cu. Blind/buried vias and multilayer stackup are not inferred.",
+    "Rectangular Edge.Cuts is an automatically generated clearance envelope, NOT the original package mechanical outline.",
+    "Clearance, length and mapping rules are checked against the source; native manufacturing rules must be configured separately.",
+    "Receipt replay binds this generated board to source data; external native DRC and electrical/thermal/mechanical signoff remain necessary."
+  ]
+}

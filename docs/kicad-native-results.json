@@ -1,0 +1,107 @@
+{
+  "oracle": "KiCad pcbnew native parser",
+  "version": "10.0.6",
+  "passed": 13,
+  "failed": 0,
+  "cases": [
+    {
+      "side": "F.Cu",
+      "rotation": 0,
+      "pads": 4,
+      "nativeParserAndResave": true,
+      "inputSHA256": "3280cab0eca315bd34012fefb746cbb18d9506d72c0ac3d764a55abc118c27a6",
+      "seconds": 0.0865
+    },
+    {
+      "side": "F.Cu",
+      "rotation": 90,
+      "pads": 4,
+      "nativeParserAndResave": true,
+      "inputSHA256": "840565020192013b5137dc4d03e9d03fb576c8291701e6e4e2fc645f997bb732",
+      "seconds": 0.0835
+    },
+    {
+      "side": "F.Cu",
+      "rotation": 180,
+      "pads": 4,
+      "nativeParserAndResave": true,
+      "inputSHA256": "a238cb78608a2f0441e1a4edb0dd748063b4fa370fca318a754fb81437b7904b",
+      "seconds": 0.0848
+    },
+    {
+      "side": "F.Cu",
+      "rotation": 270,
+      "pads": 4,
+      "nativeParserAndResave": true,
+      "inputSHA256": "d175fb5512653d86fa04d7034eef0352d6d6bc6cc7d5a524ff6301beee958425",
+      "seconds": 0.0836
+    },
+    {
+      "side": "F.Cu",
+      "rotation": 33.5,
+      "pads": 4,
+      "nativeParserAndResave": true,
+      "inputSHA256": "8c28c7badcb6d7f13efd3df2d2b7d19f0d38c95bc10da99ab491bf23bc03cf6f",
+      "seconds": 0.0855
+    },
+    {
+      "side": "F.Cu",
+      "libraryFootprintLoaded": true,
+      "pads": 4
+    },
+    {
+      "side": "B.Cu",
+      "rotation": 0,
+      "pads": 4,
+      "nativeParserAndResave": true,
+      "inputSHA256": "7898c33b51e7c67cf0966c0b4d4af20c1e5686cce964007cd6daf7aa85ed8fd4",
+      "seconds": 0.0851
+    },
+    {
+      "side": "B.Cu",
+      "rotation": 90,
+      "pads": 4,
+      "nativeParserAndResave": true,
+      "inputSHA256": "ed93739abd4a2d99e80c706da54e414506bdbb56d1151bf6b0fa630c7fddbcd7",
+      "seconds": 0.0822
+    },
+    {
+      "side": "B.Cu",
+      "rotation": 180,
+      "pads": 4,
+      "nativeParserAndResave": true,
+      "inputSHA256": "bdbc95ae7e4e1e4c6b7fdd2b768e6118d12a94bf9e7977912cc5bd5cb153dc59",
+      "seconds": 0.0831
+    },
+    {
+      "side": "B.Cu",
+      "rotation": 270,
+      "pads": 4,
+      "nativeParserAndResave": true,
+      "inputSHA256": "105835fd1d49b9ba4e0986dce3911fc4b17b7d1dbd774933921ee6498ed6912d",
+      "seconds": 0.0855
+    },
+    {
+      "side": "B.Cu",
+      "rotation": 33.5,
+      "pads": 4,
+      "nativeParserAndResave": true,
+      "inputSHA256": "5c1193ff55794f2c7ba5630c8285b37d5adba2d4553442b77b2e08731e251700",
+      "seconds": 0.0852
+    },
+    {
+      "side": "B.Cu",
+      "libraryFootprintLoaded": true,
+      "pads": 4
+    },
+    {
+      "pads": 10000,
+      "nativeTerminalCoverage": true,
+      "seconds": 0.164
+    }
+  ],
+  "limitations": [
+    "Terminal-map interoperability only. No PCB DRC, route generation, stackup, electrical or manufacturing qualification.",
+    "Front/back coordinates verified against native pad positions; native serialization round trips measured at 0.003 um tolerance."
+  ]
+}

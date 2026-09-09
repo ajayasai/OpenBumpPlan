@@ -1,0 +1,53 @@
+name: Native KiCad interoperability and intent checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  native-interoperability:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+    env:
+      OPENBUMPPLAN_EVIDENCE_DIR: /tmp/openbumpplan-interop-results
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Rebuild and compare immutable release bytes
+        run: |
+          set -euo pipefail
+          npm run build
+          git diff --exit-code -- dist/
+          npm run verify:release
+          node --test tests/interop.test.mjs tests/copper-contact.test.mjs
+      - name: Install independent parser and browser
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends kicad
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Native application parser and actual browser-origin replay
+        run: |
+          set -euo pipefail
+          /usr/bin/python3 tests/kicad_native_test.py
+          CHROMIUM=$(python -c 'from playwright.sync_api import sync_playwright; p=sync_playwright().start(); print(p.chromium.executable_path); p.stop()')
+          python tests/interop_browser_test.py --chromium "$CHROMIUM"
+          python tests/interop_browser_test.py --native --chromium "$CHROMIUM"
+          python tests/routed_browser_test.py --chromium "$CHROMIUM"
+          python tests/routed_browser_test.py --native --chromium "$CHROMIUM"
+          npm run verify:release
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-interoperability
+          path: /tmp/openbumpplan-interop-results/

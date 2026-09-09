@@ -31,3 +31,29 @@ export function demoProject({crossed=true}={}) {
   p.regions=[{id:'package-power-grid',kind:'ball',x:0,y:0,width:7600,height:5000,domain:'',minGround:8,minPower:6}];
   return normalizeProject(p);
 }
+
+/** A deliberately small routing demonstration, not a fabrication-ready rule deck. */
+export function routingDemoProject() {
+  const p=emptyProject('Routing laboratory / synthetic crossing');
+  p.description='Synthetic two-net crossing. Coverage requirements are disabled only to isolate geometric routing tests. Not a production constraint deck.';
+  p.rules={...p.rules,maxLength:200,groundRadius:0,minGroundRatio:0,clockGroundMin:0,crossingWeight:150,maxCrossings:0};
+  p.ports=[{id:'LEFT',kind:'pad',x:0,y:30,net:'DATA_A',domain:'V1',role:'signal',required:true},
+    {id:'RIGHT',kind:'ball',x:60,y:30,net:'DATA_A',domain:'V1',role:'signal'},
+    {id:'BOTTOM',kind:'pad',x:30,y:0,net:'DATA_B',domain:'V1',role:'signal',required:true},
+    {id:'TOP',kind:'ball',x:30,y:60,net:'DATA_B',domain:'V1',role:'signal'}];
+  p.connections=[{id:'horizontal',from:'LEFT',to:'RIGHT'},{id:'vertical',from:'BOTTOM',to:'TOP'}];
+  return normalizeProject(p);
+}
+
+/** A pair-first greedy trap: the nearer adjacent targets are the only reachable
+ * targets for a third signal. Moving the pair as a coupled unit restores feasibility. */
+export function coupledDemoProject() {
+  const p=emptyProject('Coupled assignment laboratory / pair bottleneck');
+  p.description='Synthetic constructive counterexample to greedy pair-first assignment. No process constraints or customer data. The differential pair must use the farther adjacent pair so the third signal can reach a target.';
+  p.rules={...p.rules,maxLength:120,pairMaxDistance:10,pairMaxSkew:0,groundRadius:0,minGroundRatio:0,clockGroundMin:0};
+  p.ports=[{id:'TX_P',kind:'pad',x:0,y:0,net:'TX_P',domain:'V1',role:'signal',pair:'TX',polarity:'+',required:true},
+    {id:'TX_N',kind:'pad',x:0,y:10,net:'TX_N',domain:'V1',role:'signal',pair:'TX',polarity:'-',required:true},
+    {id:'RESTRICTED',kind:'pad',x:-100,y:0,net:'CONTROL',domain:'V1',role:'signal',required:true},
+    ...[[0,0],[0,10],[100,0],[100,10]].map(([x,y],i)=>({id:`BALL_${i+1}`,label:`B${i+1}`,kind:'ball',x,y,role:'any'}))];
+  return normalizeProject(p);
+}

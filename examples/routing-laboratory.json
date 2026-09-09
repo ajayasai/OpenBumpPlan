@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "name": "Routing laboratory / synthetic crossing",
+  "revision": 0,
+  "units": "um",
+  "description": "Synthetic two-net crossing. Coverage requirements are disabled only to isolate geometric routing tests. Not a production constraint deck.",
+  "dies": [],
+  "ports": [
+    {
+      "label": "LEFT",
+      "dieId": "",
+      "net": "DATA_A",
+      "domain": "V1",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "LEFT",
+      "kind": "pad",
+      "x": 0,
+      "y": 30
+    },
+    {
+      "label": "RIGHT",
+      "dieId": "",
+      "net": "DATA_A",
+      "domain": "V1",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "RIGHT",
+      "kind": "ball",
+      "x": 60,
+      "y": 30
+    },
+    {
+      "label": "BOTTOM",
+      "dieId": "",
+      "net": "DATA_B",
+      "domain": "V1",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "BOTTOM",
+      "kind": "pad",
+      "x": 30,
+      "y": 0
+    },
+    {
+      "label": "TOP",
+      "dieId": "",
+      "net": "DATA_B",
+      "domain": "V1",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "TOP",
+      "kind": "ball",
+      "x": 30,
+      "y": 60
+    }
+  ],
+  "connections": [
+    {
+      "net": "",
+      "locked": false,
+      "id": "horizontal",
+      "from": "LEFT",
+      "to": "RIGHT"
+    },
+    {
+      "net": "",
+      "locked": false,
+      "id": "vertical",
+      "from": "BOTTOM",
+      "to": "TOP"
+    }
+  ],
+  "keepouts": [],
+  "regions": [],
+  "rules": {
+    "maxLength": 200,
+    "minDomainSpacing": 0,
+    "pairMaxDistance": 650,
+    "pairMaxSkew": 150,
+    "clockShieldRadius": 750,
+    "clockGroundMin": 0,
+    "groundRadius": 0,
+    "powerRadius": 1400,
+    "requirePowerForSignals": false,
+    "minGroundRatio": 0,
+    "crossingWeight": 150,
+    "maxCrossings": 0,
+    "geometryBudget": 1000000,
+    "terminalKind": "ball",
+    "requireCompletePaths": false,
+    "allowedStagePairs": [
+      [
+        "pad",
+        "bump"
+      ],
+      [
+        "pad",
+        "ball"
+      ],
+      [
+        "bump",
+        "interposer"
+      ],
+      [
+        "bump",
+        "ball"
+      ],
+      [
+        "interposer",
+        "ball"
+      ],
+      [
+        "ball",
+        "pcb"
+      ]
+    ]
+  },
+  "audit": []
+}

@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "name": "Chiplet interface · reference design",
+  "revision": 0,
+  "units": "um",
+  "description": "",
+  "dies": [],
+  "ports": [
+    {
+      "label": "PAD0",
+      "dieId": "",
+      "net": "DATA_P",
+      "domain": "V1",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "die:0",
+      "kind": "pad",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "label": "A1",
+      "dieId": "",
+      "net": "",
+      "domain": "V1",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball:0",
+      "kind": "ball",
+      "x": 2200,
+      "y": 0
+    },
+    {
+      "label": "PAD1",
+      "dieId": "",
+      "net": "DATA_N",
+      "domain": "V1",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "die:1",
+      "kind": "pad",
+      "x": 800,
+      "y": 0
+    },
+    {
+      "label": "A2",
+      "dieId": "",
+      "net": "",
+      "domain": "V1",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball:1",
+      "kind": "ball",
+      "x": 3000,
+      "y": 0
+    },
+    {
+      "label": "PAD2",
+      "dieId": "",
+      "net": "REF_CLK",
+      "domain": "V1",
+      "role": "clock",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "die:2",
+      "kind": "pad",
+      "x": 1600,
+      "y": 0
+    },
+    {
+      "label": "A3",
+      "dieId": "",
+      "net": "",
+      "domain": "V1",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball:2",
+      "kind": "ball",
+      "x": 3800,
+      "y": 0
+    },
+    {
+      "label": "PAD3",
+      "dieId": "",
+      "net": "CTRL",
+      "domain": "V1",
+      "role": "signal",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "die:3",
+      "kind": "pad",
+      "x": 0,
+      "y": 900
+    },
+    {
+      "label": "B1",
+      "dieId": "",
+      "net": "",
+      "domain": "V1",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball:3",
+      "kind": "ball",
+      "x": 2200,
+      "y": 900
+    },
+    {
+      "label": "PAD4",
+      "dieId": "",
+      "net": "VDD",
+      "domain": "V1",
+      "role": "power",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "die:4",
+      "kind": "pad",
+      "x": 800,
+      "y": 900
+    },
+    {
+      "label": "B2",
+      "dieId": "",
+      "net": "",
+      "domain": "V1",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball:4",
+      "kind": "ball",
+      "x": 3000,
+      "y": 900
+    },
+    {
+      "label": "PAD5",
+      "dieId": "",
+      "net": "GND",
+      "domain": "",
+      "role": "ground",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": true,
+      "id": "die:5",
+      "kind": "pad",
+      "x": 1600,
+      "y": 900
+    },
+    {
+      "label": "B3",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball:5",
+      "kind": "ball",
+      "x": 3800,
+      "y": 900
+    },
+    {
+      "label": "C1",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "nc",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "ball:spare",
+      "kind": "ball",
+      "x": 2200,
+      "y": 1800
+    }
+  ],
+  "connections": [
+    {
+      "net": "",
+      "locked": false,
+      "id": "map:0",
+      "from": "die:0",
+      "to": "ball:1"
+    },
+    {
+      "net": "",
+      "locked": false,
+      "id": "map:1",
+      "from": "die:1",
+      "to": "ball:0"
+    },
+    {
+      "net": "",
+      "locked": false,
+      "id": "map:2",
+      "from": "die:2",
+      "to": "ball:2"
+    },
+    {
+      "net": "",
+      "locked": false,
+      "id": "map:3",
+      "from": "die:3",
+      "to": "ball:3"
+    },
+    {
+      "net": "",
+      "locked": false,
+      "id": "map:4",
+      "from": "die:4",
+      "to": "ball:4"
+    },
+    {
+      "net": "",
+      "locked": false,
+      "id": "map:5",
+      "from": "die:5",
+      "to": "ball:5"
+    }
+  ],
+  "keepouts": [],
+  "regions": [],
+  "rules": {
+    "maxLength": 10000,
+    "minDomainSpacing": 0,
+    "pairMaxDistance": 650,
+    "pairMaxSkew": 150,
+    "clockShieldRadius": 750,
+    "clockGroundMin": 0,
+    "groundRadius": 0,
+    "powerRadius": 0,
+    "requirePowerForSignals": false,
+    "minGroundRatio": 0,
+    "crossingWeight": 150,
+    "maxCrossings": 100,
+    "geometryBudget": 1000000,
+    "terminalKind": "ball",
+    "requireCompletePaths": false,
+    "allowedStagePairs": [
+      [
+        "pad",
+        "bump"
+      ],
+      [
+        "pad",
+        "ball"
+      ],
+      [
+        "bump",
+        "interposer"
+      ],
+      [
+        "bump",
+        "ball"
+      ],
+      [
+        "interposer",
+        "ball"
+      ],
+      [
+        "ball",
+        "pcb"
+      ]
+    ]
+  },
+  "audit": []
+}

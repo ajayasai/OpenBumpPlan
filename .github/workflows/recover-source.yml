@@ -1,0 +1,93 @@
+name: Recover staged source for review (not release qualification)
+on:
+  push:
+    branches: [upgrade/native-interoperability]
+    paths: [.github/workflows/recover-source.yml]
+permissions:
+  contents: write
+jobs:
+  recover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Materialize exactly the previously checksummed source
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib,json,base64,hashlib,zlib
+          root=pathlib.Path('.').resolve()
+          ready=json.loads((root/'.interop-transfer/ready.json').read_text())
+          parts=sorted((root/'.interop-transfer').glob('part-*.b64'))
+          assert len(parts)==ready['parts']==4
+          encoded=''.join(p.read_text().strip() for p in parts)
+          assert len(encoded)<200000
+          payload=base64.b64decode(encoded,validate=True)
+          assert hashlib.sha256(payload).hexdigest()==ready['sha256']=='5078827882bd68f0d96e9dbaf64dac7541a43c0b6c8b1efdf24b2ef171cff31b'
+          d=zlib.decompressobj(31);decoded=d.decompress(payload,1000001)
+          assert len(decoded)<=1000000 and d.eof and not d.unused_data
+          files=json.loads(decoded);assert set(files)==set(ready['files']) and len(files)==16
+          for name,text in files.items():
+              p=pathlib.PurePosixPath(name)
+              assert isinstance(text,str) and not p.is_absolute() and p.as_posix()==name
+              assert not any(c in ('..','.git','.github','.env') for c in p.parts)
+              assert p.parts[0] in ('src','scripts','tests','docs','interop.html')
+              target=root
+              for c in p.parts:
+                  target=target/c
+                  assert not target.is_symlink()
+              assert not target.exists(),name
+              assert hashlib.sha256(text.encode()).hexdigest()==ready['files'][name],name
+          for name,text in files.items():
+              target=root/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_text(text)
+          PY
+          node scripts/prepare-interop.mjs
+          python3 - <<'PY'
+          import pathlib,json
+          p=pathlib.Path('tests/publish-update.test.mjs');s=p.read_text()
+          assert s.count("version:'0.3.1'")==1
+          version=json.loads(pathlib.Path('package.json').read_text())['version']
+          assert version=='0.4.0'
+          p.write_text(s.replace("version:'0.3.1'","version:'0.4.0'"))
+          PY
+          npm run build
+          node scripts/refresh-release.mjs
+          npm run verify:release
+      - name: Save reviewable source to staging only (not qualified)
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- src scripts tests docs examples dist package.json README.md CHANGELOG.md index.html interop.html
+          git diff --cached --check
+          git commit -m '[source-only] Materialize v0.4 native interchange and fix release fixture version; qualification pending'
+          git push origin HEAD:upgrade/native-interoperability
+      - name: Run the full Node regression suite
+        run: |
+          set -euo pipefail
+          npm test > "$RUNNER_TEMP/node-tests.tap" 2>&1 || { tail -120 "$RUNNER_TEMP/node-tests.tap"; exit 1; }
+          tail -12 "$RUNNER_TEMP/node-tests.tap"
+      - name: Install actual KiCad and run the independent native check
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq > "$RUNNER_TEMP/apt-update.log" 2>&1
+          sudo apt-get install -y --no-install-recommends kicad > "$RUNNER_TEMP/apt-kicad.log" 2>&1
+          /usr/bin/python3 tests/kicad_native_test.py > "$RUNNER_TEMP/kicad-test.log" 2>&1 || { cat "$RUNNER_TEMP/kicad-test.log"; exit 1; }
+          cat "$RUNNER_TEMP/kicad-test.log"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recovery-diagnostics-not-a-release
+          path: |
+            ${{ runner.temp }}/node-tests.tap
+            ${{ runner.temp }}/kicad-test.log
+            ${{ runner.temp }}/apt-*.log
+            docs/*native*.json

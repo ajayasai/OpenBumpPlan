@@ -1,0 +1,52 @@
+{
+  "schema": "openbumpplan.connectivity-contract/v1",
+  "name": "Synthetic interface intent (demonstration only)",
+  "coverage": "all",
+  "nets": [
+    {
+      "name": "DATA_P",
+      "ports": [
+        "die:0",
+        "ball:0"
+      ]
+    },
+    {
+      "name": "DATA_N",
+      "ports": [
+        "die:1",
+        "ball:1"
+      ]
+    },
+    {
+      "name": "REF_CLK",
+      "ports": [
+        "die:2",
+        "ball:2"
+      ]
+    },
+    {
+      "name": "CTRL",
+      "ports": [
+        "die:3",
+        "ball:3"
+      ]
+    },
+    {
+      "name": "VDD",
+      "ports": [
+        "die:4",
+        "ball:4"
+      ]
+    },
+    {
+      "name": "GND",
+      "ports": [
+        "die:5",
+        "ball:5"
+      ]
+    }
+  ],
+  "unassigned": [
+    "ball:spare"
+  ]
+}

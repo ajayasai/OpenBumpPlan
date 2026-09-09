@@ -1,0 +1,51 @@
+{
+  "browser": "144.0.7559.96",
+  "mode": "set_content",
+  "total": 8,
+  "passed": 8,
+  "failed": 0,
+  "scenarios": [
+    {
+      "name": "Certified coupled worker, self-contained proof export, CLI replay and undo",
+      "passed": true,
+      "seconds": 0.953
+    },
+    {
+      "name": "One-subproblem cutoff stays unknown with disabled Apply",
+      "passed": true,
+      "seconds": 0.499
+    },
+    {
+      "name": "Invalid relaxed assignment is never applied",
+      "passed": true,
+      "seconds": 0.547
+    },
+    {
+      "name": "Physical worker checks finite trace/via/pad dimensions and exports signed-review-ready evidence",
+      "passed": true,
+      "seconds": 0.776
+    },
+    {
+      "name": "Oversized declared copper cannot get a passing bundle",
+      "passed": true,
+      "seconds": 0.487
+    },
+    {
+      "name": "Changing the design invalidates a completed coupled proof for Apply",
+      "passed": true,
+      "seconds": 0.751
+    },
+    {
+      "name": "Cost quantum validation fails without changing coordinates or rules",
+      "passed": true,
+      "seconds": 0.414
+    },
+    {
+      "name": "Negotiated router uses actual worker and exports a recheckable witness",
+      "passed": true,
+      "seconds": 0.797
+    }
+  ],
+  "testedEngineVersion": "0.3.1",
+  "nativeOriginVerified": false
+}

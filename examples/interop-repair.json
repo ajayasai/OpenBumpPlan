@@ -1,0 +1,25 @@
+{
+  "schema": "openbumpplan.mapping-eco/v1",
+  "baseProjectSHA256": "7a58b324e66b3c0cdfe8a068792d1c2e0bba943ce352c28da9f437af0aa08c64",
+  "contractSHA256": "463fc31a9b71204a7abe43a6d53e293b470cea742dfba3bdbf1e4e10565011b3",
+  "edits": [
+    {
+      "id": "map:0",
+      "expected": {
+        "from": "die:0",
+        "to": "ball:1",
+        "net": ""
+      },
+      "to": "ball:0"
+    },
+    {
+      "id": "map:1",
+      "expected": {
+        "from": "die:1",
+        "to": "ball:0",
+        "net": ""
+      },
+      "to": "ball:1"
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+name: Freeze fully tested native handoff release
+on:
+  push:
+    branches: [upgrade/native-interoperability]
+    paths: ['.github/workflows/finalize-interop.yml', 'docs/release-request.json']
+permissions:
+  contents: write
+concurrency:
+  group: freeze-native-handoff
+  cancel-in-progress: false
+jobs:
+  qualify-and-freeze:
+    if: "!contains(github.event.head_commit.message, '[frozen]')"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    env:
+      OPENBUMPPLAN_EVIDENCE_DIR: /tmp/openbumpplan-final-evidence
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply guarded integration, build both applications and run all Node tests
+        run: |
+          set -euo pipefail
+          mkdir -p "$OPENBUMPPLAN_EVIDENCE_DIR"
+          node scripts/integrate-routed.mjs
+          npm run build
+          npm test > "$OPENBUMPPLAN_EVIDENCE_DIR/node-tests.tap" 2>&1 || { grep -A40 '^not ok' "$OPENBUMPPLAN_EVIDENCE_DIR/node-tests.tap"; exit 1; }
+          tail -12 "$OPENBUMPPLAN_EVIDENCE_DIR/node-tests.tap"
+          npm run qualify:v03 > "$OPENBUMPPLAN_EVIDENCE_DIR/qualify-v03.log" 2>&1
+          npm run qualify:copper -- "$OPENBUMPPLAN_EVIDENCE_DIR/copper-qualification.json" > "$OPENBUMPPLAN_EVIDENCE_DIR/qualify-copper.log" 2>&1
+          node scripts/cli.mjs verify-coupled examples/pair-bottleneck.json examples/coupled-proof.json
+          node scripts/cli.mjs verify-copper examples/routing-laboratory.json examples/physical-routes.json --technology examples/copper-technology.json
+          node scripts/cli.mjs verify-bundle examples/physical-review.json --project examples/routing-laboratory.json --technology examples/copper-technology.json
+      - name: Verify actual Ubuntu KiCad terminal-map parser
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq > "$OPENBUMPPLAN_EVIDENCE_DIR/apt.log" 2>&1
+          sudo apt-get install -y --no-install-recommends kicad >> "$OPENBUMPPLAN_EVIDENCE_DIR/apt.log" 2>&1
+          /usr/bin/python3 tests/kicad_native_test.py > "$OPENBUMPPLAN_EVIDENCE_DIR/terminal-native.log" 2>&1 || { tail -70 "$OPENBUMPPLAN_EVIDENCE_DIR/terminal-native.log"; exit 1; }
+          cp "$OPENBUMPPLAN_EVIDENCE_DIR/kicad-native-results.json" "$OPENBUMPPLAN_EVIDENCE_DIR/kicad7-native-results.json"
+      - name: Verify current stable KiCad copper, native save, DRC and broken layouts
+        run: |
+          set -euo pipefail
+          sudo add-apt-repository --yes ppa:kicad/kicad-10.0-releases >> "$OPENBUMPPLAN_EVIDENCE_DIR/apt.log" 2>&1
+          sudo apt-get update -qq >> "$OPENBUMPPLAN_EVIDENCE_DIR/apt.log" 2>&1
+          sudo apt-get install -y --no-install-recommends kicad >> "$OPENBUMPPLAN_EVIDENCE_DIR/apt.log" 2>&1
+          /usr/bin/python3 tests/routed_kicad_native_test.py > "$OPENBUMPPLAN_EVIDENCE_DIR/routed-native.log" 2>&1 || { tail -80 "$OPENBUMPPLAN_EVIDENCE_DIR/routed-native.log"; exit 1; }
+          /usr/bin/python3 tests/kicad_native_test.py > "$OPENBUMPPLAN_EVIDENCE_DIR/terminal-native10.log" 2>&1 || { tail -80 "$OPENBUMPPLAN_EVIDENCE_DIR/terminal-native10.log"; exit 1; }
+          cat "$OPENBUMPPLAN_EVIDENCE_DIR/routed-kicad-native-results.json"
+      - name: Install real browser and run retained plus new end-to-end scenarios
+        run: |
+          set -euo pipefail
+          python -m pip install playwright==1.57.0 > "$OPENBUMPPLAN_EVIDENCE_DIR/browser-install.log" 2>&1
+          python -m playwright install --with-deps chromium >> "$OPENBUMPPLAN_EVIDENCE_DIR/browser-install.log" 2>&1
+          CHROMIUM=$(python -c 'from playwright.sync_api import sync_playwright; p=sync_playwright().start(); print(p.chromium.executable_path); p.stop()')
+          for script in browser_test engineering_browser_test browser_v03 interop_browser_test routed_browser_test; do
+            python "tests/$script.py" --chromium "$CHROMIUM" > "$OPENBUMPPLAN_EVIDENCE_DIR/$script.log" 2>&1 || { tail -100 "$OPENBUMPPLAN_EVIDENCE_DIR/$script.log"; exit 1; }
+          done
+          for script in engineering_browser_test browser_v03 interop_browser_test routed_browser_test; do
+            python "tests/$script.py" --native --chromium "$CHROMIUM" > "$OPENBUMPPLAN_EVIDENCE_DIR/$script-native.log" 2>&1 || { tail -100 "$OPENBUMPPLAN_EVIDENCE_DIR/$script-native.log"; exit 1; }
+          done
+      - name: Materialize checked example and freeze evidence with source identity
+        run: |
+          set -euo pipefail
+          node --input-type=module - <<'JS'
+          import fs from 'node:fs';
+          import {routedHandoffDemo} from './src/core/routed-demo.js';
+          import {exportRoutedKiCad,verifyRoutedKiCad} from './src/core/routed-kicad.js';
+          const d=routedHandoffDemo(),r=exportRoutedKiCad(d.project,d.witness,d.technology,d.specification);
+          if(!verifyRoutedKiCad(d.project,d.witness,d.technology,r.board,r.receipt,d.specification).ok)throw new Error('Example replay failed');
+          fs.mkdirSync('examples/routed-handoff',{recursive:true});
+          for(const key of ['project','witness','technology','specification'])fs.writeFileSync(`examples/routed-handoff/${key}.json`,JSON.stringify(d[key],null,2)+'\n');
+          fs.writeFileSync('examples/routed-handoff/routed.kicad_pcb',r.board);fs.writeFileSync('examples/routed-handoff/receipt.json',JSON.stringify(r.receipt,null,2)+'\n');
+          JS
+          python - <<'PY'
+          import pathlib,os,json,hashlib,shutil,re
+          out=pathlib.Path(os.environ['OPENBUMPPLAN_EVIDENCE_DIR'])
+          for p in out.glob('*results.json'): shutil.copy2(p,pathlib.Path('docs')/p.name)
+          for name in ['routed-workbench.png','interop-workbench.png']:
+              if (out/name).exists(): shutil.copy2(out/name,pathlib.Path('docs')/name)
+          shutil.copy2(out/'node-tests.tap','docs/node-tests-v0.4.0.tap')
+          tap=(out/'node-tests.tap').read_text()
+          count=int(re.search(r'^# tests (\d+)',tap,re.M)[1]);assert re.search(r'^# fail 0$',tap,re.M)
+          sources={}
+          for folder in ('src','scripts','tests'):
+              for p in sorted(pathlib.Path(folder).rglob('*')):
+                  if p.is_file() and '__pycache__' not in p.parts: sources[str(p)]=hashlib.sha256(p.read_bytes()).hexdigest()
+          report={'version':'0.4.0','inputCommit':os.environ['GITHUB_SHA'],'run':os.environ['GITHUB_RUN_ID'],'nodeTestsPassed':count,'nodeTestsFailed':0,
+                  'gates':['full Node regression','retained solver/copper qualifications','legacy CLI witnesses','KiCad 7 terminal maps','KiCad 10 copper geometry/native resave/DRC and negative controls','KiCad 10 terminal maps','five bundled-browser suites','four native-origin browser suites'],
+                  'sourceSHA256':sources,'commercialHeadToHead':False,'manufacturingSignoff':False}
+          pathlib.Path('docs/release-qualification-v0.4.0.json').write_text(json.dumps(report,indent=2)+'\n')
+          readme=pathlib.Path('README.md');text=readme.read_text();heading='## Routed native handoff'
+          if heading not in text:
+              text+='\n'+heading+'\n\nv0.4.0 adds checked native KiCad traces, vias, pads and keepouts, a routed browser handoff panel and source-bound CLI replay. Start with [the routed handoff guide](docs/ROUTED-HANDOFF.md) and [the reproducible example](examples/routed-handoff). Measured tests are in [release qualification](docs/release-qualification-v0.4.0.json), [native copper results](docs/routed-kicad-native-results.json), and the browser results in `docs/`. These are bounded engineering checks, not commercial superiority or manufacturing signoff.\n'
+              readme.write_text(text)
+          change=pathlib.Path('CHANGELOG.md');text=change.read_text()
+          if '### Routed native handoff qualification' not in text:
+              text+='\n### Routed native handoff qualification\n\n- Export checked two-layer copper with explicit drill/thickness/envelope, reserved pads and keepouts.\n- Add source-bound structural replay, exclusive-output CLI and workbench downloads that invalidate on source changes.\n- Add real native geometry, connectivity, DRC, damaged-layout controls, CLI and browser regressions.\n- Correct release fixture version and invalid workflow context; preserve all retained tests.\n'
+              change.write_text(text)
+          transfer=pathlib.Path('.interop-transfer')
+          if transfer.exists(): shutil.rmtree(transfer)
+          PY
+          node scripts/refresh-release.mjs
+          npm run verify:release
+      - name: Independently reconstruct and test clean release archive
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import pathlib,json,zipfile,hashlib,os,subprocess
+          root=pathlib.Path('.').resolve();tmp=pathlib.Path(os.environ['RUNNER_TEMP']);evidence=pathlib.Path(os.environ['OPENBUMPPLAN_EVIDENCE_DIR'])
+          manifest=json.loads((root/'docs/release-manifest-v0.4.0.json').read_text())
+          members=[x['path'] for x in manifest['files']]+['docs/release-manifest-v0.4.0.json']
+          archive=evidence/'OpenBumpPlan-v0.4.0.zip'
+          with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
+              for name in sorted(members):
+                  info=zipfile.ZipInfo('OpenBumpPlan/'+name,(2026,9,9,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED
+                  z.writestr(info,(root/name).read_bytes())
+          clean=tmp/'clean-handoff-release'
+          with zipfile.ZipFile(archive) as z:
+              assert z.testzip() is None
+              z.extractall(clean)
+          cwd=clean/'OpenBumpPlan'
+          for number,command in enumerate([['npm','run','verify:release'],['npm','test'],['npm','run','build'],['npm','run','verify:release']]):
+              with (evidence/f'clean-{number}.log').open('w') as log:
+                  subprocess.run(command,cwd=cwd,stdout=log,stderr=subprocess.STDOUT,check=True)
+          checksum=hashlib.sha256(archive.read_bytes()).hexdigest()
+          (evidence/'SHA256SUMS').write_text(checksum+'  '+archive.name+'\n')
+          print('Clean extracted release passed verification, full tests and byte-reproducible rebuild:',checksum)
+          PY
+      - name: Commit frozen source and evidence to staging only, without force push
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- . ':!.github'
+          git diff --cached --check
+          git commit -m '[frozen] v0.4.0 native routed handoff: complete native, browser and clean-package qualification'
+          git push origin HEAD:upgrade/native-interoperability
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-handoff-release-and-evidence
+          path: /tmp/openbumpplan-final-evidence/

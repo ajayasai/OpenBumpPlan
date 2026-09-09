@@ -1,0 +1,46 @@
+name: Native routed copper qualification
+on:
+  push:
+    branches: [main, upgrade/native-interoperability]
+    paths: ['src/core/routed-*.js', 'tests/routed*', '.github/workflows/routed-native.yml']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  native-copper:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+    env:
+      OPENBUMPPLAN_EVIDENCE_DIR: /tmp/openbumpplan-native-routed-evidence
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Complete retained and new Node regression suite
+        run: |
+          set -euo pipefail
+          npm test > "$RUNNER_TEMP/node-tests.tap" 2>&1 || { tail -140 "$RUNNER_TEMP/node-tests.tap"; exit 1; }
+          tail -12 "$RUNNER_TEMP/node-tests.tap"
+      - name: Install official stable KiCad with native DRC CLI
+        run: |
+          set -euo pipefail
+          sudo add-apt-repository --yes ppa:kicad/kicad-10.0-releases > "$RUNNER_TEMP/apt-ppa.log" 2>&1
+          sudo apt-get update -qq > "$RUNNER_TEMP/apt-update.log" 2>&1
+          sudo apt-get install -y --no-install-recommends kicad > "$RUNNER_TEMP/apt-kicad.log" 2>&1
+          kicad-cli version
+      - name: Independent native copper and broken-layout controls
+        run: /usr/bin/python3 tests/routed_kicad_native_test.py
+      - name: Independent terminal-map native parser
+        run: /usr/bin/python3 tests/kicad_native_test.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-routed-evidence
+          path: |
+            /tmp/openbumpplan-native-routed-evidence/
+            ${{ runner.temp }}/node-tests.tap
+            ${{ runner.temp }}/apt-*.log
