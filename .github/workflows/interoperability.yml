@@ -13,7 +13,7 @@ jobs:
       run:
         shell: bash
     env:
-      OPENBUMPPLAN_EVIDENCE_DIR: ${{ runner.temp }}/interop-results
+      OPENBUMPPLAN_EVIDENCE_DIR: /tmp/openbumpplan-interop-results
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -43,9 +43,11 @@ jobs:
           CHROMIUM=$(python -c 'from playwright.sync_api import sync_playwright; p=sync_playwright().start(); print(p.chromium.executable_path); p.stop()')
           python tests/interop_browser_test.py --chromium "$CHROMIUM"
           python tests/interop_browser_test.py --native --chromium "$CHROMIUM"
+          python tests/routed_browser_test.py --chromium "$CHROMIUM"
+          python tests/routed_browser_test.py --native --chromium "$CHROMIUM"
           npm run verify:release
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: native-interoperability
-          path: ${{ runner.temp }}/interop-results/
+          path: /tmp/openbumpplan-interop-results/
