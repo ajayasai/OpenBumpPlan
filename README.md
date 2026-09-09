@@ -4,9 +4,15 @@
 
 Local-first planning for **IC pads → microbumps → interposer sites → package balls → PCB sites**. Edit, constrain, optimize, review and export without uploading design data.
 
-**v0.3.1 · MIT license · engineering alpha.** This release retains scalable certified assignments, hard-constraint search with proof replay, congestion-repair routing and continuous finite-width copper checks. It is **not** a qualified foundry, electrical or thermal signoff tool, and superiority over commercial EDA products has **not** been demonstrated.
+**v0.4.0 · MIT license · engineering alpha.** This release retains scalable certified assignments, hard-constraint search with proof replay, congestion-repair routing and continuous finite-width copper checks. It is **not** a qualified foundry, electrical or thermal signoff tool, and superiority over commercial EDA products has **not** been demonstrated.
 
-## New in v0.3.1: scalable continuous copper verification
+## New in v0.4.0: native interchange and independent connectivity intent
+
+Open **[the Interoperability Workbench](interop.html)** after `npm start`, or use the planner toolbar link. Import native KiCad terminal maps, export an unrouted native board and library footprint, verify actual exported terminals against an independent source/specification, detect opens/shorts against a separate logical contract, and preview/apply hash-bound mapping ECOs atomically. The release also fixes the tiny-positive-clearance contact acceptance issue.
+
+[Exact native-format scope, CLI commands and verification protocol](docs/NATIVE-INTEROPERABILITY.md). Native parser and browser evidence is available in the GitHub Actions artifacts; read actual run status rather than assuming a pass. No commercial superiority or manufacturing-signoff claim is made.
+
+## Retained v0.3.1 capability: scalable continuous copper verification
 
 The independent copper checker now uses a conservative two-dimensional bounding-volume index before its unchanged capsule/disc distance calculation. Widths, clearances, keep-outs, layer checks and acceptance tolerances are **not relaxed**. A separate bounded spatial-work counter prevents pathological index traversal from receiving an all-clear result.
 

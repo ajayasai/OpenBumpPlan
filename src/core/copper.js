@@ -82,7 +82,9 @@ export function verifyCopper(project,witness,technology,options={}) {
     const near=(a,b)=>{
       if(++comparisons>maxComparisons)throw new Error('Continuous geometry comparison budget exceeded; no all-clear result.');
       const distance=boxDistance(a,b),required=a.radius+b.radius+tech.clearance;
-      return tech.clearance===0?distance<=required+TOL:distance<required-TOL;
+      // Contact is forbidden independently of clearance tolerance. A tiny
+      // positive clearance must never turn touching/overlapping copper into a pass.
+      return distance<=a.radius+b.radius+TOL || distance<required-TOL;
     };
     // The broad phase is conservative only: every returned pair still passes
     // through the unchanged continuous Euclidean narrow-phase calculation.

@@ -1,0 +1,983 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>OpenBumpPlan · Interoperability Workbench</title>
+<style>:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#e5edf8;background:#0b1220;font-size:14px;--line:#27364b;--muted:#91a4be;--accent:#6fdac5;--bad:#ff9c9c}*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button,a.link{border:1px solid #34465f;border-radius:7px;background:#19283d;color:#dce8f8;padding:9px 13px;cursor:pointer;text-decoration:none;display:inline-block}button:hover,a.link:hover{background:#263c54}button:disabled{opacity:.45;cursor:default}.primary{background:#184e46;border-color:#337f71;color:#adf8e6}.danger{border-color:#784040}input,select,textarea{border:1px solid #31435d;border-radius:6px;background:#0d192b;color:#d8e6f9;padding:8px;max-width:100%}input[type=file]{font-size:12px;width:100%}textarea{display:block;width:100%;min-height:165px;resize:vertical;font:12px/1.6 ui-monospace,SFMono-Regular,monospace;tab-size:2}label{display:grid;gap:6px;color:#aebed2;font-size:12px}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}header{border-bottom:1px solid var(--line);padding:20px 30px;display:flex;align-items:center;gap:18px;background:#0f1c2f}.logo{display:grid;grid-template-columns:repeat(3,7px);gap:4px}.logo i{width:7px;height:7px;background:var(--accent);border-radius:2px}.brand{font-size:20px;letter-spacing:-.6px;font-weight:750}.tag{font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:5px}.spacer{flex:1}.local{font-size:12px;color:var(--accent)}main{max-width:1600px;margin:auto;padding:24px 30px}.intro{display:flex;align-items:center;gap:20px;margin-bottom:20px}h1{font-size:26px;letter-spacing:-.7px;font-weight:650;margin:0 0 8px}h2{font-size:16px;margin:0 0 12px}h3{font-size:13px;font-weight:500;color:var(--accent);margin:0 0 10px}p{color:var(--muted);line-height:1.7;margin:6px 0 15px}.eyebrow{text-transform:uppercase;font-size:10px;letter-spacing:1.6px;color:var(--accent);margin-bottom:8px}.grid{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:18px;align-items:start}.panel{border:1px solid var(--line);border-radius:10px;background:#101d30;padding:20px;min-width:0}.panel+.panel{margin-top:18px}.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hint{font-size:11px;line-height:1.65;color:var(--muted);margin:10px 0}.banner{border:1px solid #375173;border-radius:7px;padding:12px;background:#13243a;font-size:12px;line-height:1.6;margin-bottom:18px}.badge{display:inline-block;font-size:11px;border:1px solid #4b5870;border-radius:20px;padding:4px 10px;color:#9fafc6}.good{color:var(--accent)}.bad{color:var(--bad)}.summary{display:flex;gap:22px;border-bottom:1px solid var(--line);padding:12px 0 18px;margin-bottom:15px}.summary strong{font-size:25px;font-weight:500;display:block}.summary span{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}.digest{font:10px/1.6 ui-monospace,monospace;overflow-wrap:anywhere;color:var(--muted)}#map{width:100%;height:290px;background:#0c1727;border:1px solid #26394e;border-radius:8px}pre{font:11px/1.65 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:200px;overflow:auto;margin:8px 0;color:#afc0d6}.findings{max-height:230px;overflow:auto;font-size:12px}.finding{border-top:1px solid #2e3c51;padding:10px 0;line-height:1.5}.finding b{font-size:10px;letter-spacing:.8px;color:var(--bad);display:block;margin-bottom:4px}details{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}summary{cursor:pointer;color:#c4d5ec;font-size:12px;margin-bottom:12px}footer{padding:20px 30px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.7}#notice{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);border:1px solid var(--line);border-radius:8px;padding:12px 20px;background:#23364d;display:none;max-width:80vw;z-index:20}#notice.show{display:block}.small{font-size:11px}.quiet{font-size:11px;padding:6px 8px}@media(max-width:1150px){.grid{grid-template-columns:1fr 1.2fr}.right{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:18px}.right .panel{margin:0}.local{display:none}}@media(max-width:750px){main{padding:18px}.grid,.right{display:block}.grid>div{margin-bottom:18px}.right .panel{margin-bottom:18px}header{padding:16px}.intro{display:block}.summary{gap:16px}h1{font-size:23px}}
+</style></head>
+<body><div id="interop"></div><div id="notice" role="status" aria-live="polite"></div><script type="module">"use strict";
+const __mods=Object.create(null);
+__mods["src/core/model.js"]=(()=>{
+/** Canonical, dependency-free model. All geometry is micrometres, right-handed XY. */
+const VERSION = '0.4.0';
+const KINDS = ['pad', 'bump', 'interposer', 'ball', 'pcb'];
+const ROLES = ['any', 'signal', 'clock', 'power', 'ground', 'reserved', 'nc'];
+const DEFAULT_RULES = Object.freeze({
+  maxLength: 4000, minDomainSpacing: 0, pairMaxDistance: 650, pairMaxSkew: 150,
+  clockShieldRadius: 750, clockGroundMin: 1, groundRadius: 1000,
+  powerRadius: 1400, requirePowerForSignals: false, minGroundRatio: 0.15,
+  crossingWeight: 150, maxCrossings: 0, geometryBudget: 1000000,
+  terminalKind: 'ball', requireCompletePaths: false,
+  allowedStagePairs: [['pad','bump'], ['pad','ball'], ['bump','interposer'],
+    ['bump','ball'], ['interposer','ball'], ['ball','pcb']]
+});
+const clone = value => structuredClone(value);
+const rank = kind => KINDS.indexOf(kind);
+const emptyProject = (name = 'Untitled package') => ({
+  schemaVersion: 1, name, revision: 0, units: 'um', description: '',
+  dies: [], ports: [], connections: [], keepouts: [], regions: [],
+  rules: clone(DEFAULT_RULES), audit: []
+});
+function stableStringify(value) {
+  if (Array.isArray(value)) return '[' + value.map(stableStringify).join(',') + ']';
+  if (value && typeof value === 'object') return '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + stableStringify(value[k])).join(',') + '}';
+  return JSON.stringify(value);
+}
+/** Review identifier, NOT a cryptographic signature or tamper-proof audit. */
+function fingerprint(p) {
+  const copy = clone(p); delete copy.audit; delete copy.revision;
+  for (const key of ['dies','ports','connections','keepouts','regions']) copy[key]?.sort((a,b) => a.id.localeCompare(b.id));
+  let h = 2166136261;
+  for (const c of stableStringify(copy)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
+  return (h >>> 0).toString(16).padStart(8, '0');
+}
+function normalizeProject(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Project must be a JSON object.');
+  if (raw.schemaVersion !== 1) throw new Error('Unsupported schemaVersion; expected 1.');
+  const p = clone(raw);
+  p.description ??= ''; p.revision ??= 0; p.audit ??= [];
+  for (const key of ['dies','ports','connections','keepouts','regions']) p[key] ??= [];
+  p.rules = { ...clone(DEFAULT_RULES), ...p.rules };
+  p.dies = p.dies.map(d => ({name: d.id, rotation: 0, mirrorX: false, edgeKeepout: 0, cornerKeepout: 0, ...d}));
+  p.ports = p.ports.map(n => ({label: n.id, dieId: '', net: '', domain: '', role: 'any', pair: '', polarity: '', locked: false, required: false, ...n}));
+  p.connections = p.connections.map(e => ({net: '', locked: false, ...e}));
+  p.keepouts = p.keepouts.map(k => ({dieId: '', kinds: clone(KINDS), ...k}));
+  p.regions = p.regions.map(r => ({kind: 'ball', domain: '', minGround: 0, minPower: 0, ...r}));
+  assertProject(p);
+  return p;
+}
+function assertProject(p) {
+  const errors = [];
+  const need = (yes, text) => { if (!yes) errors.push(text); };
+  const number = n => typeof n === 'number' && Number.isFinite(n) && Math.abs(n) <= 1e9;
+  const string = s => typeof s === 'string' && s.length <= 512 && !/[\u0000-\u001f\u007f]/.test(s);
+  const array = (a, name, cap) => { need(Array.isArray(a), `${name} must be an array`); if (Array.isArray(a)) need(a.length <= cap, `${name} exceeds the ${cap} item safety limit`); return Array.isArray(a) ? a : []; };
+  need(p.schemaVersion === 1, 'schemaVersion must be 1');
+  need(p.units === 'um', 'Canonical units must be um; use import conversion for mm/nm.');
+  need(string(p.name) && p.name.length > 0, 'name must be a nonempty string of at most 512 characters');
+  need(typeof p.description === 'string' && p.description.length <= 10000, 'description must be text, at most 10000 characters');
+  need(Number.isSafeInteger(p.revision) && p.revision >= 0, 'revision must be a nonnegative integer');
+  const dies = array(p.dies, 'dies', 1000), ports = array(p.ports, 'ports', 10000), edges = array(p.connections, 'connections', 20000);
+  const keepouts = array(p.keepouts, 'keepouts', 1000), regions = array(p.regions, 'regions', 1000);
+  const audit = array(p.audit, 'audit', 200);
+  for (const a of audit) need(a && typeof a === 'object' && typeof a.action === 'string' && typeof a.time === 'string', 'Audit entries need action and time strings');
+  const ids = (items, label) => { const set = new Set(); for (const item of items) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) { errors.push(`${label} item must be an object`); continue; }
+    need(string(item.id) && item.id.length > 0, `${label} id must be nonempty text`);
+    need(!set.has(item.id), `Duplicate ${label} id: ${item.id}`); set.add(item.id);
+  } return set; };
+  const dieIds = ids(dies, 'die'), portIds = ids(ports, 'port'); ids(edges, 'connection'); ids(keepouts, 'keepout'); ids(regions, 'region');
+  for (const d of dies.filter(Boolean)) {
+    for (const key of ['x','y','width','height','edgeKeepout','cornerKeepout']) need(number(d[key]), `Die ${d.id}: invalid ${key}`);
+    need(d.width > 0 && d.height > 0, `Die ${d.id}: width and height must be positive`);
+    need(d.edgeKeepout >= 0 && d.cornerKeepout >= 0, `Die ${d.id}: keep-outs cannot be negative`);
+    need([0,90,180,270].includes(d.rotation), `Die ${d.id}: rotation must be 0/90/180/270`);
+    need(typeof d.mirrorX === 'boolean', `Die ${d.id}: mirrorX must be boolean`);
+    need(string(d.name), `Die ${d.id}: invalid name`);
+  }
+  for (const n of ports.filter(Boolean)) {
+    need(KINDS.includes(n.kind), `Port ${n.id}: unknown kind ${n.kind}`);
+    need(ROLES.includes(n.role), `Port ${n.id}: unknown role ${n.role}`);
+    need(number(n.x) && number(n.y), `Port ${n.id}: coordinates must be finite numbers`);
+    need(!n.dieId || dieIds.has(n.dieId), `Port ${n.id}: unknown die ${n.dieId}`);
+    for (const key of ['label','dieId','net','domain','pair','polarity']) need(string(n[key]), `Port ${n.id}: invalid ${key}`);
+    need(['','+','-'].includes(n.polarity), `Port ${n.id}: polarity must be +, -, or empty`);
+    need(Boolean(n.pair) === Boolean(n.polarity), `Port ${n.id}: pair and polarity must be supplied together`);
+    need(typeof n.locked === 'boolean' && typeof n.required === 'boolean', `Port ${n.id}: locked/required must be boolean`);
+  }
+  for (const e of edges.filter(Boolean)) {
+    need(portIds.has(e.from) && portIds.has(e.to), `Connection ${e.id}: dangling endpoint`);
+    need(e.from !== e.to, `Connection ${e.id}: cannot connect a port to itself`);
+    need(typeof e.locked === 'boolean' && string(e.net), `Connection ${e.id}: invalid net or locked value`);
+  }
+  for (const k of [...keepouts, ...regions].filter(Boolean)) {
+    for (const key of ['x','y','width','height']) need(number(k[key]), `Region ${k.id}: invalid ${key}`);
+    need(k.width > 0 && k.height > 0, `Region ${k.id}: size must be positive`);
+  }
+  for (const k of keepouts.filter(Boolean)) {
+    need(!k.dieId || dieIds.has(k.dieId), `Keep-out ${k.id}: unknown die`);
+    need(Array.isArray(k.kinds) && k.kinds.every(v => KINDS.includes(v)), `Keep-out ${k.id}: invalid kinds`);
+  }
+  for (const r of regions.filter(Boolean)) {
+    need(KINDS.includes(r.kind) && string(r.domain), `Region ${r.id}: invalid kind/domain`);
+    need(Number.isInteger(r.minGround) && r.minGround >= 0 && Number.isInteger(r.minPower) && r.minPower >= 0, `Region ${r.id}: quotas must be nonnegative integers`);
+  }
+  const rules = p.rules || {};
+  for (const key of Object.keys(rules)) need(Object.hasOwn(DEFAULT_RULES,key), `Unknown rule ${key}; check the spelling/schema.`);
+  for (const key of ['maxLength','minDomainSpacing','pairMaxDistance','pairMaxSkew','clockShieldRadius','clockGroundMin','groundRadius','powerRadius','minGroundRatio','crossingWeight','maxCrossings','geometryBudget']) need(number(rules[key]) && rules[key] >= 0, `Rule ${key} must be a finite nonnegative number`);
+  need(rules.minGroundRatio <= 1, 'minGroundRatio must be <= 1');
+  need(Number.isInteger(rules.geometryBudget) && rules.geometryBudget >= 100 && rules.geometryBudget <= 10000000, 'geometryBudget must be an integer from 100 to 10000000');
+  need(Number.isInteger(rules.clockGroundMin) && Number.isInteger(rules.maxCrossings), 'clockGroundMin/maxCrossings must be integers');
+  need(KINDS.includes(rules.terminalKind), 'Unknown terminalKind');
+  need(typeof rules.requirePowerForSignals === 'boolean' && typeof rules.requireCompletePaths === 'boolean', 'Boolean rules must be true/false');
+  need(Array.isArray(rules.allowedStagePairs) && rules.allowedStagePairs.every(v => Array.isArray(v) && v.length === 2 && KINDS.includes(v[0]) && KINDS.includes(v[1]) && rank(v[0]) < rank(v[1])), 'allowedStagePairs must contain strictly forward layer pairs');
+  if (errors.length) throw new Error(errors.slice(0, 30).join('\n') + (errors.length > 30 ? `\n... ${errors.length - 30} additional errors` : ''));
+  return p;
+}
+function indexProject(p) {
+  return {ports: new Map(p.ports.map(n => [n.id,n])), dies: new Map(p.dies.map(d => [d.id,d])), connections: new Map(p.connections.map(e => [e.id,e]))};
+}
+function transformPoint(point, die) {
+  if (!die) return {x:point.x, y:point.y};
+  const x = die.mirrorX ? die.width - point.x : point.x, y = point.y;
+  const [rx, ry] = die.rotation === 90 ? [-y,x] : die.rotation === 180 ? [-x,-y] : die.rotation === 270 ? [y,-x] : [x,y];
+  return {x: die.x + rx, y: die.y + ry};
+}
+function inversePoint(point, die) {
+  if (!die) return {x: point.x, y: point.y};
+  const dx = point.x - die.x, dy = point.y - die.y;
+  const [x,y] = die.rotation === 90 ? [dy,-dx] : die.rotation === 180 ? [-dx,-dy] : die.rotation === 270 ? [-dy,dx] : [dx,dy];
+  return {x: die.mirrorX ? die.width - x : x, y};
+}
+function worldPoint(n, index) { return transformPoint(n, index.dies.get(n.dieId)); }
+function effectiveSignals(p) {
+  const index = indexProject(p), incoming = new Map(), outgoing = new Map();
+  for (const e of p.connections) {
+    if (!incoming.has(e.to)) incoming.set(e.to, []); incoming.get(e.to).push(e);
+    if (!outgoing.has(e.from)) outgoing.set(e.from, []); outgoing.get(e.from).push(e);
+  }
+  const signals = new Map();
+  for (const n of [...p.ports].sort((a,b) => rank(a.kind)-rank(b.kind) || a.id.localeCompare(b.id))) {
+    const e = incoming.get(n.id)?.[0], parent = e && signals.get(e.from);
+    signals.set(n.id, {net: n.net || parent?.net || e?.net || '', domain: n.domain || parent?.domain || '',
+      role: n.role === 'any' ? (parent?.role || 'any') : n.role,
+      pair: n.pair || parent?.pair || '', polarity: n.polarity || parent?.polarity || ''});
+  }
+  return {...index, incoming, outgoing, signals};
+}
+function tracePath(p, start) {
+  const ctx = effectiveSignals(p), seen = new Set(), path = []; let id = start;
+  while (id && !seen.has(id)) { seen.add(id); path.push(id); id = ctx.outgoing.get(id)?.[0]?.to; }
+  return path;
+}
+function portAt(p, id) {
+  const port = p.ports.find(n => n.id === id); if (!port) throw new Error(`Unknown port ${id}`); return port;
+}
+function connect(p, from, to, {replace = false} = {}) {
+  const a = portAt(p,from), b = portAt(p,to);
+  if (a.locked || b.locked) throw new Error('Unlock the affected ports before changing their mappings.');
+  const previous = p.connections.filter(e => e.from === from || e.to === to);
+  if (previous.some(e => e.locked || portAt(p,e.from).locked || portAt(p,e.to).locked)) throw new Error('A locked mapping cannot be replaced.');
+  if (previous.length && !replace) throw new Error('Source or target is occupied. Enable Replace mapping to reassign.');
+  if (rank(a.kind) >= rank(b.kind)) throw new Error('Connections must point forward through the stack.');
+  if (!p.rules.allowedStagePairs.some(([s,t]) => s === a.kind && t === b.kind)) throw new Error(`Stage ${a.kind} -> ${b.kind} is not allowed by the rules.`);
+  p.connections = p.connections.filter(e => !previous.includes(e));
+  let id = `link:${from}`, serial = 1;
+  while (p.connections.some(e => e.id === id)) id = `link:${from}:${serial++}`;
+  p.connections.push({id, from, to, net:'', locked:false});
+}
+function disconnect(p, id) {
+  const n = portAt(p,id), linked = p.connections.filter(e => e.from === id || e.to === id);
+  if (n.locked || linked.some(e => e.locked || portAt(p,e.from).locked || portAt(p,e.to).locked)) throw new Error('Unlock the affected ports/mappings first.');
+  p.connections = p.connections.filter(e => e.from !== id && e.to !== id);
+}
+
+return {VERSION,KINDS,ROLES,DEFAULT_RULES,clone,rank,emptyProject,stableStringify,fingerprint,normalizeProject,assertProject,indexProject,transformPoint,inversePoint,worldPoint,effectiveSignals,tracePath,portAt,connect,disconnect};})();
+__mods["src/core/geometry.js"]=(()=>{
+const EPS = 1e-8;
+const manhattan = (a,b) => Math.abs(a.x-b.x) + Math.abs(a.y-b.y);
+const euclidean = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
+const insideRect = (p,r) => p.x >= r.x-EPS && p.x <= r.x+r.width+EPS && p.y >= r.y-EPS && p.y <= r.y+r.height+EPS;
+const orient = (a,b,c) => (b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x);
+/** Proper straight-ratsnest crossings; endpoint contacts are not crossings. */
+function segmentRelation(a,b,c,d) {
+  if (manhattan(a,b) < EPS || manhattan(c,d) < EPS) return null;
+  const o1 = orient(a,b,c), o2 = orient(a,b,d), o3 = orient(c,d,a), o4 = orient(c,d,b);
+  const tol = EPS * Math.max(1, manhattan(a,b), manhattan(c,d));
+  if ((o1 > tol && o2 < -tol || o1 < -tol && o2 > tol) && (o3 > tol && o4 < -tol || o3 < -tol && o4 > tol)) return 'cross';
+  if ([o1,o2,o3,o4].every(v => Math.abs(v) <= tol)) {
+    const k = Math.abs(a.x-b.x) >= Math.abs(a.y-b.y) ? 'x' : 'y';
+    const overlap = Math.min(Math.max(a[k],b[k]), Math.max(c[k],d[k])) - Math.max(Math.min(a[k],b[k]), Math.min(c[k],d[k]));
+    return overlap > EPS ? 'overlap' : null;
+  }
+  return null;
+}
+/** Bounding-box sweep. Budget exhaustion is explicit: no false "all clear". */
+function crossingAnalysis(segments, budget = 1000000) {
+  const sorted = segments.map(s => ({...s, minX:Math.min(s.a.x,s.b.x), maxX:Math.max(s.a.x,s.b.x), minY:Math.min(s.a.y,s.b.y), maxY:Math.max(s.a.y,s.b.y)}))
+    .sort((a,b) => a.minX-b.minX || a.id.localeCompare(b.id));
+  let active = [], comparisons = 0, crossings = 0, overlaps = 0; const examples = [];
+  for (const s of sorted) {
+    active = active.filter(t => t.maxX >= s.minX-EPS);
+    for (const t of active) {
+      if (++comparisons > budget) return {crossings, overlaps, comparisons:budget, complete:false, examples};
+      if (s.stage !== t.stage || s.minY > t.maxY+EPS || t.minY > s.maxY+EPS || s.net && s.net === t.net || s.from === t.from || s.from === t.to || s.to === t.from || s.to === t.to) continue;
+      const relation = segmentRelation(s.a,s.b,t.a,t.b);
+      if (relation === 'cross') crossings++;
+      if (relation === 'overlap') overlaps++;
+      if (relation && examples.length < 100) examples.push({a:s.id,b:t.id,type:relation});
+    }
+    active.push(s);
+  }
+  return {crossings, overlaps, comparisons, complete:true, examples};
+}
+class SpatialIndex {
+  constructor(items, radius) {
+    this.cell = Math.max(radius, 1); this.cells = new Map();
+    for (const item of items) {
+      const k = this.key(Math.floor(item.x/this.cell),Math.floor(item.y/this.cell));
+      if (!this.cells.has(k)) this.cells.set(k,[]); this.cells.get(k).push(item);
+    }
+  }
+  key(x,y) { return `${x},${y}`; }
+  near(point, radius) {
+    const found = [], loX=Math.floor((point.x-radius)/this.cell), hiX=Math.floor((point.x+radius)/this.cell), loY=Math.floor((point.y-radius)/this.cell), hiY=Math.floor((point.y+radius)/this.cell);
+    for (let x=loX;x<=hiX;x++) for(let y=loY;y<=hiY;y++) for(const item of this.cells.get(this.key(x,y)) || []) if(euclidean(point,item) <= radius+EPS) found.push(item);
+    return found;
+  }
+}
+
+return {EPS,manhattan,euclidean,insideRect,segmentRelation,crossingAnalysis,SpatialIndex};})();
+__mods["src/core/rules.js"]=(()=>{
+const { assertProject, effectiveSignals, worldPoint, inversePoint, rank }=__mods["src/core/model.js"];
+const { EPS, manhattan, euclidean, insideRect, crossingAnalysis, SpatialIndex }=__mods["src/core/geometry.js"];
+const DRAFT_CODES = new Set(['EMPTY_DESIGN','NO_ASSIGNMENTS','UNASSIGNED','PATH_INCOMPLETE','PAIR_INCOMPLETE','DOMAIN_UNSPECIFIED','NET_UNSPECIFIED']);
+const issueKey = issue => `${issue.code}|${[...(issue.ports || [])].sort().join('|')}|${issue.ref || ''}`;
+function blockedPosition(n, p, ctx) {
+  const d = ctx.dies.get(n.dieId), result = [], w = worldPoint(n,ctx);
+  if (d) {
+    if (n.x < -EPS || n.y < -EPS || n.x > d.width+EPS || n.y > d.height+EPS) result.push('OUTSIDE_DIE');
+    if (d.edgeKeepout > 0 && Math.min(n.x,n.y,d.width-n.x,d.height-n.y) < d.edgeKeepout-EPS) result.push('EDGE_KEEPOUT');
+    if (d.cornerKeepout > 0 && [[0,0],[d.width,0],[0,d.height],[d.width,d.height]].some(([x,y]) => Math.hypot(n.x-x,n.y-y) < d.cornerKeepout-EPS)) result.push('CORNER_KEEPOUT');
+  }
+  for (const k of p.keepouts) if (k.kinds.includes(n.kind)) {
+    if (k.dieId && n.dieId !== k.dieId) continue;
+    const q = k.dieId ? inversePoint(w,ctx.dies.get(k.dieId)) : w;
+    if (insideRect(q,k)) result.push(`KEEPOUT:${k.id}`);
+  }
+  return result;
+}
+/** A separable hard-compatibility predicate. Coupled rules need analyze(). */
+function compatible(source, target, p, ctx = effectiveSignals(p)) {
+  if (['reserved','nc'].includes(target.role) || ['reserved','nc'].includes(source.role)) return false;
+  const s = ctx.signals.get(source.id) || source;
+  if (target.net && s.net && target.net !== s.net) return false;
+  if (target.domain && s.domain && target.domain !== s.domain) return false;
+  if (target.role !== 'any' && target.role !== s.role) return false;
+  if (target.pair && target.pair !== s.pair || target.polarity && target.polarity !== s.polarity) return false;
+  if (blockedPosition(target,p,ctx).length) return false;
+  if (manhattan(worldPoint(source,ctx),worldPoint(target,ctx)) > p.rules.maxLength+EPS) return false;
+  return true;
+}
+function analyze(p) {
+  assertProject(p);
+  const ctx = effectiveSignals(p), r = p.rules, issues = [];
+  let totalIssues=0, errors=0, warnings=0, geometryOps=0, complete=true;
+  const add = (code,severity,message,ports=[],ref='') => {
+    totalIssues++; if (severity === 'error') errors++; else if (severity === 'warning') warnings++;
+    if (issues.length < 5000) issues.push({code,severity,message,ports,ref,category:DRAFT_CODES.has(code)?'incomplete':'constraint'});
+  };
+  const spend = () => { geometryOps++; if (geometryOps > r.geometryBudget) complete=false; return complete; };
+  if(!p.ports.length)add('EMPTY_DESIGN','error','The project contains no interface sites.');
+  else if(!p.connections.length)add('NO_ASSIGNMENTS','error','The project contains no assignments.');
+  const positions = new Map(p.ports.map(n => [n.id,worldPoint(n,ctx)]));
+  const active = n => Boolean(ctx.incoming.get(n.id)?.length || ctx.outgoing.get(n.id)?.length);
+  let unassigned=0;
+  for (const n of p.ports) {
+    const used=active(n), ins=ctx.incoming.get(n.id) || [], outs=ctx.outgoing.get(n.id) || [], s=ctx.signals.get(n.id);
+    if (ins.length > 1) add('MULTIPLE_DRIVERS','error',`${n.id} has ${ins.length} incoming assignments. Each physical site has capacity one.`,[n.id]);
+    if (outs.length > 1) add('FANOUT','error',`${n.id} has ${outs.length} outgoing assignments. Model a branch with separate physical sites.`,[n.id]);
+    if (n.required && !used) {unassigned++; add('UNASSIGNED','error',`Required port ${n.id} is unassigned.`,[n.id]);}
+    if (used && ['reserved','nc'].includes(n.role)) add('FORBIDDEN_SITE','error',`${n.id} is ${n.role} and cannot carry an assignment.`,[n.id]);
+    // Keep-outs describe forbidden occupied sites, not forbidden empty candidate grid points.
+    if (used) for (const reason of blockedPosition(n,p,ctx)) add(reason.split(':')[0],'error',`${n.id} violates ${reason.toLowerCase().replaceAll('_',' ')}.`,[n.id],reason.split(':')[1] || '');
+    if (used && !s.net) add('NET_UNSPECIFIED','error',`Active port ${n.id} has no logical net.`,[n.id]);
+    if (used && ['signal','clock','power'].includes(s.role) && !s.domain) add('DOMAIN_UNSPECIFIED','error',`Active port ${n.id} has no voltage-domain identifier.`,[n.id]);
+    if (used && s.role === 'any') add('ROLE_UNSPECIFIED','warning',`Active port ${n.id} has no electrical role; coverage checks cannot classify it.`,[n.id]);
+    if (r.requireCompletePaths && used && rank(n.kind) < rank(r.terminalKind) && !outs.length) add('PATH_INCOMPLETE','error',`The path stops at ${n.id} before the declared terminal layer ${r.terminalKind}.`,[n.id]);
+  }
+  const segments=[], lengths=Object.create(null), stageTotals=Object.create(null); let totalLength=0,maxLength=0;
+  const pairEdges = new Map();
+  for (const e of p.connections) {
+    const a=ctx.ports.get(e.from), b=ctx.ports.get(e.to), s=ctx.signals.get(a.id), t=ctx.signals.get(b.id);
+    if (!r.allowedStagePairs.some(([x,y]) => x===a.kind && y===b.kind) || rank(a.kind)>=rank(b.kind)) add('STAGE_ORDER','error',`Connection ${e.id} is not an allowed forward stage.`,[a.id,b.id],e.id);
+    if (b.net && s.net && b.net!==s.net || e.net && s.net && e.net!==s.net || e.net && b.net && e.net!==b.net) add('NET_CONFLICT','error',`Connection ${e.id} joins incompatible logical nets.`,[a.id,b.id],e.id);
+    if (b.domain && s.domain && b.domain!==s.domain) add('DOMAIN_CONFLICT','error',`Connection ${e.id} joins ${s.domain} to ${b.domain}.`,[a.id,b.id],e.id);
+    if (b.role!=='any' && s.role!=='any' && b.role!==s.role) add('ROLE_CONFLICT','error',`Connection ${e.id} joins ${s.role} to a ${b.role} site.`,[a.id,b.id],e.id);
+    if (b.pair && s.pair && b.pair!==s.pair || b.polarity && s.polarity && b.polarity!==s.polarity) add('PAIR_POLARITY','error',`Connection ${e.id} changes differential-pair identity/polarity.`,[a.id,b.id],e.id);
+    const length=manhattan(positions.get(a.id),positions.get(b.id)), stage=`${a.kind} -> ${b.kind}`;
+    lengths[e.id]=length; totalLength+=length; maxLength=Math.max(maxLength,length); stageTotals[stage]=(stageTotals[stage] || 0)+length;
+    if (length>r.maxLength+EPS) add('MAX_LENGTH','error',`${e.id}: L1 ${length.toFixed(2)} um exceeds ${r.maxLength} um.`,[a.id,b.id],e.id);
+    segments.push({id:e.id,from:a.id,to:b.id,a:positions.get(a.id),b:positions.get(b.id),net:s.net || t.net,stage});
+    if(s.pair) { const k=`${stage}:${s.pair}`; if(!pairEdges.has(k)) pairEdges.set(k,[]); pairEdges.get(k).push({e,s,length}); }
+  }
+  // Detect same-coordinate occupied sites within the same physical layer.
+  const occupied=p.ports.filter(active).map(n => ({...n,...positions.get(n.id),signal:ctx.signals.get(n.id)}));
+  const layerGroups = new Map();
+  for(const n of occupied) {if(!layerGroups.has(n.kind)) layerGroups.set(n.kind,[]); layerGroups.get(n.kind).push(n);}
+  for(const [kind,group] of layerGroups) {
+    const duplicates=new Map();
+    for(const n of group) {
+      const key=`${n.x.toFixed(8)},${n.y.toFixed(8)}`;
+      if(duplicates.has(key)) add('SITE_COLLISION','error',`Two occupied ${kind} sites share the same physical coordinate.`,[duplicates.get(key),n.id]);
+      else duplicates.set(key,n.id);
+    }
+    if(r.minDomainSpacing>0 && complete) {
+      const spatial=new SpatialIndex(group,r.minDomainSpacing);
+      outer: for(const n of group) for(const m of spatial.near(n,r.minDomainSpacing)) {
+        if(!spend()) break outer;
+        if(n.id>=m.id || !n.signal.domain || !m.signal.domain || n.signal.domain===m.signal.domain || n.signal.role==='ground' || m.signal.role==='ground') continue;
+        if(euclidean(n,m)<r.minDomainSpacing-EPS) add('DOMAIN_SPACING','error',`Different voltage domains at ${n.id}/${m.id} are closer than ${r.minDomainSpacing} um.`,[n.id,m.id]);
+      }
+    }
+    const ground=group.filter(n => n.signal.role==='ground' && n.signal.net), power=group.filter(n => n.signal.role==='power' && n.signal.net);
+    const radius=Math.max(r.groundRadius,r.clockShieldRadius,r.powerRadius,1), groundIndex=new SpatialIndex(ground,radius), powerIndex=new SpatialIndex(power,radius);
+    for(const n of group) {
+      if(!complete) break;
+      if(!['signal','clock'].includes(n.signal.role)) continue;
+      const nearby=groundIndex.near(n,radius); geometryOps+=nearby.length+1; if(geometryOps>r.geometryBudget){complete=false;break;}
+      if(r.groundRadius>0 && !nearby.some(g => euclidean(n,g)<=r.groundRadius+EPS)) add('GROUND_COVERAGE','error',`No connected ground ${kind} lies within ${r.groundRadius} um of ${n.id}.`,[n.id]);
+      if(n.signal.role==='clock') {
+        const count=nearby.filter(g => euclidean(n,g)<=r.clockShieldRadius+EPS).length;
+        if(count<r.clockGroundMin) add('CLOCK_SHIELD','error',`${n.id} needs ${r.clockGroundMin} connected ground neighbour(s) within ${r.clockShieldRadius} um; found ${count}.`,[n.id]);
+      }
+      if(r.requirePowerForSignals && r.powerRadius>0) {
+        const supplies=powerIndex.near(n,r.powerRadius); geometryOps+=supplies.length+1; if(geometryOps>r.geometryBudget){complete=false;break;}
+        if(!supplies.some(g => g.signal.domain===n.signal.domain)) add('POWER_COVERAGE','error',`No connected ${n.signal.domain || '(unspecified)'} power ${kind} within ${r.powerRadius} um of ${n.id}.`,[n.id]);
+      }
+    }
+    const ratio=group.length ? ground.length/group.length : 0;
+    if(r.minGroundRatio>0 && ratio+EPS<r.minGroundRatio) add('GROUND_RATIO','error',`${kind}: connected ground ratio ${(100*ratio).toFixed(1)}% is below ${(100*r.minGroundRatio).toFixed(1)}%.`,[],kind);
+  }
+  const pairGroups=new Map();
+  for(const n of occupied) if(n.signal.pair) {const key=`${n.kind}:${n.signal.pair}`;if(!pairGroups.has(key))pairGroups.set(key,[]);pairGroups.get(key).push(n);}
+  for(const [key,nodes] of pairGroups) {
+    if(nodes.length!==2 || new Set(nodes.map(n=>n.signal.polarity)).size!==2) add('PAIR_INCOMPLETE','error',`${key} needs exactly one + and one - endpoint on this layer.`,nodes.map(n=>n.id),key);
+    else if(manhattan(nodes[0],nodes[1])>r.pairMaxDistance+EPS) add('PAIR_ADJACENCY','error',`${key}: pair separation exceeds ${r.pairMaxDistance} um (L1).`,nodes.map(n=>n.id),key);
+  }
+  for(const [key,items] of pairEdges) if(items.length===2 && items[0].s.polarity!==items[1].s.polarity) {
+    if(Math.abs(items[0].length-items[1].length)>r.pairMaxSkew+EPS) add('PAIR_SKEW','error',`${key}: L1 length mismatch exceeds ${r.pairMaxSkew} um.`,items.flatMap(v=>[v.e.from,v.e.to]),key);
+  }
+  for(const region of p.regions) {
+    const group=occupied.filter(n=>n.kind===region.kind && insideRect(n,region));
+    const ground=group.filter(n=>n.signal.role==='ground').length;
+    const power=group.filter(n=>n.signal.role==='power' && (!region.domain || n.signal.domain===region.domain)).length;
+    if(ground<region.minGround) add('REGION_GROUND','error',`Region ${region.id}: requires ${region.minGround} connected grounds; found ${ground}.`,[],region.id);
+    if(power<region.minPower) add('REGION_POWER','error',`Region ${region.id}: requires ${region.minPower} connected power sites; found ${power}.`,[],region.id);
+  }
+  const crossing=crossingAnalysis(segments,Math.max(0,r.geometryBudget-geometryOps));
+  complete=complete && crossing.complete;
+  if(crossing.crossings>r.maxCrossings) add('RATSNEST_CROSSING','warning',`${crossing.crossings} same-stage straight-line crossing(s), above budget ${r.maxCrossings}. This is not routed-layer DRC.`,[]);
+  if(crossing.overlaps) add('RATSNEST_OVERLAP','warning',`${crossing.overlaps} same-stage collinear overlap(s). Layered routing may resolve these.`,[]);
+  if(!complete) add('ANALYSIS_INCOMPLETE','error','Geometry budget exhausted. Counts are lower bounds; the design must not be treated as checked.',[]);
+  issues.sort((a,b) => (a.severity==='error'?0:1)-(b.severity==='error'?0:1) || a.code.localeCompare(b.code));
+  return {complete, ready:complete && errors===0 && warnings===0, errors,warnings,totalIssues, detailsTruncated:totalIssues>issues.length,issues,
+    metrics:{ports:p.ports.length,connections:p.connections.length,unassigned,totalLength,maxLength,meanLength:p.connections.length?totalLength/p.connections.length:0,
+      crossings:crossing.crossings,overlaps:crossing.overlaps,score:totalLength+r.crossingWeight*crossing.crossings,scoreExact:complete,stageTotals},
+    lengths, crossingExamples:crossing.examples, geometryComparisons:geometryOps+crossing.comparisons};
+}
+/** Draft incompleteness is allowed while editing; new hard violations are not. */
+function regressionCheck(before,after,{draft=true}={}) {
+  if(!after.complete || after.detailsTruncated) return {ok:false,reason:'The candidate was not fully checked.'};
+  const hard = a => a.issues.filter(i=>i.severity==='error' && (!draft || !DRAFT_CODES.has(i.code)));
+  const oldKeys=new Set(hard(before).map(issueKey)), introduced=hard(after).filter(i=>!oldKeys.has(issueKey(i)));
+  return {ok:introduced.length===0,introduced,reason:introduced[0]?.message || ''};
+}
+
+return {DRAFT_CODES,issueKey,blockedPosition,compatible,analyze,regressionCheck};})();
+__mods["src/core/exporters.js"]=(()=>{
+const { VERSION, KINDS, effectiveSignals, worldPoint, transformPoint, fingerprint }=__mods["src/core/model.js"];
+const { analyze }=__mods["src/core/rules.js"];
+const escapeHTML = value => String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LAYER_COLORS = {pad:'#f4b56a',bump:'#5fe1cc',interposer:'#b69af9',ball:'#76b6ff',pcb:'#ed9dcc'};
+const ROLE_COLORS = {any:'#8494a9',signal:'#76b6ff',clock:'#e6a4f9',power:'#f4b56a',ground:'#5fe1cc',reserved:'#f57883',nc:'#596a7e'};
+const csvEncode = value => {
+  let s=String(value??'');
+  if(typeof value==='string' && /^[\s]*[=+\-@']/.test(s))s="'"+s;
+  return /[",\r\n]/.test(s)?'"'+s.replaceAll('"','""')+'"':s;
+};
+const csvTable = (headers,rows) => [headers.join(','),...rows.map(row=>row.map(csvEncode).join(','))].join('\r\n')+'\r\n';
+function exportPortsCSV(p) {
+  const headers=['id','label','kind','dieId','x','y','net','domain','role','pair','polarity','locked','required','units','_text_encoding'];
+  return csvTable(headers,p.ports.map(n=>headers.map(k=>k==='units'?'um':k==='_text_encoding'?'apostrophe-v1':n[k])));
+}
+function exportConnectionsCSV(p) {
+  const ctx=effectiveSignals(p),a=analyze(p);
+  return csvTable(['id','from','to','net','locked','signal','length_um','_text_encoding'],p.connections.map(e=>[e.id,e.from,e.to,e.net,e.locked,ctx.signals.get(e.from).net,a.lengths[e.id],'apostrophe-v1']));
+}
+const exportJSON = p => JSON.stringify(p,null,2)+'\n';
+function layoutProject(p,{view='physical',layers=KINDS}={}) {
+  const ctx=effectiveSignals(p),physical=p.ports.map(n=>worldPoint(n,ctx));
+  const xs=physical.map(n=>n.x),ys=physical.map(n=>n.y);
+  const xmin=Math.min(0,...xs),xmax=Math.max(1000,...xs),ymin=Math.min(0,...ys),ymax=Math.max(1000,...ys),span=xmax-xmin+1200;
+  const offsets=Object.fromEntries(KINDS.map((k,i)=>[k,view==='exploded'?i*span:0]));
+  const nodes=p.ports.filter(n=>layers.includes(n.kind)).map(n=>{const q=worldPoint(n,ctx);return {...n,sx:q.x+offsets[n.kind],sy:-q.y,signal:ctx.signals.get(n.id)};});
+  const corners=[];
+  for(const d of p.dies)for(const q of [{x:0,y:0},{x:d.width,y:0},{x:d.width,y:d.height},{x:0,y:d.height}]){const w=transformPoint(q,d);corners.push({sx:w.x,sy:-w.y});}
+  const all=[...nodes,...corners],bx=Math.min(xmin,...all.map(n=>n.sx))-350,by=Math.min(-ymax,...all.map(n=>n.sy))-400;
+  const bw=Math.max(xmax,...all.map(n=>n.sx))-bx+450,bh=Math.max(-ymin,...all.map(n=>n.sy))-by+350;
+  return {ctx,nodes,offsets,bounds:{x:bx,y:by,width:bw,height:bh},span};
+}
+function diagram(p,{view='physical',layers=KINDS,selected='',showLabels=true,baseline=null}={}) {
+  const layout=layoutProject(p,{view,layers}),{ctx,nodes,offsets,bounds}=layout;
+  const ids=new Map(nodes.map(n=>[n.id,n])),selectedSignal=ctx.signals.get(selected)?.net;
+  let body='';
+  if(view==='exploded')for(const kind of layers) body+=`<text x="${bounds.x+offsets[kind]+500}" y="${bounds.y+160}" fill="${LAYER_COLORS[kind]}" font-size="140" font-family="sans-serif">${kind.toUpperCase()}</text>`;
+  for(const d of p.dies)for(const layer of view==='exploded'?layers.filter(k=>['pad','bump'].includes(k)):['pad']) {
+    const corners=[{x:0,y:0},{x:d.width,y:0},{x:d.width,y:d.height},{x:0,y:d.height}].map(q=>transformPoint(q,d));
+    body+=`<polygon points="${corners.map(q=>`${q.x+offsets[layer]},${-q.y}`).join(' ')}" fill="#172233" fill-opacity="0.55" stroke="#52637b" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    const label=corners[0];body+=`<text x="${label.x+offsets[layer]+30}" y="${-label.y+140}" fill="#94a6bc" font-size="90" font-family="sans-serif">${escapeHTML(d.name)} / R${d.rotation}${d.mirrorX?' MX':''}</text>`;
+  }
+  for(const k of p.keepouts) {
+    const d=ctx.dies.get(k.dieId),points=[{x:k.x,y:k.y},{x:k.x+k.width,y:k.y},{x:k.x+k.width,y:k.y+k.height},{x:k.x,y:k.y+k.height}].map(q=>transformPoint(q,d));
+    for(const kind of view==='exploded'?k.kinds.filter(v=>layers.includes(v)):['pad'])body+=`<polygon points="${points.map(q=>`${q.x+offsets[kind]},${-q.y}`).join(' ')}" fill="#f57883" fill-opacity="0.2" stroke="#f57883" stroke-dasharray="5 4" stroke-width="1" vector-effect="non-scaling-stroke"><title>Keep-out: ${escapeHTML(k.id)}</title></polygon>`;
+  }
+  if(baseline) {
+    const old=layoutProject(baseline,{view,layers}),oldIds=new Map(old.nodes.map(n=>[n.id,n]));
+    for(const e of baseline.connections){const a=oldIds.get(e.from),b=oldIds.get(e.to);if(a&&b)body+=`<line x1="${a.sx}" y1="${a.sy}" x2="${b.sx}" y2="${b.sy}" stroke="#f57883" stroke-opacity="0.35" stroke-dasharray="4 5" stroke-width="1" vector-effect="non-scaling-stroke"/>`;}
+  }
+  for(const e of p.connections) {
+    const a=ids.get(e.from),b=ids.get(e.to);if(!a||!b)continue;
+    const hot=selected&&(e.from===selected||e.to===selected||selectedSignal&&a.signal.net===selectedSignal);
+    body+=`<line data-edge="${escapeHTML(e.id)}" x1="${a.sx}" y1="${a.sy}" x2="${b.sx}" y2="${b.sy}" stroke="${ROLE_COLORS[a.signal.role]}" stroke-opacity="${hot?0.95:selected?0.12:0.36}" stroke-width="${hot?2:0.9}" vector-effect="non-scaling-stroke"><title>${escapeHTML(a.signal.net || '(unnamed)')}: ${escapeHTML(e.from)} to ${escapeHTML(e.to)}</title></line>`;
+  }
+  for(const n of nodes) {
+    const hot=n.id===selected,fill=ROLE_COLORS[n.signal.role],radius=n.kind==='ball'?48:32;
+    body+=`<g data-port="${escapeHTML(n.id)}" class="port" tabindex="0" role="button" aria-label="${escapeHTML(`${n.id}, ${n.signal.net||'unassigned'}, ${n.signal.role}`)}">`;
+    if(hot)body+=`<circle cx="${n.sx}" cy="${n.sy}" r="${radius+35}" fill="none" stroke="#ffffff" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+    body+=`<circle cx="${n.sx}" cy="${n.sy}" r="${radius}" fill="${fill}" fill-opacity="${n.role==='nc'?0.35:0.95}" stroke="${n.locked?'#ffffff':LAYER_COLORS[n.kind]}" stroke-width="${n.locked?2:0.7}" vector-effect="non-scaling-stroke"/><title>${escapeHTML(n.id)} | ${escapeHTML(n.signal.net || '(unassigned)')} | ${escapeHTML(n.signal.domain)}${n.locked?' | LOCKED':''}</title>`;
+    if(['reserved','nc'].includes(n.role))body+=`<path d="M ${n.sx-radius} ${n.sy-radius} L ${n.sx+radius} ${n.sy+radius}" stroke="#ffffff" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    if(showLabels&&(nodes.length<=350||hot))body+=`<text x="${n.sx+radius+20}" y="${n.sy-30}" fill="${hot?'#ffffff':'#acbad0'}" font-size="70" font-family="sans-serif" pointer-events="none">${escapeHTML(n.label)}</text>`;
+    body+='</g>';
+  }
+  return {...layout,body};
+}
+function exportSVG(p,options={}) {
+  const d=diagram(p,options),b=d.bounds;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="${b.x} ${b.y} ${b.width} ${b.height}" role="img" aria-label="${escapeHTML(p.name)}"><title>${escapeHTML(p.name)} - OpenBumpPlan planning view</title><rect x="${b.x}" y="${b.y}" width="${b.width}" height="${b.height}" fill="#0e1522"/>${d.body}</svg>`;
+}
+const fmt = n => Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
+const statusText = a => !a.complete?'NOT FULLY CHECKED':a.errors?'REVIEW REQUIRED':a.warnings?'PLANNING WARNINGS':'PLANNING CHECKS PASS - NOT SIGNOFF';
+const markdownCell = s => String(s??'').replaceAll('|','\\|').replaceAll('\n',' ');
+function exportICDMarkdown(p) {
+  const a=analyze(p),ctx=effectiveSignals(p);
+  let text=`# ${p.name}\n\nInterface-control document | OpenBumpPlan ${VERSION}\n\nRevision: ${p.revision} | Review ID: ${fingerprint(p)} | Units: um\n\n**${statusText(a)}**\n\n${p.description}\n\n## Coordinate convention\n\nAll canonical coordinates are micrometres. Positive Y is up. Die ports use local coordinates; die transforms mirror local X first, rotate counter-clockwise about the local origin, then translate to package XY. Other ports use package XY. Screen exploded offsets are never used for scoring.\n\n## Planning metrics\n\n${a.metrics.ports} sites; ${a.metrics.connections} assignments; ${fmt(a.metrics.totalLength)} um total L1; ${a.metrics.crossings} straight-line crossings; ${a.errors} errors; ${a.warnings} warnings. Score: ${fmt(a.metrics.score)}${a.complete?'':' (lower bound: analysis incomplete)'}.\n\n## Mechanical interfaces\n\n| Die | Origin X | Origin Y | Width | Height | Rotation | Mirror X |\n|---|---:|---:|---:|---:|---:|---|\n`;
+  for(const d of p.dies)text+=`| ${markdownCell(d.id)} | ${d.x} | ${d.y} | ${d.width} | ${d.height} | ${d.rotation} | ${d.mirrorX} |\n`;
+  text+='\n## Interface assignments\n\n| Source | Destination | Effective net | Domain | Role | L1 (um) | Locked |\n|---|---|---|---|---|---:|---|\n';
+  for(const e of p.connections){const s=ctx.signals.get(e.from);text+=`| ${[e.from,e.to,s.net,s.domain,s.role,fmt(a.lengths[e.id]),e.locked].map(markdownCell).join(' | ')} |\n`;}
+  text+='\n## Constraints\n\n```json\n'+JSON.stringify({rules:p.rules,keepouts:p.keepouts,regions:p.regions},null,2)+'\n```\n\n## Findings\n\n';
+  text+=a.issues.length?a.issues.map(i=>`- ${i.severity.toUpperCase()} / ${i.code}: ${i.message}`).join('\n'):'No configured-rule findings.';
+  text+='\n\n## Review and limitations\n\nPlanning only. Crossings are same-stage straight-ratsnest crossings; overlaps are reported separately. L1 is not routed electrical length. Ground proximity and power quotas are geometric proxies, not SI/PI/EM/thermal results. No foundry/package signoff is implied. Unknown domains/nets and incomplete analysis block readiness. The review identifier and local audit are not cryptographic signatures.\n\nEngineering owner: __________  Reviewer: __________  Approval date: __________\n';
+  return text;
+}
+function exportICDHTML(p) {
+  const a=analyze(p),ctx=effectiveSignals(p),table=(headers,rows)=>`<table><thead><tr>${headers.map(h=>`<th>${escapeHTML(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(c=>`<td>${escapeHTML(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>${escapeHTML(p.name)} - ICD</title><style>body{font:14px/1.6 system-ui,sans-serif;max-width:1120px;margin:40px auto;padding:0 28px;color:#142138}h1{font-size:32px;line-height:1.2}h2{margin-top:32px;border-bottom:1px solid #ccd5e3;padding-bottom:8px}table{border-collapse:collapse;width:100%;font-size:12px}td,th{padding:7px;text-align:left;border-bottom:1px solid #d9e0eb;overflow-wrap:anywhere}th{background:#eef3f9}.status{background:#eef3f9;padding:18px;font-weight:700}pre{background:#f3f6fa;white-space:pre-wrap;padding:16px;font:12px/1.5 monospace}svg{width:100%;height:auto;max-height:500px}footer{margin:40px 0;color:#5b6a7e}@media print{body{margin:0;font-size:10px}h2{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}svg{max-height:360px}}</style></head><body><p>OPENBUMPPLAN / INTERFACE CONTROL</p><h1>${escapeHTML(p.name)}</h1><p>Revision ${p.revision} &middot; Review ID ${fingerprint(p)} &middot; Canonical units: micrometres</p><p>${escapeHTML(p.description)}</p><p class="status">${statusText(a)}</p><h2>Planning summary</h2>${table(['Sites','Assignments','Total L1 (um)','Crossings','Errors','Warnings'],[[a.metrics.ports,a.metrics.connections,fmt(a.metrics.totalLength),a.metrics.crossings,a.errors,a.warnings]])}${exportSVG(p).replace(/<\?xml[^>]*\?>/,'')}<h2>Coordinate convention</h2><p>Positive Y is up. Die-local X is mirrored first (when enabled), then rotated counter-clockwise about the die origin and translated into package coordinates. Bumps may be die-local; package/interposer/PCB sites can use package XY. Exploded display offsets never change physical scores.</p><h2>Mechanical interfaces</h2>${table(['Die','X','Y','Width','Height','Rotation','Mirror X'],p.dies.map(d=>[d.id,d.x,d.y,d.width,d.height,d.rotation,d.mirrorX]))}<h2>Assignments</h2>${table(['Source','Destination','Effective net','Domain','Role','L1 (um)','Locked'],p.connections.map(e=>{const s=ctx.signals.get(e.from);return[e.from,e.to,s.net,s.domain,s.role,fmt(a.lengths[e.id]),e.locked];}))}<h2>Configured constraints</h2><pre>${escapeHTML(JSON.stringify({rules:p.rules,keepouts:p.keepouts,regions:p.regions},null,2))}</pre><h2>Findings</h2>${a.issues.length?table(['Severity','Rule','Explanation'],a.issues.map(i=>[i.severity,i.code,i.message])):'<p>No configured-rule findings.</p>'}<h2>Review boundaries</h2><p>This is a planning document, not fabrication approval. Straight-line crossings do not establish a routed-layer short. L1 length is not routed electrical length. Ground proximity and power quotas are geometric proxies; no signal-integrity, power-integrity, electromigration, thermal, or manufacturing signoff has been performed. Local audit/review IDs are not tamper-proof signatures.</p><p>Engineering owner: __________________ Reviewer: __________________ Approval date: __________________</p><footer>Generated by OpenBumpPlan ${VERSION}. Data remains local unless you explicitly export or share it.</footer></body></html>`;
+}
+/** Small, vector/text PDF writer. Base14 Helvetica, printable ASCII transliteration.
+ * HTML/JSON/CSV/SVG retain full Unicode; PDF text outside ASCII is transliterated.
+ */
+function exportPDF(p) {
+  const a=analyze(p),ctx=effectiveSignals(p),pages=[];let commands=[],y=0;
+  const ascii = s => String(s).normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^\x20-\x7E]/g,'?');
+  const pdfText = s => ascii(s).replace(/[\\()]/g,c=>'\\'+c);
+  const drawText=(text,x,yy,size=10,bold=false)=>commands.push(`BT /${bold?'F2':'F1'} ${size} Tf 0.10 0.16 0.24 rg 1 0 0 1 ${x} ${yy} Tm (${pdfText(text)}) Tj ET`);
+  const newPage=()=>{if(commands.length)pages.push(commands.join('\n'));commands=[];drawText('OPENBUMPPLAN / INTERFACE CONTROL',44,806,9,true);commands.push('0.78 0.83 0.88 RG 44 796 m 551 796 l S');drawText(`Revision ${p.revision} | ${fingerprint(p)} | planning only`,44,28,8);drawText(`Page ${pages.length+1}`,510,28,8);y=773;};
+  const line=(text,size=10,bold=false)=>{
+    const max=Math.floor(505/(size*0.59)),words=ascii(text).split(/\s+/);let current='';const lines=[];
+    for(const word of words){if(word.length>max){if(current){lines.push(current);current='';}for(let i=0;i<word.length;i+=max)lines.push(word.slice(i,i+max));}else if((current+' '+word).trim().length>max){lines.push(current);current=word;}else current=(current+' '+word).trim();}
+    if(current||!lines.length)lines.push(current);
+    for(const textLine of lines){if(y<55)newPage();drawText(textLine,44,y,size,bold);y-=size*1.55;}
+  };
+  const heading=text=>{if(y<100)newPage();y-=12;line(text,14,true);y-=3;};
+  newPage();line(p.name,21,true);line(`Status: ${statusText(a)}`,10,true);line(`${a.metrics.ports} sites | ${a.metrics.connections} assignments | ${fmt(a.metrics.totalLength)} um total L1 | ${a.metrics.crossings} crossings`,9);
+  line(`${a.errors} errors | ${a.warnings} warnings | Score ${fmt(a.metrics.score)}${a.complete?'':' (INCOMPLETE / lower bound)'}`,9);
+  y-=12;
+  const layout=layoutProject(p),b=layout.bounds,mapHeight=240,scale=Math.min(505/b.width,mapHeight/b.height),mapBottom=y-mapHeight;
+  commands.push(`0.96 0.97 0.99 rg 44 ${mapBottom} 507 ${mapHeight} re f`);
+  const xy=n=>({x:44+(n.x-b.x)*scale,y:mapBottom+mapHeight-(-n.y-b.y)*scale});
+  for(const e of p.connections){const s=xy(worldPoint(ctx.ports.get(e.from),ctx)),t=xy(worldPoint(ctx.ports.get(e.to),ctx));commands.push(`0.55 0.63 0.72 RG 0.4 w ${s.x.toFixed(3)} ${s.y.toFixed(3)} m ${t.x.toFixed(3)} ${t.y.toFixed(3)} l S`);}
+  for(const n of p.ports){const q=xy(worldPoint(n,ctx));const role=ctx.signals.get(n.id).role;const rgb=role==='ground'?'0.08 0.55 0.42':role==='power'?'0.75 0.38 0.12':'0.19 0.40 0.68';commands.push(`${rgb} rg ${(q.x-1.5).toFixed(3)} ${(q.y-1.5).toFixed(3)} 3 3 re f`);}
+  y=mapBottom-20;line('Physical XY projection; assignments are planning lines, not routed conductors.',8);
+  heading('Coordinate convention');line('Canonical unit: micrometre (um). Positive Y is up. Die ports use local coordinates: mirror local X, rotate counter-clockwise around the local origin, then translate to package XY. Display separation never affects scoring.',9);
+  heading('Review boundary');line('Not signoff. Manhattan length and straight-line crossings are proxies, not physical routing or electrical simulation. Ground proximity and power quotas do not certify SI, PI, EM, thermal, or manufacturability. The local review ID is not a cryptographic signature.',9);
+  newPage();heading('Mechanical interfaces');
+  for(const d of p.dies)line(`${d.id}: origin (${d.x}, ${d.y}) um; size ${d.width} x ${d.height} um; R${d.rotation}; mirror X ${d.mirrorX}`,9);
+  heading('Interface assignments');
+  for(const e of p.connections){if(y<95)newPage();const s=ctx.signals.get(e.from);line(`${e.from} -> ${e.to}`,9,true);line(`Net ${s.net||'(unnamed)'} | ${s.domain||'(no domain)'} | ${s.role} | L1 ${fmt(a.lengths[e.id])} um${e.locked?' | LOCKED':''}`,8);y-=4;}
+  heading('Configured rules');for(const [k,v]of Object.entries(p.rules))line(`${k}: ${typeof v==='object'?JSON.stringify(v):v}`,9);
+  heading('Keep-outs and P/G regions');for(const k of [...p.keepouts,...p.regions])line(JSON.stringify(k),8);if(!p.keepouts.length&&!p.regions.length)line('None configured.',9);
+  heading('Findings');if(!a.issues.length)line('No configured-rule findings.',9);for(const issue of a.issues)line(`${issue.severity.toUpperCase()} / ${issue.code}: ${issue.message}`,9);
+  if(a.detailsTruncated)line('Finding detail limit reached. Consult JSON validation output and split the design.',9,true);
+  heading('Review and approval');line('Engineering owner: ____________________',10);line('Reviewer: ____________________   Approval date: ____________________',10);line('PDF text uses printable ASCII transliteration. Use HTML or JSON for full Unicode labels.',8);
+  pages.push(commands.join('\n'));
+  const objects=['','<< /Type /Catalog /Pages 2 0 R >>','', '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>'];
+  const kids=[];
+  for(const content of pages){const pageId=objects.length,streamId=pageId+1;kids.push(`${pageId} 0 R`);objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${streamId} 0 R >>`);objects.push(`<< /Length ${content.length} >>\nstream\n${content}\nendstream`);}
+  objects[2]=`<< /Type /Pages /Kids [${kids.join(' ')}] /Count ${pages.length} >>`;
+  let output='%PDF-1.4\n%OpenBumpPlan\n';const offsets=[0];
+  for(let i=1;i<objects.length;i++){offsets.push(output.length);output+=`${i} 0 obj\n${objects[i]}\nendobj\n`;}
+  const xref=output.length;output+=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;
+  for(let i=1;i<objects.length;i++)output+=`${String(offsets[i]).padStart(10,'0')} 00000 n \n`;
+  output+=`trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`;
+  return new TextEncoder().encode(output);
+}
+
+return {escapeHTML,LAYER_COLORS,ROLE_COLORS,csvTable,exportPortsCSV,exportConnectionsCSV,exportJSON,layoutProject,diagram,exportSVG,exportICDMarkdown,exportICDHTML,exportPDF};})();
+__mods["src/core/sexpr.js"]=(()=>{
+/** Bounded, non-evaluating KiCad S-expression reader. No regex-based tree parsing.
+ * Strings remain strings, including numeric pin identifiers and Unicode names. */
+function parseSExpression(text, {maxBytes=5*1024*1024, maxNodes=400000, maxDepth=64}={}) {
+  for (const [key,value,cap] of [['maxBytes',maxBytes,5*1024*1024],['maxNodes',maxNodes,400000],['maxDepth',maxDepth,128]]) {
+    if (!Number.isSafeInteger(value)||value<1||value>cap) throw new Error(`Invalid ${key} budget`);
+  }
+  if (typeof text!=='string'||new TextEncoder().encode(text).length>maxBytes||text.includes('\0')) throw new Error('Expected NUL-free text within the byte budget');
+  let i=text.charCodeAt(0)===0xFEFF?1:0,count=0,root=null;
+  const stack=[];
+  function append(value) {
+    if (++count>maxNodes) throw new Error('S-expression node budget exceeded');
+    if (stack.length) stack.at(-1).push(value);
+    else if (root===null) root=value;
+    else throw new Error('More than one S-expression root');
+  }
+  while (i<text.length) {
+    const c=text[i];
+    if (/\s/.test(c)) {i++;continue;}
+    if (c===';') {while(i<text.length&&text[i]!=='\n')i++;continue;}
+    if (c==='(') {const node=[];append(node);stack.push(node);if(stack.length>maxDepth)throw new Error('S-expression depth budget exceeded');i++;continue;}
+    if (c===')') {if(!stack.length)throw new Error(`Unmatched closing parenthesis at ${i}`);stack.pop();i++;continue;}
+    let word='';
+    if (c==='"') {
+      i++;let closed=false;
+      while(i<text.length) {
+        const q=text[i++];
+        if(q==='"'){closed=true;break;}
+        if(q==='\\') {
+          const e=text[i++],esc={'"':'"','\\':'\\','n':'\n','r':'\r','t':'\t'};
+          if(!Object.hasOwn(esc,e))throw new Error('Unsupported string escape');
+          word+=esc[e];
+        } else {if(q.charCodeAt(0)<32)throw new Error('Unescaped control character in string');word+=q;}
+      }
+      if(!closed)throw new Error('Unterminated quoted string');
+      if(i<text.length&&!/[\s();]/.test(text[i]))throw new Error('Missing separator after quoted string');
+    } else {
+      while(i<text.length&&!/[\s();]/.test(text[i])) {
+        if(text[i]==='"'||text.charCodeAt(i)<32)throw new Error('Invalid unquoted atom');
+        word+=text[i++];
+      }
+      if(!word)throw new Error(`Invalid token at ${i}`);
+    }
+    append(word);
+  }
+  if(stack.length||!Array.isArray(root)||!root.length)throw new Error('Incomplete or empty S-expression');
+  return root;
+}
+function children(node, name) {return node.filter(v=>Array.isArray(v)&&v[0]===name);}
+function singleton(node,name,required=false) {
+  const found=children(node,name);
+  if(found.length>1||required&&!found.length)throw new Error(`Expected ${required?'exactly':'at most'} one ${name}`);
+  return found[0];
+}
+function finiteDecimal(value, label='number') {
+  if(typeof value!=='string'||!/^[-+]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(value))throw new Error(`Invalid ${label}`);
+  const n=Number(value);if(!Number.isFinite(n)||Math.abs(n)>1e6)throw new Error(`${label} out of range`);return n;
+}
+function identifier(value, label='identifier', empty=false) {
+  if(typeof value!=='string'||(!empty&&!value.length)||value.length>512||/[\u0000-\u001f\u007f]/.test(value))throw new Error(`Invalid ${label}`);
+  if(new TextDecoder().decode(new TextEncoder().encode(value))!==value)throw new Error(`Malformed Unicode in ${label}`);
+  return value;
+}
+
+return {parseSExpression,children,singleton,finiteDecimal,identifier};})();
+__mods["src/core/hash.js"]=(()=>{
+/** SHA-256 for checksum-only use when Web Crypto is absent (e.g. a sandboxed
+ * offline document). Algorithm: RFC 6234 sections 4–6. No signing/key operations.
+ * Native Web Crypto is preferred by evidence.js. Cross-checked against Node/OpenSSL. */
+const K = new Uint32Array([
+  0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+  0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+  0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+  0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+  0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+  0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+  0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+  0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+]);
+const rotate = (v,n) => (v>>>n)|(v<<(32-n));
+function sha256Bytes(bytes) {
+  if(!(bytes instanceof Uint8Array)||bytes.length>64*1024*1024)throw new Error('SHA-256 fallback accepts at most 64 MiB of bytes.');
+  const length=bytes.length,size=Math.ceil((length+9)/64)*64,padded=new Uint8Array(size);
+  padded.set(bytes);padded[length]=128;
+  const view=new DataView(padded.buffer);
+  view.setUint32(size-8,Math.floor(length/0x20000000));view.setUint32(size-4,(length*8)>>>0);
+  const H=new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]),w=new Uint32Array(64);
+  for(let offset=0;offset<size;offset+=64){
+    for(let i=0;i<16;i++)w[i]=view.getUint32(offset+i*4);
+    for(let i=16;i<64;i++){
+      const a=w[i-15],b=w[i-2],s0=rotate(a,7)^rotate(a,18)^(a>>>3),s1=rotate(b,17)^rotate(b,19)^(b>>>10);
+      w[i]=(w[i-16]+s0+w[i-7]+s1)>>>0;
+    }
+    let [a,b,c,d,e,f,g,h]=H;
+    for(let i=0;i<64;i++){
+      const S1=rotate(e,6)^rotate(e,11)^rotate(e,25),choose=(e&f)^(~e&g),t1=(h+S1+choose+K[i]+w[i])>>>0;
+      const S0=rotate(a,2)^rotate(a,13)^rotate(a,22),majority=(a&b)^(a&c)^(b&c),t2=(S0+majority)>>>0;
+      h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0;
+    }
+    const state=[a,b,c,d,e,f,g,h];for(let i=0;i<8;i++)H[i]=(H[i]+state[i])>>>0;
+  }
+  return [...H].map(x=>x.toString(16).padStart(8,'0')).join('');
+}
+
+return {sha256Bytes};})();
+__mods["src/core/terminal-interop.js"]=(()=>{
+const { parseSExpression, children, singleton, finiteDecimal, identifier }=__mods["src/core/sexpr.js"];
+const { emptyProject, normalizeProject, indexProject, worldPoint, KINDS, stableStringify }=__mods["src/core/model.js"];
+const { sha256Bytes }=__mods["src/core/hash.js"];
+const INTEROP_VERSION='0.4.0';
+function textDigest(text){return sha256Bytes(new TextEncoder().encode(text));}
+function objectDigest(value){return textDigest(stableStringify(value));}
+const clean=n=>Math.abs(n)<1e-9?0:Math.round(n*1e6)/1e6;
+const pos=(node,required=false)=>{
+  const at=singleton(node,'at',required)||['at','0','0'];
+  if(at.length<3||at.length>4)throw new Error('Invalid at coordinates');
+  return [finiteDecimal(at[1],'x'),finiteDecimal(at[2],'y'),finiteDecimal(at[3]??'0','angle')];
+};
+function reference(fp) {
+  const props=children(fp,'property').filter(v=>v[1]==='Reference');
+  const texts=children(fp,'fp_text').filter(v=>v[1]==='reference');
+  if(props.length>1||texts.length>1||props.length&&texts.length)throw new Error('Ambiguous footprint reference');
+  return (props[0]||texts[0])?.[2]||'';
+}
+function strictOptions(options,allowed) {for(const key of Object.keys(options))if(!allowed.includes(key))throw new Error(`Unknown interchange option ${key}`);}
+/** Reads terminal maps, NOT PCB routing/stackup/DRC. Already-flipped B.Cu
+ * footprint local coordinates must not be mirrored a second time. */
+function importKiCad(text, options={}) {
+  strictOptions(options,['kind','prefix','references']);
+  const {kind='pcb',prefix='',references=null}=options;
+  if(!KINDS.includes(kind))throw new Error('Invalid destination kind');
+  identifier(prefix,'prefix',true);
+  if(references!==null&&(!Array.isArray(references)||!references.length||references.some(r=>typeof r!=='string')||new Set(references).size!==references.length))throw new Error('references must be a nonempty unique string list');
+  const root=parseSExpression(text),board=root[0]==='kicad_pcb';
+  if(!board&&root[0]!=='footprint')throw new Error('Expected modern kicad_pcb or footprint root');
+  const nets=new Map(),names=new Set();
+  if(board)for(const net of children(root,'net')) {
+    if(net.length!==3||!/^(0|[1-9]\d*)$/.test(net[1])||!Number.isSafeInteger(Number(net[1])))throw new Error('Invalid net declaration');
+    identifier(net[2],'net name',true);
+    if(nets.has(net[1])||names.has(net[2]))throw new Error('Duplicate net code/name');
+    if((net[1]==='0')!==(net[2]===''))throw new Error('Net zero must be the empty net');
+    nets.set(net[1],net[2]);names.add(net[2]);
+  }
+  const all=board?children(root,'footprint'):[root],selected=[],found=new Set(),refs=new Set();
+  if(board&&children(root,'module').length)throw new Error('Legacy modules cannot be silently omitted');
+  if(!all.length)throw new Error('No modern footprints found');
+  for(const fp of all) {
+    let ref=reference(fp);
+    if(!ref&&!board)ref='PACKAGE';
+    if(references&&!references.includes(ref))continue;
+    identifier(ref,'footprint reference');
+    if(refs.has(ref))throw new Error(`Duplicate selected reference ${ref}`);
+    refs.add(ref);found.add(ref);selected.push({fp,ref});
+  }
+  if(references&&references.some(ref=>!found.has(ref)))throw new Error('Requested footprint reference not found');
+  if(!selected.length)throw new Error('No selected footprints');
+  const p=emptyProject('KiCad terminal map'),ids=new Set(),warnings=[
+    'Terminal-map import only: tracks, vias, zones, rules, board outline, 3D models and stackup are not imported.',
+    'Pad geometry is retained as interchange metadata; the planning engine still treats sites as points. No manufacturability approval.'
+  ];
+  if(all.length!==selected.length)warnings.push(`${all.length-selected.length} unselected footprints omitted by explicit reference selection.`);
+  for(const {fp,ref}of selected) {
+    const layer=singleton(fp,'layer',true);if(layer.length!==2||!['F.Cu','B.Cu'].includes(layer[1]))throw new Error('Only front/back copper footprints supported');
+    const [fx,fy,angle]=pos(fp),a=angle*Math.PI/180,cos=Math.cos(a),sin=Math.sin(a);
+    let pads=children(fp,'pad');if(!pads.length)throw new Error(`${ref} has no pads`);
+    for(const pad of pads) {
+      const number=identifier(pad[1],'pad number'),type=pad[2],shape=pad[3];
+      if(type!=='smd'||!['circle','rect','oval','roundrect'].includes(shape))throw new Error(`${ref}:${number}: unsupported pad type/shape; only simple SMD pads are imported`);
+      const known=new Set(['at','size','layers','net','pinfunction','pintype','uuid','tstamp','roundrect_rratio','locked','solder_mask_margin','solder_paste_margin','solder_paste_margin_ratio','clearance','zone_connect','thermal_bridge_width','thermal_gap','remove_unused_layers','keep_end_layers','property']);
+      for(const item of pad.slice(4))if(Array.isArray(item)&&!known.has(item[0])||!Array.isArray(item)&&item!=='locked')throw new Error(`${ref}:${number}: unsupported pad field`);
+      const unsupported=['offset','rect_delta','primitives','options','chamfer','chamfer_ratio','drill'];
+      if(unsupported.some(k=>children(pad,k).length))throw new Error(`${ref}:${number}: unsupported pad geometry modifier`);
+      const layers=singleton(pad,'layers',true);
+      if(layers.slice(1).some(v=>typeof v!=='string')||!layers.includes(layer[1])||layers.some(v=>v==='*.Cu'||v===(layer[1]==='F.Cu'?'B.Cu':'F.Cu')||/^In\d+\.Cu$/.test(v)))throw new Error('Unsupported or inconsistent pad copper layers');
+      const size=singleton(pad,'size',true);if(size.length!==3)throw new Error('Invalid pad size');
+      const width=finiteDecimal(size[1],'pad width'),height=finiteDecimal(size[2],'pad height');
+      if(width<=0||height<=0||shape==='circle'&&width!==height)throw new Error('Invalid positive pad dimensions');
+      const ratio=singleton(pad,'roundrect_rratio');
+      if(shape==='roundrect'&&(!ratio||ratio.length!==2||finiteDecimal(ratio[1])<0||finiteDecimal(ratio[1])>0.5))throw new Error('Invalid roundrect ratio');
+      const [px,py,rotation]=pos(pad,true),net=singleton(pad,'net');let netName='';
+      if(net) {
+        if(net.length!==3||!/^(0|[1-9]\d*)$/.test(net[1]))throw new Error('Invalid pad net reference');
+        netName=identifier(net[2],'pad net name',true);
+        if(board&&!(net[1]==='0'&&netName===''&&!nets.has('0'))&&nets.get(net[1])!==netName)throw new Error(`Unresolved/mismatched pad net on ${ref}:${number}`);
+      }
+      const id=prefix+ref+':'+number;
+      if(ids.has(id))throw new Error(`Duplicate physical pin identifier ${id}; split stacked pads explicitly`);ids.add(id);
+      const locked=fp.includes('locked')||pad.includes('locked')||!!singleton(fp,'locked')||!!singleton(pad,'locked');
+      p.ports.push({id,label:number,kind,x:clean(1000*(fx+px*cos+py*sin)),y:clean(-1000*(fy-px*sin+py*cos)),net:netName,role:'any',locked,
+        interchange:{format:'kicad-terminal/v1',reference:ref,footprint:identifier(fp[1],'footprint name'),number,shape,width:width*1000,height:height*1000,rotation,side:layer[1],sourceFrame:'mm/y-down',local:[px,py],footprintAt:[fx,fy,angle]}});
+      if(p.ports.length>10000)throw new Error('Terminal-map safety limit: 10000 sites');
+    }
+  }
+  p.description=warnings.join('\n');
+  return {project:normalizeProject(p),report:{schema:'openbumpplan.import/v1',adapter:'kicad-terminal/v1',sourceSHA256:textDigest(text),units:'um',yAxis:'up',terminalCount:p.ports.length,footprints:[...refs],warnings}};
+}
+
+/** Graph-net labels are computed from all component members, not first-parent
+ * propagation. Conflicting declarations are rejected rather than picked. */
+function componentNetNames(project) {
+  const p=normalizeProject(project),parents=new Map(p.ports.map(v=>[v.id,v.id]));
+  function find(id){let r=id;while(parents.get(r)!==r)r=parents.get(r);while(id!==r){const next=parents.get(id);parents.set(id,r);id=next;}return r;}
+  for(const e of p.connections){const a=find(e.from),b=find(e.to);if(a!==b)parents.set(a,b);}
+  const labels=new Map();
+  function add(id,net){if(!net)return;const r=find(id);if(!labels.has(r))labels.set(r,new Set());labels.get(r).add(net);}
+  for(const n of p.ports)add(n.id,n.net);for(const e of p.connections)add(e.from,e.net);
+  for(const [r,set]of labels)if(set.size>1)throw new Error(`Conflicting connected net names near ${r}`);
+  return new Map(p.ports.map(n=>[n.id,[...(labels.get(find(n.id))||[])][0]||'']));
+}
+const q=s=>JSON.stringify(identifier(s,'output text',true));
+const mm=n=>{if(!Number.isFinite(n)||Math.abs(n)>1e9)throw new Error('Export coordinate out of range');return (Math.round(n*1000)/1e6).toFixed(6).replace(/\.?0+$/,'')||'0';};
+/** Generates an UNROUTED pin-map board plus a library footprint. It does not
+ * modify an existing PCB and it cannot serve as a manufacturing layout. */
+function exportKiCad(project, options={}) {
+  strictOptions(options,['kind','diameter','side','name','reference','originX','originY']);
+  const {kind='ball',diameter,side='F.Cu',name='OpenBumpPlan_PinMap',reference='U1',originX=0,originY=0}=options;
+  const p=normalizeProject(project);
+  if(!KINDS.includes(kind)||!['F.Cu','B.Cu'].includes(side))throw new Error('Invalid export kind or copper side');
+  identifier(name,'footprint name');identifier(reference,'reference');
+  if(typeof diameter!=='number'||!Number.isFinite(diameter)||diameter<0.001||diameter>1e6||Math.abs(diameter*1000-Math.round(diameter*1000))>1e-6)throw new Error('Supply explicit positive SMD pad diameter in um');
+  if(!Number.isFinite(originX)||!Number.isFinite(originY)||Math.abs(originX)>1e9||Math.abs(originY)>1e9)throw new Error('Invalid export origin');
+  const ports=p.ports.filter(n=>n.kind===kind);if(!ports.length)throw new Error('No sites on selected layer');
+  const ctx=indexProject(p),labels=componentNetNames(p),numbers=new Set();
+  const map=ports.map(n=>{
+    const number=identifier(n.label||n.id,'pad number');
+    if(numbers.has(number))throw new Error(`Duplicate output pad number ${number}`);numbers.add(number);
+    const w=worldPoint(n,ctx),net=labels.get(n.id);
+    if(['nc','reserved'].includes(n.role)&&net)throw new Error(`Reserved/NC site ${n.id} has a net`);
+    return {id:n.id,number,net,x:clean(w.x-originX),y:clean(w.y-originY),side,diameter};
+  });
+  const netNames=[...new Set(map.map(n=>n.net).filter(Boolean))].sort(),netCodes=new Map(netNames.map((net,i)=>[net,i+1]));
+  const tech=side[0],effects='(effects (font (size 1 1) (thickness 0.15)))';
+  function footprint(withNets) {
+    return `(footprint ${q(name)}${withNets?'':' (version 20221018) (generator openbumpplan)'}\n  (layer ${q(side)})\n  (at 0 0)\n  (descr "OpenBumpPlan terminal map only; unrouted; not fabrication approval")\n  (attr smd)\n  (fp_text reference ${q(reference)} (at 0 0) (layer "${tech}.SilkS") hide ${effects})\n  (fp_text value ${q(name)} (at 0 0) (layer "${tech}.Fab") hide ${effects})\n`+
+      map.map(n=>`  (pad ${q(n.number)} smd circle (at ${mm(n.x)} ${mm(-n.y)}) (size ${mm(diameter)} ${mm(diameter)}) (layers "${tech}.Cu" "${tech}.Paste" "${tech}.Mask")${withNets&&n.net?` (net ${netCodes.get(n.net)} ${q(n.net)})`:''})`).join('\n')+'\n)\n';
+  }
+  const board=`(kicad_pcb (version 20221018) (generator openbumpplan)\n  (general (thickness 1.6))\n  (paper "A4")\n  (layers (0 "F.Cu" signal) (31 "B.Cu" signal) (34 "B.Paste" user) (35 "F.Paste" user) (36 "B.SilkS" user) (37 "F.SilkS" user) (38 "B.Mask" user) (39 "F.Mask" user) (44 "Edge.Cuts" user) (48 "B.Fab" user) (49 "F.Fab" user))\n  (setup (pad_to_mask_clearance 0))\n  (net 0 "")\n`+netNames.map((net,i)=>`  (net ${i+1} ${q(net)})`).join('\n')+'\n'+footprint(true)+')\n';
+  const library=footprint(false);
+  // File identity is separate from source intent. Hashes do not approve a design.
+  const receipt={schema:'openbumpplan.kicad-export/v1',adapterVersion:INTEROP_VERSION,projectSHA256:objectDigest(p),kind,side,diameter,name,reference,origin:{x:originX,y:originY},coordinateConvention:'KiCad mm/y-down; package um/y-up',terminalCount:map.length,map,
+    files:{boardSHA256:textDigest(board),footprintSHA256:textDigest(library)},warnings:['Generated unrouted pin-map board; no traces, vias, outline, stackup or manufacturing DRC.','Library footprints do not carry net assignments; use the board and mapping receipt.','Selected-layer sites flattened to package XY; circular pads regenerated from explicit diameter, not from imported shape metadata.']};
+  return {board,footprint:library,receipt};
+}
+function verifyKiCadExport(project,board,receipt,expectedOptions) {
+  if(!expectedOptions||typeof expectedOptions.diameter!=='number')throw new Error('Supply independently expected export geometry options');
+  if(!receipt||receipt.schema!=='openbumpplan.kicad-export/v1')throw new Error('Invalid export receipt');
+  const p=normalizeProject(project),issues=[];
+  if(receipt.projectSHA256!==objectDigest(p))issues.push('Stale or wrong source project');
+  if(receipt.files?.boardSHA256!==textDigest(board))issues.push('Board checksum mismatch');
+  // Recreate expectations from the independently supplied project and explicit
+  // export specification, never from receipt.map or receipt.terminalCount.
+  const expectedReceipt=exportKiCad(p,expectedOptions).receipt,expected=expectedReceipt.map;
+  for(const key of ['kind','side','diameter','origin','name','reference'])if(stableStringify(receipt[key])!==stableStringify(expectedReceipt[key]))issues.push(`Unexpected export specification: ${key}`);
+  if(receipt.terminalCount!==expected.length||stableStringify(receipt.map)!==stableStringify(expected))issues.push('Mapping receipt differs from independent source');
+  const tree=parseSExpression(board);
+  const allowedRoot=['version','generator','generator_version','general','paper','layers','setup','net','footprint'];
+  if(tree[0]!=='kicad_pcb'||tree.slice(1).some(n=>!Array.isArray(n)||!allowedRoot.includes(n[0])))issues.push('Unexpected non-terminal board content');
+  const allowedFootprint=['version','generator','layer','at','descr','attr','fp_text','property','pad','uuid','tstamp'];
+  for(const f of children(tree,'footprint'))if(f.slice(2).some(n=>!Array.isArray(n)||!allowedFootprint.includes(n[0])))issues.push('Unexpected non-terminal footprint content');
+  const actual=importKiCad(board,{kind:expectedReceipt.kind}).project.ports;
+  const byNumber=new Map(actual.map(n=>[n.label,n]));
+  if(actual.length!==expected.length||byNumber.size!==expected.length)issues.push('Terminal coverage mismatch');
+  for(const e of expected){const a=byNumber.get(e.number);if(!a||a.net!==e.net||Math.abs(a.x-e.x)>0.00051||Math.abs(a.y-e.y)>0.00051||Math.abs(a.interchange.width-e.diameter)>0.0000001||Math.abs(a.interchange.height-e.diameter)>0.0000001||a.interchange.side!==e.side||a.interchange.reference!==expectedReceipt.reference||a.interchange.footprint!==expectedReceipt.name)issues.push(`Terminal mismatch: ${e.number}`);}
+  return {ok:issues.length===0,complete:true,issues,checked:expected.length,projectSHA256:objectDigest(p),boardSHA256:textDigest(board)};
+}
+
+return {INTEROP_VERSION,textDigest,objectDigest,importKiCad,componentNetNames,exportKiCad,verifyKiCadExport};})();
+__mods["src/core/connectivity-contract.js"]=(()=>{
+const { normalizeProject, stableStringify }=__mods["src/core/model.js"];
+const { analyze }=__mods["src/core/rules.js"];
+const { objectDigest }=__mods["src/core/terminal-interop.js"];
+const { identifier }=__mods["src/core/sexpr.js"];
+function keys(value,allowed,label){if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(k=>!allowed.includes(k)))throw new Error(`Invalid ${label} object/unknown field`);}
+function validateContract(raw) {
+  keys(raw,['schema','name','coverage','nets','unassigned'],'connectivity contract');
+  if(raw.schema!=='openbumpplan.connectivity-contract/v1'||!['all','listed'].includes(raw.coverage))throw new Error('Contract requires schema v1 and explicit all/listed coverage');
+  identifier(raw.name,'contract name');
+  if(!Array.isArray(raw.nets)||!raw.nets.length||raw.nets.length>10000||!Array.isArray(raw.unassigned)||raw.unassigned.length>10000)throw new Error('Invalid contract nets/unassigned arrays');
+  const ports=new Set(),names=new Set();
+  function pin(id){identifier(id,'contract port');if(ports.has(id))throw new Error(`Port occurs twice in contract: ${id}`);ports.add(id);if(ports.size>10000)throw new Error('Contract exceeds 10000-port budget');}
+  for(const net of raw.nets){keys(net,['name','ports','domain'],'contract net');identifier(net.name,'net name');if(names.has(net.name))throw new Error('Duplicate contract net name');names.add(net.name);
+    if(net.domain!==undefined)identifier(net.domain,'domain');
+    if(!Array.isArray(net.ports)||!net.ports.length||net.ports.length>10000)throw new Error('Each contract net needs ports');net.ports.forEach(pin);
+  }
+  raw.unassigned.forEach(pin);return structuredClone(raw);
+}
+/** Independent intent verification. Undirected graph traversal over explicit
+ * edges; equal labels do NOT imply connectivity. No first-parent propagation.
+ * A contract must originate in separately reviewed design intent. */
+function verifyConnectivityContract(project,raw,{maxWork=250000}={}) {
+  if(!Number.isSafeInteger(maxWork)||maxWork<1||maxWork>2000000)throw new Error('Invalid contract work budget');
+  const p=normalizeProject(project),contract=validateContract(raw),issues=[],adj=new Map(p.ports.map(n=>[n.id,[]])),nodes=new Map(p.ports.map(n=>[n.id,n]));
+  let work=0,issueCount=0;
+  const step=()=>{if(++work>maxWork)throw new Error('WORK_LIMIT');};
+  function issue(code,message,ports=[]){issueCount++;if(issues.length<2000)issues.push({code,message,ports:ports.slice(0,32)});}
+  const required=new Map(),declared=new Set(),unassigned=new Set(contract.unassigned);
+  for(const net of contract.nets)for(const id of net.ports){required.set(id,net);declared.add(id);}
+  contract.unassigned.forEach(id=>declared.add(id));
+  const component=new Map(),groups=[];
+  let complete=true;
+  try {
+    for(const id of declared){step();if(!nodes.has(id))issue('MISSING_PORT',`Contract port ${id} is absent`,[id]);}
+    if(contract.coverage==='all')for(const n of p.ports){step();if(!declared.has(n.id))issue('UNCOVERED_PORT',`No intent declared for ${n.id}`,[n.id]);}
+    for(const e of p.connections){step();adj.get(e.from).push({to:e.to,edge:e});adj.get(e.to).push({to:e.from,edge:e});}
+    for(const n of p.ports) {
+      step();if(component.has(n.id))continue;
+      const idx=groups.length,queue=[n.id],group={ports:[],names:new Set(),edges:new Map()};groups.push(group);component.set(n.id,idx);
+      for(let k=0;k<queue.length;k++) {
+        step();const id=queue[k];group.ports.push(id);if(required.has(id))group.names.add(required.get(id).name);
+        for(const link of adj.get(id)){step();group.edges.set(link.edge.id,link.edge);if(!component.has(link.to)){component.set(link.to,idx);queue.push(link.to);}}
+      }
+    }
+    for(const g of groups) {
+      step();const first=g.names.values().next().value;
+      if(g.names.size>1)issue('SHORT',`Connected component joins ${[...g.names].slice(0,10).join(', ')}`,g.ports);
+      for(const id of g.ports) {
+        step();const n=nodes.get(id);
+        if((unassigned.has(id)||['nc','reserved'].includes(n.role))&&adj.get(id).length)issue('FORBIDDEN_CONNECTION',`Isolated/reserved/NC port ${id} is connected`,[id]);
+        if(['nc','reserved'].includes(n.role)&&(n.net||required.has(id)))issue('FORBIDDEN_NET',`Reserved/NC port ${id} has signal intent or a net`,[id]);
+        if(unassigned.has(id)&&n.net)issue('UNASSIGNED_NET',`Unassigned port ${id} declares a net`,[id]);
+        if(first&&n.net&&!g.names.has(n.net))issue('NET_LABEL',`Port ${id} declares ${n.net}, expected ${[...g.names].slice(0,10).join(' / ')}`,[id]);
+        const expected=required.get(id);
+        if(expected?.domain&&expected.domain!==n.domain)issue('DOMAIN',`Port ${id} domain conflicts with intent`,[id]);
+      }
+      for(const e of g.edges.values()){step();if(first&&e.net&&!g.names.has(e.net))issue('EDGE_NET',`Connection ${e.id} has an unexpected net name`,[e.from,e.to]);}
+    }
+    for(const net of contract.nets){step();const comps=new Set(net.ports.filter(id=>nodes.has(id)).map(id=>component.get(id)));if(comps.size>1)issue('OPEN',`Net ${net.name} is split into ${comps.size} disconnected components`,net.ports);}
+  }catch(error){if(error.message!=='WORK_LIMIT')throw error;complete=false;issue('INCOMPLETE','Connectivity check work budget exhausted');}
+  return {schema:'openbumpplan.connectivity-review/v1',ok:complete&&issueCount===0,complete,coverage:contract.coverage,contractSHA256:objectDigest(contract),projectSHA256:objectDigest(p),issueCount,issues,findingsTruncated:issueCount>issues.length,
+    statistics:{ports:p.ports.length,connections:p.connections.length,expectedNets:contract.nets.length,declaredPorts:declared.size,components:groups.length,work},
+    limitations:contract.coverage==='listed'?['Only listed terminals have independently specified intent; unlisted terminals are not fully qualified.','Logical mapping verification, not copper extraction or electrical signoff.']:['Logical mapping verification, not copper extraction or electrical signoff.']};
+}
+function verifyIntentReview(project,contract,review) {
+  const actual=verifyConnectivityContract(project,contract);
+  return {ok:actual.ok&&stableStringify(actual)===stableStringify(review),complete:actual.complete,current:actual,
+    reason:stableStringify(actual)===stableStringify(review)?'Recomputed against independently supplied project and contract':'Stale, tampered, differently scoped or wrong review'};
+}
+/** Atomic mapping-only ECO. Preconditions pin the complete normalized base;
+ * there is no force mode and no implicit weakening of intent/rules. */
+function previewMappingECO(project,patch,rawContract) {
+  const p=normalizeProject(project),contract=validateContract(rawContract);
+  if(contract.coverage!=='all')throw new Error('ECO acceptance requires all-port intent coverage');
+  keys(patch,['schema','baseProjectSHA256','contractSHA256','edits'],'mapping ECO');
+  if(patch.schema!=='openbumpplan.mapping-eco/v1'||patch.baseProjectSHA256!==objectDigest(p)||patch.contractSHA256!==objectDigest(contract))throw new Error('Stale/wrong ECO project or independent contract');
+  if(!Array.isArray(patch.edits)||!patch.edits.length||patch.edits.length>20000)throw new Error('ECO requires a bounded edit list');
+  const candidate=structuredClone(p),edges=new Map(candidate.connections.map(e=>[e.id,e])),ports=new Map(p.ports.map(n=>[n.id,n])),seen=new Set();
+  for(const edit of patch.edits) {
+    keys(edit,['id','expected','to'],'ECO edit');keys(edit.expected,['from','to','net'],'ECO precondition');
+    identifier(edit.id,'edge id');identifier(edit.to,'target id');
+    const e=edges.get(edit.id);if(!e||seen.has(edit.id))throw new Error('Missing or duplicate ECO connection');seen.add(edit.id);
+    if(!ports.has(edit.to)||edit.expected.from!==e.from||edit.expected.to!==e.to||edit.expected.net!==e.net)throw new Error('ECO connection precondition failed');
+    if(e.locked||[e.from,e.to,edit.to].some(id=>ports.get(id).locked))throw new Error('ECO would change a locked endpoint or mapping');
+    e.to=edit.to;
+  }
+  const analysis=analyze(candidate),intent=verifyConnectivityContract(candidate,contract);
+  const accepted=analysis.complete&&analysis.errors===0&&intent.ok;
+  return {accepted,baseProjectSHA256:objectDigest(p),candidateProjectSHA256:objectDigest(candidate),changed:patch.edits.length,
+    project:accepted?candidate:null,planning:{complete:analysis.complete,errors:analysis.errors,warnings:analysis.warnings,issues:analysis.issues},intent};
+}
+
+return {validateContract,verifyConnectivityContract,verifyIntentReview,previewMappingECO};})();
+__mods["src/core/interop-demo.js"]=(()=>{
+const { emptyProject, normalizeProject }=__mods["src/core/model.js"];
+const { objectDigest }=__mods["src/core/terminal-interop.js"];
+/** Synthetic demonstration, not a reviewed industrial design. The intent file
+ * is deliberately separate; real contracts must come from independent intent. */
+function interoperabilityDemo() {
+  const p=emptyProject('Chiplet interface · reference design');
+  Object.assign(p.rules,{groundRadius:0,powerRadius:0,minGroundRatio:0,clockGroundMin:0,maxLength:10000,maxCrossings:100});
+  const nets=['DATA_P','DATA_N','REF_CLK','CTRL','VDD','GND'];
+  for(let i=0;i<nets.length;i++) {
+    const x=(i%3)*800,y=Math.floor(i/3)*900,net=nets[i],role=i===4?'power':i===5?'ground':i===2?'clock':'signal';
+    p.ports.push({id:'die:'+i,label:'PAD'+i,kind:'pad',x,y,net,domain:i===5?'':'V1',role,required:true});
+    p.ports.push({id:'ball:'+i,label:['A1','A2','A3','B1','B2','B3'][i],kind:'ball',x:x+2200,y,role:'any',domain:i===5?'':'V1'});
+    p.connections.push({id:'map:'+i,from:'die:'+i,to:'ball:'+i,net:''});
+  }
+  p.ports.push({id:'ball:spare',label:'C1',kind:'ball',x:2200,y:1800,role:'nc'});
+  const project=normalizeProject(p);
+  const contract={schema:'openbumpplan.connectivity-contract/v1',name:'Synthetic interface intent (demonstration only)',coverage:'all',nets:nets.map((name,i)=>({name,ports:['die:'+i,'ball:'+i]})),unassigned:['ball:spare']};
+  return {project,contract};
+}
+function swappedInterfaceDemo() {
+  const {project,contract}=interoperabilityDemo();
+  [project.connections[0].to,project.connections[1].to]=[project.connections[1].to,project.connections[0].to];
+  const patch={schema:'openbumpplan.mapping-eco/v1',baseProjectSHA256:objectDigest(project),contractSHA256:objectDigest(contract),edits:[0,1].map(i=>({id:'map:'+i,expected:{from:'die:'+i,to:project.connections[i].to,net:''},to:'ball:'+i}))};
+  return {project,contract,patch};
+}
+
+return {interoperabilityDemo,swappedInterfaceDemo};})();
+__mods["src/interop-app.js"]=(()=>{
+const { normalizeProject, KINDS, worldPoint, indexProject }=__mods["src/core/model.js"];
+const { escapeHTML }=__mods["src/core/exporters.js"];
+const { INTEROP_VERSION, importKiCad, exportKiCad, verifyKiCadExport, objectDigest }=__mods["src/core/terminal-interop.js"];
+const { verifyConnectivityContract, verifyIntentReview, previewMappingECO }=__mods["src/core/connectivity-contract.js"];
+const { interoperabilityDemo, swappedInterfaceDemo }=__mods["src/core/interop-demo.js"];
+const $=id=>document.getElementById(id),esc=escapeHTML,json=v=>JSON.stringify(v,null,2);
+let {project,contract}=interoperabilityDemo(),review=null,pending=null,eco=null,previous=null,generated=null,timer,fileEpoch=0,contractEpoch=0;
+const kinds=selected=>KINDS.map(k=>`<option ${k===selected?'selected':''}>${k}</option>`).join('');
+$('interop').innerHTML=`<header><div class="logo" aria-hidden="true">${'<i></i>'.repeat(9)}</div><div><div class="brand">OpenBumpPlan</div><div class="tag">INTEROPERABILITY WORKBENCH · ${INTEROP_VERSION}</div></div><span class="spacer"></span><span class="local">● No design data leaves this device</span><a class="link" href="index.html">Planner ↗</a></header><main>
+<section class="intro"><div><div class="eyebrow">From logical intent to a portable pin map</div><h1>Exchange files. Preserve meaning.</h1><p>Native KiCad terminals, independently supplied connectivity intent and checked mapping changes.</p></div><span class="spacer"></span><button id="demo">Load clean example</button></section>
+<div class="banner">Engineering preview, not signoff. Imported tracks, vias, zones and stackup are <strong>not</strong> part of this terminal-map adapter. A passing intent review verifies logical mappings only. Example data and example intent are synthetic.</div>
+<div class="grid"><div class="left"><section class="panel"><h3>01 / INPUT</h3><h2>Bring in a project or pin map</h2><label>Project JSON or KiCad board / footprint<input type="file" id="projectFile" accept=".json,.kicad_pcb,.kicad_mod"></label><div class="row"><button id="loadPlanner">Read planner's local project</button></div><div class="formgrid"><label>Native import site kind<select id="importKind">${kinds('pcb')}</select></label><label>Reference filter (optional)<input id="reference" placeholder="U1"></label></div><details><summary>Paste native KiCad text</summary><textarea id="nativeText" spellcheck="false" aria-label="KiCad input"></textarea><div class="row"><button id="previewImport">Preview native import</button></div></details><div id="importInfo" class="hint">No import pending. Nothing is replaced until you apply.</div><button id="applyImport" disabled>Apply previewed import</button></section>
+<section class="panel"><h3>02 / INDEPENDENT INTENT</h3><h2>Check what must be connected</h2><label>Reviewed contract JSON<input id="contractFile" type="file" accept=".json"></label><label class="hint">Contract text (editable)<textarea id="contractText" spellcheck="false"></textarea></label><div class="row"><button id="check" class="primary">Check connectivity intent</button><button id="saveContract" class="quiet">Save contract</button></div><p class="hint">Use a separately reviewed specification. Generating a contract from the same mapping cannot reveal that mapping's mistakes.</p></section></div>
+<div class="center"><section class="panel"><div class="row" style="margin-top:0"><h3 style="margin:0">LIVE PROJECT</h3><span class="spacer"></span><span id="reviewStatus" class="badge">Not reviewed</span></div><h2 id="projectName"></h2><div class="summary"><div><strong id="sites"></strong><span>Sites</span></div><div><strong id="links"></strong><span>Mappings</span></div><div><strong id="netCount"></strong><span>Intent nets</span></div></div><svg id="map" role="img" aria-label="Current logical terminal map"></svg><div class="row"><span class="small good">● die pad</span><span class="small">○ package / board terminal</span><span class="spacer"></span><button id="saveProject" class="quiet">Save project JSON</button></div><div class="digest" id="digest"></div><div id="findings" class="findings"></div><div class="row"><button id="saveReview" disabled>Export intent review</button><button id="replay" disabled>Independently replay</button></div><label class="hint">Verify a saved intent review against this project and the supplied contract<input id="reviewFile" type="file" accept=".json"></label></section>
+<section class="panel"><h3>03 / MAPPING ECO</h3><h2>Preview changes before applying</h2><div class="row"><button id="swapDemo">Load swapped-map example</button><button id="undo" disabled>Undo applied change</button></div><label>Hash-bound mapping patch<textarea id="patchText" spellcheck="false" aria-label="Mapping ECO patch"></textarea></label><div class="row"><button id="previewEco">Check patch</button><button id="applyEco" class="primary" disabled>Apply checked patch</button></div><pre id="ecoInfo">No patch candidate. Locks, base identity, full intent coverage and planning rules are checked together.</pre></section></div>
+<div class="right"><section class="panel"><h3>04 / NATIVE OUTPUT</h3><h2>Export a verified pin-map board</h2><div class="formgrid"><label>Selected layer<select id="exportKind">${kinds('ball')}</select></label><label>Output copper side<select id="side"><option>F.Cu</option><option>B.Cu</option></select></label><label>Round-pad diameter (µm)<input type="number" id="diameter" min=".001" step=".001" value="250"></label></div><p class="hint">Geometry is explicit: selected sites are flattened to package XY and emitted as circular pads. This is an unrouted starting board, not a full PCB conversion.</p><button id="makeExport" class="primary">Build & verify native output</button><pre id="exportInfo">No output generated.</pre><div class="row"><button id="saveBoard" disabled>.kicad_pcb</button><button id="saveFootprint" disabled>.kicad_mod</button><button id="saveReceipt" disabled>Receipt JSON</button></div><p class="hint">The board carries net assignments; the library footprint does not. Independent replay checks actual file terminals against the source project and your explicit export settings.</p></section>
+<section class="panel"><h3>REVIEW BOUNDARIES</h3><h2>Three checks, different meanings</h2><p><strong>Import:</strong> coordinates, units, references and net identities are parsed; omitted content is reported.</p><p><strong>Intent:</strong> explicit graph connectivity is compared with a separate contract. Equal labels alone do not connect ports.</p><p><strong>Export:</strong> pin coordinates, nets, pad size and side are re-read and compared with the expected source and geometry.</p><p class="hint">No electrical, thermal, mechanical, manufacturing or regulatory approval is implied.</p></section></div></div></main><footer>Local-only • No cloud service, account, telemetry or external runtime dependencies • Save JSON to move between this workbench and the planner. Local storage is read only after an explicit request.</footer>`;
+function notice(s,bad=false){$('notice').textContent=s;$('notice').className='show'+(bad?' bad':'');clearTimeout(timer);timer=setTimeout(()=>$('notice').className='',6500);}
+function guarded(fn){return async()=>{try{await fn();}catch(e){notice(e.message,true);}};}
+function invalidate(){review=null;eco=null;generated=null;$('applyEco').disabled=true;['saveBoard','saveFootprint','saveReceipt'].forEach(k=>$(k).disabled=true);$('exportInfo').textContent='No current verified output.';}
+function setProject(p){fileEpoch++;contractEpoch++;project=normalizeProject(p);pending=null;$('applyImport').disabled=true;invalidate();render();}
+function parseContract(){return JSON.parse($('contractText').value);}
+function render(){
+  $('projectName').textContent=project.name;$('sites').textContent=project.ports.length;$('links').textContent=project.connections.length;
+  try{$('netCount').textContent=parseContract().nets.length;}catch{$('netCount').textContent='—';}
+  $('digest').textContent='Current project SHA-256 · '+objectDigest(project);$('undo').disabled=!previous;
+  $('reviewStatus').textContent=review?review.ok?(review.coverage==='all'?'All-port intent passes':'Listed-port intent passes'):`${review.issueCount} intent finding(s)`:'Not reviewed';
+  $('reviewStatus').className='badge '+(review?(review.ok?'good':'bad'):'');
+  $('saveReview').disabled=!review;$('replay').disabled=!review;
+  $('findings').innerHTML=review?(review.ok?'<p class="good small">Current mappings match the supplied intent within the stated coverage. This is not electrical signoff.</p>':review.issues.map(i=>`<div class="finding"><b>${esc(i.code)}</b>${esc(i.message)}</div>`).join('')):'';
+  const ctx=indexProject(project),points=project.ports.map(n=>({...n,...worldPoint(n,ctx)})),byId=new Map(points.map(n=>[n.id,n]));
+  if(points.length){const xs=points.map(n=>n.x),ys=points.map(n=>-n.y),x0=Math.min(...xs),y0=Math.min(...ys),dx=Math.max(...xs)-x0,dy=Math.max(...ys)-y0,pad=Math.max(dx,dy,1)*.13,r=Math.max(dx,dy,1)*.012;
+    $('map').setAttribute('viewBox',`${x0-pad} ${y0-pad} ${dx+2*pad} ${dy+2*pad}`);
+    // Rendering is explicitly capped; the verification engines use all sites.
+    $('map').innerHTML=project.connections.slice(0,3000).map(e=>{const a=byId.get(e.from),b=byId.get(e.to);return `<path d="M${a.x},${-a.y} L${b.x},${-b.y}" stroke="#365471" stroke-width="${r*.18}"/>`;}).join('')+points.slice(0,3000).map(n=>`<g><circle cx="${n.x}" cy="${-n.y}" r="${r}" fill="${n.kind==='pad'?'#6fdac5':'#15263a'}" stroke="#6fdac5" stroke-width="${r*.16}"/><text x="${n.x}" y="${-n.y-r*1.9}" font-size="${r*1.55}" fill="#c3d0e2" text-anchor="middle">${esc(n.label)}</text></g>`).join('');
+    if(points.length>3000)$('findings').insertAdjacentHTML('beforeend','<p class="hint">Preview limited to 3,000 sites. All sites remain in the project and are checked/exported.</p>');
+  }else $('map').innerHTML='';
+}
+function download(name,data){const blob=new Blob([typeof data==='string'?data:json(data)],{type:name.endsWith('.json')?'application/json':'text/plain'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
+async function readFile(input){const f=input.files[0];if(!f)throw new Error('Choose a file');if(f.size>5*1024*1024)throw new Error('File exceeds 5 MiB safety limit');return await f.text();}
+function previewNative(text){const ref=$('reference').value.trim(),r=importKiCad(text,{kind:$('importKind').value,...(ref?{references:[ref]}:{})});pending=r;$('importInfo').textContent=`${r.report.terminalCount} terminals · ${r.report.footprints.join(', ')}\n${r.report.warnings.join('\n')}`;$('applyImport').disabled=false;}
+function exportSpec(){return {kind:$('exportKind').value,side:$('side').value,diameter:Number($('diameter').value)};}
+$('contractText').value=json(contract);
+$('demo').onclick=guarded(()=>{const d=interoperabilityDemo();contract=d.contract;$('contractText').value=json(contract);previous=null;$('patchText').value='';setProject(d.project);});
+$('projectFile').onchange=guarded(async()=>{pending=null;$('applyImport').disabled=true;const epoch=++fileEpoch;const text=await readFile($('projectFile'));if(epoch!==fileEpoch)return;if($('projectFile').files[0].name.endsWith('.json')){const p=normalizeProject(JSON.parse(text));pending={project:p};$('importInfo').textContent=`Preview: ${p.name}, ${p.ports.length} sites. Applying replaces only this workbench project.`;$('applyImport').disabled=false;}else previewNative(text);});
+$('previewImport').onclick=guarded(()=>{pending=null;$('applyImport').disabled=true;previewNative($('nativeText').value);});
+$('applyImport').onclick=guarded(()=>{if(!pending)throw new Error('No valid preview');previous=project;setProject(pending.project);notice('Preview applied. Prior review and exports invalidated.');});
+$('loadPlanner').onclick=guarded(()=>{const s=localStorage.getItem('openbumpplan.project.v1');if(!s)throw new Error('No saved planner project on this origin. Load its exported JSON instead.');const p=normalizeProject(JSON.parse(s));pending={project:p};$('importInfo').textContent=`Preview local planner: ${p.name}, ${p.ports.length} sites`;$('applyImport').disabled=false;});
+$('nativeText').oninput=()=>{fileEpoch++;pending=null;$('applyImport').disabled=true;};['reference','importKind'].forEach(k=>$(k).oninput=()=>{fileEpoch++;pending=null;$('applyImport').disabled=true;});
+$('contractFile').onchange=guarded(async()=>{const epoch=++contractEpoch;invalidate();render();const text=await readFile($('contractFile'));if(epoch!==contractEpoch)return;$('contractText').value=text;render();});
+$('contractText').oninput=()=>{contractEpoch++;invalidate();render();};
+$('check').onclick=guarded(()=>{review=verifyConnectivityContract(project,parseContract());render();});
+$('saveProject').onclick=()=>download('openbumpplan-project.json',project);
+$('saveContract').onclick=guarded(()=>download('connectivity-contract.json',parseContract()));
+$('saveReview').onclick=guarded(()=>{if(!review)throw new Error('No current review');download('connectivity-review.json',review);});
+$('replay').onclick=guarded(()=>{const r=verifyIntentReview(project,parseContract(),review);notice(r.ok?'Review independently replayed against current project and supplied intent':'Review is stale, failing or does not match',!r.ok);});
+$('reviewFile').onchange=guarded(async()=>{const r=verifyIntentReview(project,parseContract(),JSON.parse(await readFile($('reviewFile'))));notice(r.ok?'Saved review matches current project and supplied intent':'Saved review rejected: '+r.reason,!r.ok);});
+$('swapDemo').onclick=guarded(()=>{const d=swappedInterfaceDemo();contract=d.contract;$('contractText').value=json(contract);previous=null;setProject(d.project);$('patchText').value=json(d.patch);review=verifyConnectivityContract(project,contract);render();});
+$('patchText').oninput=()=>{eco=null;$('applyEco').disabled=true;};
+$('previewEco').onclick=guarded(()=>{eco=null;$('applyEco').disabled=true;eco=previewMappingECO(project,JSON.parse($('patchText').value),parseContract());$('ecoInfo').textContent=`${eco.accepted?'Accepted candidate — not applied':'Rejected candidate'}\n${eco.changed} mapping edits · ${eco.planning.errors} planning errors · ${eco.intent.issueCount} intent findings\nCandidate SHA-256: ${eco.candidateProjectSHA256}`;$('applyEco').disabled=!eco.accepted;});
+$('applyEco').onclick=guarded(()=>{const r=previewMappingECO(project,JSON.parse($('patchText').value),parseContract());if(!eco?.accepted||!r.accepted||r.candidateProjectSHA256!==eco.candidateProjectSHA256)throw new Error('Candidate no longer matches; preview again');previous=project;setProject(r.project);review=verifyConnectivityContract(project,parseContract());render();$('ecoInfo').textContent='Checked mapping change applied. Undo is available.';});
+$('undo').onclick=guarded(()=>{if(!previous)throw new Error('Nothing to undo');const p=previous;previous=null;setProject(p);});
+for(const k of ['exportKind','diameter','side'])$(k).oninput=()=>{generated=null;['saveBoard','saveFootprint','saveReceipt'].forEach(id=>$(id).disabled=true);$('exportInfo').textContent='Settings changed. Rebuild and verify.';};
+$('makeExport').onclick=guarded(()=>{generated=null;['saveBoard','saveFootprint','saveReceipt'].forEach(id=>$(id).disabled=true);const options=exportSpec(),out=exportKiCad(project,options),r=verifyKiCadExport(project,out.board,out.receipt,options);if(!r.ok)throw new Error(r.issues.join('; '));generated=out;$('exportInfo').textContent=`${r.checked} terminals independently re-read and matched\n${out.receipt.warnings.join('\n\n')}\nBoard SHA-256: ${r.boardSHA256}`;['saveBoard','saveFootprint','saveReceipt'].forEach(k=>$(k).disabled=false);});
+for(const [button,suffix,key]of [['saveBoard','kicad_pcb','board'],['saveFootprint','kicad_mod','footprint'],['saveReceipt','receipt.json','receipt']])$(button).onclick=guarded(()=>{if(!generated||!verifyKiCadExport(project,generated.board,generated.receipt,exportSpec()).ok)throw new Error('No current verified output');download('OpenBumpPlan_PinMap.'+suffix,generated[key]);});
+render();
+
+return {};})();</script></body></html>

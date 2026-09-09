@@ -12,9 +12,9 @@ import { VERSION } from '../src/core/model.js';
 
 export const UPDATE_REPOSITORY = 'ajayasai/OpenBumpPlan';
 export const UPDATE_BASE = '7e87673bd63b601045c1d5a50e5448051ec759ef';
-export const UPDATE_BRANCH = `release/v${VERSION}-indexed-copper`;
+export const UPDATE_BRANCH = `release/v${VERSION}-native-interoperability`;
 export const MANIFEST_PATH = `docs/release-manifest-v${VERSION}.json`;
-export const REQUIRED_RELEASE_FILES = ['index.html','package.json','src/core/model.js','src/core/solver.js','src/core/routing.js','src/core/evidence.js','src/core/hash.js','dist/index.html','dist/openbumpplan.html','src/core/scalable.js','src/core/coupled-search.js','src/core/coupled-proof.js','src/core/copper.js','src/core/spatial-index.js','docs/release-validation.json'];
+export const REQUIRED_RELEASE_FILES = ['interop.html','dist/interop.html','index.html','package.json','src/core/model.js','src/core/solver.js','src/core/routing.js','src/core/evidence.js','src/core/hash.js','dist/index.html','dist/openbumpplan.html','src/core/scalable.js','src/core/coupled-search.js','src/core/coupled-proof.js','src/core/copper.js','src/core/spatial-index.js','docs/release-validation.json'];
 const MAX_BYTES = 10_000_000;
 function checkSourceCoverage(root, seen) {
   function walk(relative) {
@@ -72,6 +72,7 @@ function localChecks(root) {
   const files = fs.readdirSync(path.join(root,'tests')).filter(f=>f.endsWith('.test.mjs')).sort().map(f=>`tests/${f}`);
   run(process.execPath,['--test',...files],{cwd:root});
   run(process.execPath,['scripts/build.mjs'],{cwd:root});
+  run(process.execPath,['scripts/build-interop.mjs'],{cwd:root});
 }
 
 export function main(args=process.argv.slice(2)) {

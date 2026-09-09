@@ -1,0 +1,67 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { parseSExpression } from '../src/core/sexpr.js';
+import { importKiCad, exportKiCad, verifyKiCadExport, objectDigest, textDigest } from '../src/core/terminal-interop.js';
+import { validateContract, verifyConnectivityContract, verifyIntentReview, previewMappingECO } from '../src/core/connectivity-contract.js';
+import { fixture, synthetic, seeded } from './helpers.mjs';
+import { normalizeProject } from '../src/core/model.js';
+const spec={kind:'ball',diameter:250,side:'F.Cu'};
+const contract=()=>({schema:'openbumpplan.connectivity-contract/v1',name:'Independent test intent',coverage:'all',nets:[{name:'DATA',ports:['s','t']}],unassigned:[]});
+const fp=(side='F.Cu',angle=0)=>`(footprint "Test" (layer "${side}") (at 10 20 ${angle}) (fp_text reference "U1" (at 0 0) (layer "F.SilkS")) (pad "A1" smd circle (at 1 2) (size 0.25 0.25) (layers "${side}")))`;
+for(const [s,code]of [['','empty'],['(a','Incomplete'],['a','Incomplete'],['(a))','Unmatched'],['(a)(b)','More than one'],['(a "b)','Unterminated'],['(a "\\q")','escape'],['(a "b"c)','separator'],['(a \u0000)','NUL']])test(`S-expression rejects ${code}: ${JSON.stringify(s)}`,()=>assert.throws(()=>parseSExpression(s)));
+test('Nested strings, parentheses in quoted names and comments do not change tree',()=>assert.deepEqual(parseSExpression('; comment\n(a "x(y)" (b "\\\"\\\\") 001)'),['a','x(y)',['b','"\\'],'001']));
+for(const opt of [{maxBytes:1},{maxDepth:1},{maxNodes:1},{maxNodes:NaN},{maxBytes:Infinity},{maxDepth:0}])test('Parser budget '+JSON.stringify(opt),()=>assert.throws(()=>parseSExpression('(a (b c))',opt)));
+for(const side of ['F.Cu','B.Cu'])for(const [angle,x,y]of [[0,11000,-22000],[90,12000,-19000],[180,9000,-18000],[270,8000,-21000]])test(`KiCad ${side} ${angle} absolute transformed terminals`,()=>{const r=importKiCad(fp(side,angle));assert.deepEqual([r.project.ports[0].x,r.project.ports[0].y],[x,y]);assert.equal(r.project.ports[0].interchange.side,side);assert.equal(r.report.sourceSHA256,textDigest(fp(side,angle)));});
+for(const [old,next]of [['smd circle','thru_hole circle'],['smd circle','smd custom'],['(size 0.25 0.25)','(size -1 1)'],['(size 0.25 0.25)','(size 1 2)'],['(at 1 2)','(at NaN 2)'],['(at 1 2)','(at 1 2) (at 2 3)'],['(size 0.25 0.25)','(size 1 1) (offset 2 2)'],['(layers "F.Cu")','(layers "*.Cu")'],['(layers "F.Cu")','(layers "B.Cu")'],['"A1"','""'],['(size 0.25 0.25)','(size 1 1) (unknown_geometry 3)']])test('Unsupported selected pad fails: '+next,()=>assert.throws(()=>importKiCad(fp().replace(old,next))));
+test('Multiple physical pads sharing a number are not silently coalesced',()=>assert.throws(()=>importKiCad(fp().replace(/\)$/, ' (pad "A1" smd circle (at 2 3) (size 1 1) (layers "F.Cu")))')),/Duplicate/));
+test('Multiple selected footprints need unambiguous references',()=>assert.throws(()=>importKiCad(`(kicad_pcb ${fp()} ${fp()})`),/Duplicate/));
+test('Explicit reference selection retains omission warning',()=>{const r=importKiCad(`(kicad_pcb ${fp()} ${fp().replace('"U1"','"U2"')})`,{references:['U1']});assert.equal(r.project.ports.length,1);assert.match(r.report.warnings.join(' '),/1 unselected/);assert.throws(()=>importKiCad(fp(),{references:['U7']}));});
+test('Pad net code/name cannot disagree with board net table',()=>assert.throws(()=>importKiCad(`(kicad_pcb (net 1 "X") ${fp().replace('(size 0.25 0.25)','(size 0.25 0.25) (net 1 "Y")')})`),/net/));
+for(let seed=1;seed<=40;seed++)test(`Randomized transformed pin-map round trip seed ${seed}`,()=>{
+ const random=seeded(seed),p=synthetic(12);p.dies=[{id:'D',name:'D',x:127.4,y:-253.8,width:15000,height:14000,rotation:[0,90,180,270][seed%4],mirrorX:seed%2===0,edgeKeepout:0,cornerKeepout:0}];
+ for(const n of p.ports.filter(n=>n.kind==='ball')){n.label='B'+n.id;n.dieId='D';n.x+=random()*10;n.y+=random()*10;}
+ const options={...spec,side:seed%2?'F.Cu':'B.Cu'},out=exportKiCad(p,options),r=verifyKiCadExport(p,out.board,out.receipt,options);
+ assert.equal(r.ok,true,JSON.stringify(r));assert.equal(importKiCad(out.board).project.ports.length,12);assert.equal(importKiCad(out.footprint).project.ports[0].net,'');assert.equal(exportKiCad(p,options).board,out.board);
+});
+test('Unicode and quote injection are escaped without losing net or terminal identity',()=>{const p=fixture();p.ports[0].net='NET "quoted" / μ';p.ports[1].label='A") (evil "';const out=exportKiCad(p,spec);assert.equal(verifyKiCadExport(p,out.board,out.receipt,spec).ok,true);});
+for(const diameter of [undefined,0,-1,NaN,Infinity,0.0001,1.0001])test('Explicit representable diameter required '+diameter,()=>assert.throws(()=>exportKiCad(fixture(),{diameter})));
+test('Duplicate output pad numbers rejected',()=>{const p=synthetic(2);p.ports.filter(n=>n.kind==='ball').forEach(n=>n.label='A1');assert.throws(()=>exportKiCad(p,spec),/Duplicate/);});
+test('Net zero and changed export geometry cannot be laundered with recomputed hashes',()=>{const p=fixture(),out=exportKiCad(p,spec);const changed=exportKiCad(p,{...spec,diameter:100});assert.equal(verifyKiCadExport(p,changed.board,changed.receipt,spec).ok,false);assert.throws(()=>verifyKiCadExport(p,out.board,out.receipt));});
+test('Altered terminal location is caught independently of receipt map and digest',()=>{const p=fixture(),out=exportKiCad(p,spec),board=out.board.replace('(at 0.1 0)','(at 0.2 0)'),receipt=structuredClone(out.receipt);receipt.files.boardSHA256=textDigest(board);receipt.map[0].x=200;assert.equal(verifyKiCadExport(p,board,receipt,spec).ok,false);});
+test('Stale project or changed net cannot pass exchange replay',()=>{const p=fixture(),out=exportKiCad(p,spec);p.ports[0].net='OTHER';assert.equal(verifyKiCadExport(p,out.board,out.receipt,spec).ok,false);});
+test('Same names without a connection do not satisfy intent',()=>{const p=fixture();p.ports[1].net='DATA';p.connections=[];const r=verifyConnectivityContract(p,contract());assert.equal(r.ok,false);assert(r.issues.some(i=>i.code==='OPEN'));});
+test('Ordinary path satisfies independently provided intent',()=>assert.equal(verifyConnectivityContract(fixture(),contract()).ok,true));
+test('Undirected traversal covers reverse-shaped paths without inferred label unions',()=>{const p=fixture();p.connections[0]={...p.connections[0],from:'t',to:'s'};assert.equal(verifyConnectivityContract(p,contract()).ok,true);});
+test('All-port coverage requires every reserved/unassigned terminal',()=>{const p=fixture();p.ports.push({...p.ports[1],id:'spare',role:'nc'});assert.equal(verifyConnectivityContract(p,contract()).ok,false);const c=contract();c.unassigned=['spare'];assert.equal(verifyConnectivityContract(p,c).ok,true);p.connections.push({id:'short',from:'s',to:'spare',net:'',locked:false});assert.equal(verifyConnectivityContract(p,c).ok,false);});
+test('Same-component mislabeled intermediate node caught',()=>{const p=fixture();p.ports.push({...p.ports[1],id:'middle',kind:'bump',net:'WRONG'});p.connections=[{id:'a',from:'s',to:'middle',net:'',locked:false},{id:'b',from:'middle',to:'t',net:'',locked:false}];const c=contract();c.nets[0].ports.push('middle');assert(verifyConnectivityContract(p,c).issues.some(i=>i.code==='NET_LABEL'));});
+test('Distinct intended nets shorted together are rejected',()=>{const p=synthetic(2);p.connections.push({id:'bridge',from:'s0',to:'t1',net:'',locked:false});const c={...contract(),nets:[{name:'N0',ports:['s0','t0']},{name:'N1',ports:['s1','t1']}]};assert(verifyConnectivityContract(p,c).issues.some(i=>i.code==='SHORT'));});
+test('Incomplete intent traversal never passes',()=>{const r=verifyConnectivityContract(fixture(),contract(),{maxWork:1});assert.equal(r.ok,false);assert.equal(r.complete,false);});
+for(const alter of [c=>c.nets.push(c.nets[0]),c=>c.nets[0].ports.push('s'),c=>c.unassigned.push('s'),c=>c.coverage='automatic',c=>c.unknown=true,c=>c.nets[0].foo='bad',c=>c.nets=[]])test('Contract invalid input rejected '+alter.toString(),()=>{const c=contract();alter(c);assert.throws(()=>validateContract(c));});
+test('Intent report must match independent current contract, not embedded status',()=>{const p=fixture(),c=contract(),r=verifyConnectivityContract(p,c);assert(verifyIntentReview(p,c,r).ok);p.connections=[];r.ok=true;r.projectSHA256=objectDigest(p);assert(!verifyIntentReview(p,c,r).ok);});
+function swapped(){const p=synthetic(2);p.connections[0].to='t1';p.connections[1].to='t0';const c={...contract(),nets:[{name:'N0',ports:['s0','t0']},{name:'N1',ports:['s1','t1']}]};const patch={schema:'openbumpplan.mapping-eco/v1',baseProjectSHA256:objectDigest(p),contractSHA256:objectDigest(c),edits:p.connections.map((e,i)=>({id:e.id,expected:{from:e.from,to:e.to,net:e.net},to:'t'+i}))};return {p,c,patch};}
+test('Atomic two-way ECO restores intent and leaves original untouched',()=>{const {p,c,patch}=swapped(),before=JSON.stringify(p),r=previewMappingECO(p,patch,c);assert.equal(r.accepted,true,JSON.stringify(r));assert.equal(JSON.stringify(p),before);assert.equal(r.project.connections[0].to,'t0');});
+for(const alter of [({p})=>p.name='Other',({c})=>c.name='Untrusted change',({p,patch})=>{p.ports[0].locked=true;patch.baseProjectSHA256=objectDigest(p);},({patch})=>patch.edits[0].expected.net='WRONG',({patch})=>patch.edits.push(patch.edits[0])])test('ECO guard '+alter.toString(),()=>{const data=swapped();alter(data);assert.throws(()=>previewMappingECO(data.p,data.patch,data.c));});
+test('One-sided swap never applies a partially broken candidate',()=>{const {p,c,patch}=swapped();patch.edits.pop();const r=previewMappingECO(p,patch,c);assert.equal(r.accepted,false);assert.equal(r.project,null);});
+test('CLI export and independent replay, no output overwrite',()=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'bump-interop-'));
+ try{const project=path.join(dir,'p.json'),prefix=path.join(dir,'pinmap');fs.writeFileSync(project,JSON.stringify(fixture()));
+ const run=args=>spawnSync(process.execPath,['scripts/interop.mjs',...args],{encoding:'utf8'});
+ let r=run(['export',project,prefix,'--diameter','250']);assert.equal(r.status,0,r.stderr);
+ r=run(['verify-export',project,prefix+'.kicad_pcb',prefix+'.receipt.json','--diameter','250']);assert.equal(r.status,0,r.stdout+r.stderr);
+ assert.equal(run(['export',project,prefix,'--diameter','250']).status,2);
+ assert.equal(run(['verify-export',project,prefix+'.kicad_pcb',prefix+'.receipt.json','--diameter','100']).status,1);
+ assert.equal(run(['import',prefix+'.kicad_pcb',path.join(dir,'import.json'),'--typo','250']).status,2);
+ }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});
+test('10000-terminal native format round trip completes without downsampling',()=>{const p=normalizeProject({...fixture(),connections:[],ports:Array.from({length:10000},(_,i)=>({id:'T'+i,label:String(i),kind:'ball',x:(i%100)*500,y:Math.floor(i/100)*500,role:'any',net:'N'+i}))});const out=exportKiCad(p,spec),r=verifyKiCadExport(p,out.board,out.receipt,spec);assert.equal(r.ok,true);assert.equal(r.checked,10000);});
+test('Explicit domain cannot be satisfied by missing domain declaration',()=>{const c=contract();c.nets[0].domain='V1';const p=fixture();p.ports[1].domain='';assert(verifyConnectivityContract(p,c).issues.some(i=>i.code==='DOMAIN'));});
+test('Reserved terminal cannot have signal intent even without edges',()=>{const p=fixture();p.ports[1].role='nc';p.connections=[];assert(verifyConnectivityContract(p,contract()).issues.some(i=>i.code==='FORBIDDEN_NET'));});
+test('Malformed Unicode identifiers rejected before emitting native text',()=>{const p=fixture();p.ports[1].label='\ud800';assert.throws(()=>exportKiCad(p,spec),/Unicode/);});
+test('Leading-zero net codes rejected as ambiguous numeric identity',()=>assert.throws(()=>importKiCad(`(kicad_pcb (net 01 "X") ${fp()})`),/net/));
+test('Added native copper cannot pass unrouted-map export verification',()=>{const p=fixture(),out=exportKiCad(p,spec);out.board=out.board.trimEnd().slice(0,-1)+' (segment (start 0 0) (end 1 1) (width .1) (layer "F.Cu") (net 1)))';out.receipt.files.boardSHA256=textDigest(out.board);assert(!verifyKiCadExport(p,out.board,out.receipt,spec).ok);});
+test('False source IDs in mapping receipt rejected even when board is unchanged',()=>{const p=fixture(),out=exportKiCad(p,spec);out.receipt.map[0].id='MISLEADING';assert(!verifyKiCadExport(p,out.board,out.receipt,spec).ok);});
+test('Wrong native reference rejected after recomputing board checksum',()=>{const p=fixture(),out=exportKiCad(p,spec);out.board=out.board.replace('reference "U1"','reference "U2"');out.receipt.files.boardSHA256=textDigest(out.board);assert(!verifyKiCadExport(p,out.board,out.receipt,spec).ok);});

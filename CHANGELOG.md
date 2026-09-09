@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+Native KiCad terminal-map interchange, independent logical intent review/replay, atomic mapping ECO and a dedicated offline workbench. Correct continuous-copper contact handling for tiny positive clearances; preserve indexed geometry checks. Fresh version-bound example evidence and bounded delivery. See docs/NATIVE-INTEROPERABILITY.md.
+
 ## 0.3.1 — conservative spatial copper verification
 
 - Replace whole-board obstacle and pad-pair scans with deterministic two-dimensional BVH candidate filtering; preserve the independent continuous narrow phase, tolerances, physical assumptions and diagnostic order.
