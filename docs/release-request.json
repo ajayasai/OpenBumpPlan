@@ -1,0 +1,6 @@
+{
+  "version": "0.4.0",
+  "attempt": 2,
+  "scope": "Complete native, browser and clean-package qualification; not release approval",
+  "nativeCheck": "Require physical copper-layer membership and a KiCad copper violation identifying both deliberately shorted nets."
+}
