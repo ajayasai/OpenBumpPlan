@@ -71,7 +71,11 @@ def inspect(board, case):
     assert len({p.GetNumber() for p in pads}) == len(pads)
     for pad in pads:
         pos = pad.GetPosition()
-        assert (pos.x, pos.y, pad.GetNetname(), int(pad.GetLayer())) == pad_expect[pad.GetNumber()]
+        expected = pad_expect[pad.GetNumber()]
+        assert (pos.x, pos.y, pad.GetNetname()) == expected[:3], (case['project']['name'], pad.GetNumber(), pos.x, pos.y, pad.GetNetname(), expected)
+        assert pad.IsOnLayer(expected[3]), ('Missing expected copper layer', pad.GetNumber(), expected)
+        opposite = pcbnew.B_Cu if expected[3] == int(pcbnew.F_Cu) else pcbnew.F_Cu
+        assert not pad.IsOnLayer(opposite), ('Unexpected opposite copper layer', pad.GetNumber())
         assert pad.GetSize().x == pad.GetSize().y == nm(tech['padDiameter'])
         assert pad.GetShape() == pcbnew.PAD_SHAPE_CIRCLE
     tracks, vias = Counter(), Counter()
@@ -150,6 +154,7 @@ with tempfile.TemporaryDirectory(prefix='openbumpplan-native-routes-') as folder
     broken = folder/'broken-open.kicad_pcb';pcbnew.SaveBoard(str(broken),board)
     code, report = drc(broken, folder/'broken-open.json')
     assert code == 5 and report.get('unconnected_items'), report
+    open_findings = len(report['unconnected_items'])
     board = pcbnew.LoadBoard(str(folder/'route-0.kicad_pcb'))
     pads = {p.GetNumber():p for p in board.GetPads()}
     short = pcbnew.PCB_TRACK(board)
@@ -157,10 +162,19 @@ with tempfile.TemporaryDirectory(prefix='openbumpplan-native-routes-') as folder
     short.SetWidth(nm(250));short.SetLayer(pcbnew.F_Cu);short.SetNetCode(pads['H_IN'].GetNetCode());board.Add(short)
     broken = folder/'broken-short.kicad_pcb';pcbnew.SaveBoard(str(broken),board)
     code, report = drc(broken, folder/'broken-short.json')
-    assert code == 5 and any('short' in v['type'] or 'clearance' in v['type'] for v in report.get('violations',[])), report
+    # KiCad may classify a track-to-track short as tracks_crossing, not
+    # shorting_items. Require a copper error naming BOTH deliberately joined
+    # nets; an unrelated mask/courtyard warning is not sufficient evidence.
+    copper_types = {'shorting_items', 'clearance', 'tracks_crossing'}
+    short_findings = [v for v in report.get('violations', [])
+        if v.get('severity') == 'error' and v.get('type') in copper_types
+        and all(any('['+net+']' in item.get('description','') for item in v.get('items',[]))
+                for net in ('HORIZONTAL','VERTICAL'))]
+    assert code == 5 and short_findings, report
+    short_types = sorted({v['type'] for v in short_findings})
 report = {'oracle':'KiCad native copper geometry, connectivity, serialization and CLI DRC',
     'version':pcbnew.Version(),'casesPassed':len(results),'casesFailed':0,
-    'negativeControls':{'removedTrackDetected':True,'addedShortDetected':True},'cases':results,
+    'negativeControls':{'removedTrackDetected':True,'openFindings':open_findings,'addedShortDetected':True,'shortFindingTypes':short_types},'cases':results,
     'scope':'Synthetic two-layer fixtures with the stated simplified dimensions. Native DRC used error severity and default KiCad rules; warnings are outside this gate. Not foundry, signal/power integrity, thermal or mechanical signoff.'}
 (OUTPUT/'routed-kicad-native-results.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report,indent=2))
