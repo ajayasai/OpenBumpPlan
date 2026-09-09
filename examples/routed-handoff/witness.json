@@ -1,0 +1,136 @@
+{
+  "type": "openbumpplan-route-witness",
+  "schemaVersion": 1,
+  "designKey": "{\"connections\":[{\"from\":\"H_IN\",\"id\":\"H\",\"locked\":false,\"net\":\"\",\"to\":\"H_OUT\"},{\"from\":\"V_IN\",\"id\":\"V\",\"locked\":false,\"net\":\"\",\"to\":\"V_OUT\"}],\"description\":\"\",\"dies\":[],\"keepouts\":[{\"dieId\":\"\",\"height\":500,\"id\":\"FIXTURE_KEEPOUT\",\"kinds\":[\"pad\",\"ball\"],\"width\":500,\"x\":3000,\"y\":7000}],\"name\":\"Synthetic two-layer routed handoff\",\"ports\":[{\"dieId\":\"\",\"domain\":\"\",\"id\":\"H_IN\",\"kind\":\"pad\",\"label\":\"H_IN\",\"locked\":false,\"net\":\"HORIZONTAL\",\"pair\":\"\",\"polarity\":\"\",\"required\":false,\"role\":\"any\",\"x\":-6000,\"y\":2000},{\"dieId\":\"\",\"domain\":\"\",\"id\":\"H_OUT\",\"kind\":\"ball\",\"label\":\"H_OUT\",\"locked\":false,\"net\":\"\",\"pair\":\"\",\"polarity\":\"\",\"required\":false,\"role\":\"any\",\"x\":2000,\"y\":2000},{\"dieId\":\"\",\"domain\":\"\",\"id\":\"V_IN\",\"kind\":\"pad\",\"label\":\"V_IN\",\"locked\":false,\"net\":\"VERTICAL\",\"pair\":\"\",\"polarity\":\"\",\"required\":false,\"role\":\"any\",\"x\":-2000,\"y\":-2000},{\"dieId\":\"\",\"domain\":\"\",\"id\":\"V_OUT\",\"kind\":\"ball\",\"label\":\"V_OUT\",\"locked\":false,\"net\":\"\",\"pair\":\"\",\"polarity\":\"\",\"required\":false,\"role\":\"any\",\"x\":-2000,\"y\":6000},{\"dieId\":\"\",\"domain\":\"\",\"id\":\"RESERVED\",\"kind\":\"ball\",\"label\":\"RESERVED\",\"locked\":false,\"net\":\"\",\"pair\":\"\",\"polarity\":\"\",\"required\":false,\"role\":\"reserved\",\"x\":-6000,\"y\":7000}],\"regions\":[],\"rules\":{\"allowedStagePairs\":[[\"pad\",\"bump\"],[\"pad\",\"ball\"],[\"bump\",\"interposer\"],[\"bump\",\"ball\"],[\"interposer\",\"ball\"],[\"ball\",\"pcb\"]],\"clockGroundMin\":0,\"clockShieldRadius\":750,\"crossingWeight\":150,\"geometryBudget\":1000000,\"groundRadius\":0,\"maxCrossings\":10,\"maxLength\":100000,\"minDomainSpacing\":0,\"minGroundRatio\":0,\"pairMaxDistance\":650,\"pairMaxSkew\":150,\"powerRadius\":0,\"requireCompletePaths\":false,\"requirePowerForSignals\":false,\"terminalKind\":\"ball\"},\"schemaVersion\":1,\"units\":\"um\"}",
+  "config": {
+    "fromKind": "pad",
+    "toKind": "ball",
+    "pitch": 1000,
+    "originX": -7000,
+    "originY": -3000,
+    "columns": 12,
+    "rows": 12,
+    "layers": 2,
+    "clearance": 0,
+    "viaCost": 4000,
+    "startLayer": 0,
+    "endLayer": 0
+  },
+  "routes": [
+    {
+      "connectionId": "H",
+      "path": [
+        [
+          1,
+          5,
+          0
+        ],
+        [
+          2,
+          5,
+          0
+        ],
+        [
+          3,
+          5,
+          0
+        ],
+        [
+          4,
+          5,
+          0
+        ],
+        [
+          5,
+          5,
+          0
+        ],
+        [
+          6,
+          5,
+          0
+        ],
+        [
+          7,
+          5,
+          0
+        ],
+        [
+          8,
+          5,
+          0
+        ],
+        [
+          9,
+          5,
+          0
+        ]
+      ]
+    },
+    {
+      "connectionId": "V",
+      "path": [
+        [
+          5,
+          1,
+          0
+        ],
+        [
+          5,
+          2,
+          0
+        ],
+        [
+          5,
+          2,
+          1
+        ],
+        [
+          5,
+          3,
+          1
+        ],
+        [
+          5,
+          4,
+          1
+        ],
+        [
+          5,
+          5,
+          1
+        ],
+        [
+          5,
+          6,
+          1
+        ],
+        [
+          5,
+          7,
+          1
+        ],
+        [
+          5,
+          8,
+          1
+        ],
+        [
+          5,
+          8,
+          0
+        ],
+        [
+          5,
+          9,
+          0
+        ]
+      ]
+    }
+  ],
+  "metrics": {
+    "routed": 2,
+    "wireLength": 16000,
+    "vias": 2
+  }
+}

@@ -21,6 +21,7 @@
     "qualify:v03": "node scripts/qualify-v03.mjs",
     "qualify:copper": "node scripts/qualify-copper.mjs",
     "interop": "node scripts/interop.mjs",
-    "build:interop": "node scripts/build-interop.mjs"
+    "build:interop": "node scripts/build-interop.mjs",
+    "test:routed": "node --test tests/routed*.test.mjs"
   }
 }

@@ -1,0 +1,96 @@
+{
+  "oracle": "KiCad native copper geometry, connectivity, serialization and CLI DRC",
+  "version": "10.0.6",
+  "casesPassed": 6,
+  "casesFailed": 0,
+  "negativeControls": {
+    "removedTrackDetected": true,
+    "openFindings": 1,
+    "addedShortDetected": true,
+    "shortFindingTypes": [
+      "shorting_items",
+      "tracks_crossing"
+    ]
+  },
+  "cases": [
+    {
+      "fixture": "Synthetic two-layer routed handoff",
+      "pads": 5,
+      "segments": 4,
+      "vias": 2,
+      "unitTrackEdges": 16,
+      "nativeUnconnected": 0,
+      "keepouts": 1,
+      "nativeResave": true,
+      "nativeDRCErrorCount": 0,
+      "boardSHA256": "6650b4eff22cfdc49dc41250b747b34d6f9a344d288635eb018c75203e058812",
+      "seconds": 0.8439
+    },
+    {
+      "fixture": "Native 1-route 0-0",
+      "pads": 2,
+      "segments": 1,
+      "vias": 0,
+      "unitTrackEdges": 10,
+      "nativeUnconnected": 0,
+      "keepouts": 0,
+      "nativeResave": true,
+      "nativeDRCErrorCount": 0,
+      "boardSHA256": "24cf807b520afa2104decc3375845985b14031b46a0939b30d6e7fb2262846af",
+      "seconds": 0.4863
+    },
+    {
+      "fixture": "Native 8-route 1-1",
+      "pads": 16,
+      "segments": 8,
+      "vias": 0,
+      "unitTrackEdges": 80,
+      "nativeUnconnected": 0,
+      "keepouts": 0,
+      "nativeResave": true,
+      "nativeDRCErrorCount": 0,
+      "boardSHA256": "abce5acdf93a92915973d71565ada97b4ac77b1e413d3db9e80b01c3196cc0fa",
+      "seconds": 0.4906
+    },
+    {
+      "fixture": "Native 8-route 0-1",
+      "pads": 16,
+      "segments": 16,
+      "vias": 8,
+      "unitTrackEdges": 80,
+      "nativeUnconnected": 0,
+      "keepouts": 0,
+      "nativeResave": true,
+      "nativeDRCErrorCount": 0,
+      "boardSHA256": "ac6d42bcde5546e76bbd5f7f5adb841d14aed5800c35ff8febac3ddb83e8e229",
+      "seconds": 0.4926
+    },
+    {
+      "fixture": "Native 8-route 1-0",
+      "pads": 16,
+      "segments": 16,
+      "vias": 8,
+      "unitTrackEdges": 80,
+      "nativeUnconnected": 0,
+      "keepouts": 0,
+      "nativeResave": true,
+      "nativeDRCErrorCount": 0,
+      "boardSHA256": "660182b3dc2c2c19b51fe6f26bbb57f9fc9eb7c986135f614d4be1006b36197f",
+      "seconds": 0.4923
+    },
+    {
+      "fixture": "Native 64-route 0-0",
+      "pads": 128,
+      "segments": 64,
+      "vias": 0,
+      "unitTrackEdges": 640,
+      "nativeUnconnected": 0,
+      "keepouts": 0,
+      "nativeResave": true,
+      "nativeDRCErrorCount": 0,
+      "boardSHA256": "4561f6b35f168ce2a772ff129952f5a15d675c699a91f5787e87a46aba13bc6f",
+      "seconds": 0.5112
+    }
+  ],
+  "scope": "Synthetic two-layer fixtures with the stated simplified dimensions. Native DRC used error severity and default KiCad rules; warnings are outside this gate. Not foundry, signal/power integrity, thermal or mechanical signoff."
+}

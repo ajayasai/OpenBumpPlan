@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "name": "Synthetic two-layer routed handoff",
+  "revision": 0,
+  "units": "um",
+  "description": "",
+  "dies": [],
+  "ports": [
+    {
+      "label": "H_IN",
+      "dieId": "",
+      "net": "HORIZONTAL",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "H_IN",
+      "kind": "pad",
+      "x": -6000,
+      "y": 2000
+    },
+    {
+      "label": "H_OUT",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "H_OUT",
+      "kind": "ball",
+      "x": 2000,
+      "y": 2000
+    },
+    {
+      "label": "V_IN",
+      "dieId": "",
+      "net": "VERTICAL",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "V_IN",
+      "kind": "pad",
+      "x": -2000,
+      "y": -2000
+    },
+    {
+      "label": "V_OUT",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "any",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "V_OUT",
+      "kind": "ball",
+      "x": -2000,
+      "y": 6000
+    },
+    {
+      "label": "RESERVED",
+      "dieId": "",
+      "net": "",
+      "domain": "",
+      "role": "reserved",
+      "pair": "",
+      "polarity": "",
+      "locked": false,
+      "required": false,
+      "id": "RESERVED",
+      "kind": "ball",
+      "x": -6000,
+      "y": 7000
+    }
+  ],
+  "connections": [
+    {
+      "net": "",
+      "locked": false,
+      "id": "H",
+      "from": "H_IN",
+      "to": "H_OUT"
+    },
+    {
+      "net": "",
+      "locked": false,
+      "id": "V",
+      "from": "V_IN",
+      "to": "V_OUT"
+    }
+  ],
+  "keepouts": [
+    {
+      "dieId": "",
+      "kinds": [
+        "pad",
+        "ball"
+      ],
+      "id": "FIXTURE_KEEPOUT",
+      "x": 3000,
+      "y": 7000,
+      "width": 500,
+      "height": 500
+    }
+  ],
+  "regions": [],
+  "rules": {
+    "maxLength": 100000,
+    "minDomainSpacing": 0,
+    "pairMaxDistance": 650,
+    "pairMaxSkew": 150,
+    "clockShieldRadius": 750,
+    "clockGroundMin": 0,
+    "groundRadius": 0,
+    "powerRadius": 0,
+    "requirePowerForSignals": false,
+    "minGroundRatio": 0,
+    "crossingWeight": 150,
+    "maxCrossings": 10,
+    "geometryBudget": 1000000,
+    "terminalKind": "ball",
+    "requireCompletePaths": false,
+    "allowedStagePairs": [
+      [
+        "pad",
+        "bump"
+      ],
+      [
+        "pad",
+        "ball"
+      ],
+      [
+        "bump",
+        "interposer"
+      ],
+      [
+        "bump",
+        "ball"
+      ],
+      [
+        "interposer",
+        "ball"
+      ],
+      [
+        "ball",
+        "pcb"
+      ]
+    ]
+  },
+  "audit": []
+}

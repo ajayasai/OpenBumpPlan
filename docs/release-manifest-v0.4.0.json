@@ -15,9 +15,14 @@
       "sha256": "b1fa1a56cf971a591be5c610bf1174f72bd98272ba291249c2d95cbcbdba7c6b"
     },
     {
+      "path": ".github/workflows/finalize-interop.yml",
+      "bytes": 11095,
+      "sha256": "8dbb60b1de97d13869d0b501401460f7a8579bc8b05c20e765fcd0742d2c8c81"
+    },
+    {
       "path": ".github/workflows/interoperability.yml",
-      "bytes": 1801,
-      "sha256": "14a3036713172134c9c4f24e2c0c029fd8814d27a2b32b86870d9dd1fc421485"
+      "bytes": 1946,
+      "sha256": "05544a17d4f335fb42e0cbb4a5cfe75ca8c66f3d3f0b470a9097cfbacf284ea8"
     },
     {
       "path": ".github/workflows/pages.yml",
@@ -30,14 +35,19 @@
       "sha256": "a23f28aba3c514c0338d788748ff02f763973d8679c9b46f69ea4455eee3f245"
     },
     {
+      "path": ".github/workflows/routed-native.yml",
+      "bytes": 1761,
+      "sha256": "906c781abc28ea2fce60857eb4602331bf9add495c482d1792783dbb1bd10405"
+    },
+    {
       "path": ".gitignore",
       "bytes": 174,
       "sha256": "3ab8c13e252e7a03b003a8d4aa3d97e857e62708a6a9ee61f73f2877a861098b"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 3119,
-      "sha256": "434c23e5d3220c5f18cc9a045455bf9da4a1aedb7076e5e84109db4bc5a41bb2"
+      "bytes": 3575,
+      "sha256": "88984dfc24201cfece88bc299900a8184968f91cb20350122750fd9874efd1a9"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -56,8 +66,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 11751,
-      "sha256": "c444ab81df503c77038f9b81be0d2886fa11265dc599b50fee6d64c6e1ad68d0"
+      "bytes": 12301,
+      "sha256": "15085d86770ec54483b6348b83ea047c976294b0646ba4f11979862ada3e8750"
     },
     {
       "path": "SECURITY.md",
@@ -67,7 +77,7 @@
     {
       "path": "dist/INTEROP-SHA256SUMS",
       "bytes": 79,
-      "sha256": "6544376a4714482bd09a347db3c3218b4aac54db821ffd81824b61f520734172"
+      "sha256": "047070fe71c464e77b40bf1486b498e2a7408f064bb5291cc9689e110e34f9e1"
     },
     {
       "path": "dist/SHA256SUMS",
@@ -81,8 +91,8 @@
     },
     {
       "path": "dist/interop.html",
-      "bytes": 101519,
-      "sha256": "f153a24aa2f4b270a2083f78daea8d410a7e0ed39339cd9c6e12037b0518d847"
+      "bytes": 157327,
+      "sha256": "9d18d6390075062f29bbf60fd98f1b9e29905b1a51f776f2feae893d7ead123e"
     },
     {
       "path": "dist/openbumpplan.html",
@@ -138,6 +148,11 @@
       "path": "docs/RELEASE-RECOVERY.md",
       "bytes": 2706,
       "sha256": "500e9cf1c899a582a470229a0b596db0bd43495a7950d585a8e444b46fb00272"
+    },
+    {
+      "path": "docs/ROUTED-HANDOFF.md",
+      "bytes": 5605,
+      "sha256": "1d20f56222ed48fbb7a006563ae2eef00dbf80d73c32a69f2f21a66e109afb15"
     },
     {
       "path": "docs/V0.2.0.md",
@@ -197,7 +212,7 @@
     {
       "path": "docs/browser-test-results.json",
       "bytes": 2134,
-      "sha256": "7f83de0167418e79e9304d59f2a0a3af3f20a778d2338861154bf6be250ec6ef"
+      "sha256": "abb88e7001c41541d48a1383b792e671bda8f806b31c29a53d8ac027ab0099db"
     },
     {
       "path": "docs/demo-map.svg",
@@ -212,7 +227,12 @@
     {
       "path": "docs/engineering-browser-v0.3.0.json",
       "bytes": 1870,
-      "sha256": "01577fffb5f77c338746652d193c298285a805f91dad8622619ed40197b97a13"
+      "sha256": "27d53b915c29c4500f7d97eb9b281b5af5edc318354d05c645364da18eaad2f3"
+    },
+    {
+      "path": "docs/engineering-studio.png",
+      "bytes": 225327,
+      "sha256": "4bf6bd1bb9dc9f5557c5374a711c6280b791414cbfb415e37034f4f735811f37"
     },
     {
       "path": "docs/example-revision-diff.json",
@@ -235,6 +255,26 @@
       "sha256": "12b2b6dc9a1d278fcd87b9a4f91e1f58d2ff1c7ae59d540bb8391f2968d64070"
     },
     {
+      "path": "docs/interop-workbench.png",
+      "bytes": 350090,
+      "sha256": "8bb7bba814da52e14c64d43d81f7f054394243d742fa3323b7ec3485595ec020"
+    },
+    {
+      "path": "docs/kicad-native-results.json",
+      "bytes": 2917,
+      "sha256": "6443dc3dff55629bffb15c5f065af74db980d6cbdf562c02e8f77fbfd4888b0a"
+    },
+    {
+      "path": "docs/kicad7-native-results.json",
+      "bytes": 2917,
+      "sha256": "59a1a36c0e2bba27db61770a92225fa4bca191c96f9aed0a4aac41c0aef16962"
+    },
+    {
+      "path": "docs/native-browser-v0.3.0.json",
+      "bytes": 1821,
+      "sha256": "67caf4b8f3b946436eadf63be8ff0b5119c069ccac152df267a934330ee54823"
+    },
+    {
       "path": "docs/node-test-results.tap",
       "bytes": 21735,
       "sha256": "78e93cdc57997a9c8191a98139b35e8b2066e451df7d38f30ae5fc9629a748c8"
@@ -248,6 +288,11 @@
       "path": "docs/node-tests-v0.3.0.tap",
       "bytes": 95812,
       "sha256": "063153199f07d88a4aec468ecaef1df98e3b6445604701d365f5038885eb54e4"
+    },
+    {
+      "path": "docs/node-tests-v0.4.0.tap",
+      "bytes": 172086,
+      "sha256": "74aeab349598be50c21607641d6ee6de10a3286bbda7eb46f234dfa9c03bed03"
     },
     {
       "path": "docs/planning-browser-v0.2.0.json",
@@ -277,7 +322,7 @@
     {
       "path": "docs/qualification-v0.3.0.json",
       "bytes": 46762,
-      "sha256": "d5297a94bc6913a7ba983870dbd52ebb69a4f7f35485cda7b32a9b1bd860f40b"
+      "sha256": "ccab388c9d4fbe79fcd3aa88732e5dc60a61fc9e958e173966a0647a811bd779"
     },
     {
       "path": "docs/release-manifest-v0.3.0.json",
@@ -290,6 +335,16 @@
       "sha256": "6091398fb6eca83f6ca742397e225e4f39c7984ec957f31a2bab899f49987c14"
     },
     {
+      "path": "docs/release-qualification-v0.4.0.json",
+      "bytes": 8874,
+      "sha256": "aa98f76dce63e5d8d513d3bbbd2b7ec8b09b287ba7aafa39fc5419bd129ce705"
+    },
+    {
+      "path": "docs/release-request.json",
+      "bytes": 313,
+      "sha256": "66ee97f9ac77662f57ac268b933385ffd09e03b50697a3751b5b4b618855c791"
+    },
+    {
       "path": "docs/release-v0.2.0.json",
       "bytes": 1816,
       "sha256": "67be362f8e908ad06df40f1d9a5b14f3c239080183e9040ecd74b2b6df9dffe7"
@@ -300,14 +355,44 @@
       "sha256": "988ca424fab34becb682b0fba0a76844bc82c88f5e40462e498b3c50fb5823ad"
     },
     {
+      "path": "docs/routed-browser-native-results.json",
+      "bytes": 692,
+      "sha256": "82a2fb63da8bc1b60a2c45e2eac38c61c5fb894bc20c32378e8414dc55cc3718"
+    },
+    {
+      "path": "docs/routed-browser-results.json",
+      "bytes": 693,
+      "sha256": "5b436bdabeefccfe1d5b7809c644c92e6e018f89792fca27b4d45141aa69d7ad"
+    },
+    {
+      "path": "docs/routed-kicad-native-results.json",
+      "bytes": 2785,
+      "sha256": "4ba75a74ddc27f4490ab726d17fa8fd76dff3f3b4d1c0de4aa7d8f6718e4f898"
+    },
+    {
+      "path": "docs/routed-workbench.png",
+      "bytes": 98346,
+      "sha256": "8cd7361b40a1f84b6786bfab576a929d28d859418b9624c13944eddf2d25cb2d"
+    },
+    {
       "path": "docs/studio-screenshot.png",
-      "bytes": 192171,
-      "sha256": "f3dbf16a0110399b453fa1fc6830a2affb3ded98f6594b79b1e20644dbb25ea9"
+      "bytes": 194451,
+      "sha256": "ca59e42b821d501d7ac0ce6a2fec35c847742cc5753b3c8185c1d004a6ea3dc0"
+    },
+    {
+      "path": "docs/studio-v0.3.0.png",
+      "bytes": 183748,
+      "sha256": "f3faccae5ee8116f78ea9d0c8a12a843f0864cbf4f31a20725b72628d6afd9df"
     },
     {
       "path": "docs/v03-browser.json",
-      "bytes": 1266,
-      "sha256": "ad5aeb46b177a68e044b1665e91b0caab5a1ab39fd1a61256f58055297d8f4bf"
+      "bytes": 1263,
+      "sha256": "176f1715cdd759f44037be6c283b9daaf31e8c520b2a04fd58d98a7640eddef2"
+    },
+    {
+      "path": "docs/v03-native-browser.json",
+      "bytes": 1336,
+      "sha256": "9dd9f02497b820a47396a59f507cf7eadc2e4c5e5da2382f20342dfc17940ee3"
     },
     {
       "path": "examples/assignments.csv",
@@ -415,6 +500,36 @@
       "sha256": "d84fa80bf3e3bc4abb5919b7a6d7c422c244f66dd065630bab7e5d42a652ba2d"
     },
     {
+      "path": "examples/routed-handoff/project.json",
+      "bytes": 2827,
+      "sha256": "d4ab5b6b5e17dcc6e02b162b79ed654113f8420733a680898269268822ec403b"
+    },
+    {
+      "path": "examples/routed-handoff/receipt.json",
+      "bytes": 1497,
+      "sha256": "c88f0c7b0cdfa99bac5503c824fef6fbe9fa4f5dbefdb5594ca8fb3e29e1d8c9"
+    },
+    {
+      "path": "examples/routed-handoff/routed.kicad_pcb",
+      "bytes": 3200,
+      "sha256": "6650b4eff22cfdc49dc41250b747b34d6f9a344d288635eb018c75203e058812"
+    },
+    {
+      "path": "examples/routed-handoff/specification.json",
+      "bytes": 70,
+      "sha256": "b74c73eb63d528d8bebadd77eb5ea98f0c0678382a2686cde19398fccac7db7e"
+    },
+    {
+      "path": "examples/routed-handoff/technology.json",
+      "bytes": 105,
+      "sha256": "e6bc276fa40cb8e18cf19777ba9a75e184537f200da2c4227ac1910dc16400cb"
+    },
+    {
+      "path": "examples/routed-handoff/witness.json",
+      "bytes": 3792,
+      "sha256": "af001ef3a783cc6c95eded81cd1b5c10d66db7726f359a4e748050779af614ce"
+    },
+    {
       "path": "examples/routing-laboratory.json",
       "bytes": 2501,
       "sha256": "3af6dca86dae198b42489ed57db03a52849ae2f241af675ee84910a081e7d3ce"
@@ -451,8 +566,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 973,
-      "sha256": "27d50564061633b89231447c225437054952c629d37661b25c47db06f8517bba"
+      "bytes": 1030,
+      "sha256": "119f1ff69ff31a7fb06a61d6a88d30be44cc4f433037d938321e0ed2f1966abc"
     },
     {
       "path": "scripts/benchmark.mjs",
@@ -473,6 +588,11 @@
       "path": "scripts/cli.mjs",
       "bytes": 11199,
       "sha256": "8fd627f5e73ba2bcdcd484939352adb7c842e02cd29db6fa9e19eaea0308b89c"
+    },
+    {
+      "path": "scripts/integrate-routed.mjs",
+      "bytes": 4032,
+      "sha256": "1164b02a487428d2813b04bd36c8e7d0a9b36133edcf216d64c2f8b512b72dbc"
     },
     {
       "path": "scripts/interop.mjs",
@@ -518,6 +638,11 @@
       "path": "scripts/refresh-release.mjs",
       "bytes": 1779,
       "sha256": "437748d8bc40b09244c609eee385fda00f896f1b245a99fa1dd5fe2d3503aef0"
+    },
+    {
+      "path": "scripts/routed-kicad.mjs",
+      "bytes": 2529,
+      "sha256": "d34624b7b8fc2f52a73ff4d242734b39360a691c8a72a4b4c08b89801173201e"
     },
     {
       "path": "scripts/serve.mjs",
@@ -595,6 +720,11 @@
       "sha256": "71a032ad0f9184322831201835792fa4661b764f8268ba9e7f8d29acd72308b3"
     },
     {
+      "path": "src/core/kicad-nets.js",
+      "bytes": 2121,
+      "sha256": "103db555648a6680b11c1caad073d2eaa2ff9aa060c664dad0902f91213af41a"
+    },
+    {
       "path": "src/core/mincost.js",
       "bytes": 4290,
       "sha256": "39f59de82666c8064daf4215aacd6dee6b9e5c94380195ef51af3b3bc98a879f"
@@ -618,6 +748,16 @@
       "path": "src/core/revisions.js",
       "bytes": 3623,
       "sha256": "3f99c80414a232a91c0d5663897c4b582e8f8937a3a86854828480525f8dbedb"
+    },
+    {
+      "path": "src/core/routed-demo.js",
+      "bytes": 1722,
+      "sha256": "23a4d1bbb96333811509b044869c7bbe8d70207f00a044244e08a28973292ae9"
+    },
+    {
+      "path": "src/core/routed-kicad.js",
+      "bytes": 11442,
+      "sha256": "b9e18c4f5bc295e5ee8be688bc9b153efeaca09c22d9d8bf509de314fd760afb"
     },
     {
       "path": "src/core/routing.js",
@@ -656,18 +796,23 @@
     },
     {
       "path": "src/core/terminal-interop.js",
-      "bytes": 15024,
-      "sha256": "540561612a00d0aa22919f53c8cc8a1d54f905b0e8830a45bafea0be7772e91f"
+      "bytes": 14306,
+      "sha256": "c06e4d96c7d1c4bb767440f871c102282e666e0d8653900792bb9e9f45de9989"
     },
     {
       "path": "src/interop-app.js",
-      "bytes": 16196,
-      "sha256": "237f2d27a16c5eb4556e942890058a6c8c8b542f01187b43a9245f780c32eb3a"
+      "bytes": 16581,
+      "sha256": "b2f0e8a0b4f5d21e95af787ee204f81cb0d907845d3aa13a49ef05bdcd540f83"
     },
     {
       "path": "src/interop.css",
       "bytes": 4474,
       "sha256": "007f4a6629197e6009011cdc0d47d0878c512c2ec1f8b881c359eb36c317b751"
+    },
+    {
+      "path": "src/routed-export-ui.js",
+      "bytes": 6524,
+      "sha256": "b98eb98532d1a52f93f0d023d855b79e886f9b23c83b2c5ad2d479ac2a035e53"
     },
     {
       "path": "src/styles.css",
@@ -760,6 +905,11 @@
       "sha256": "a778cb59e2d30f78f285a9c9a57ded234d1f92eaa8bb8383c4a4b0102a7fac68"
     },
     {
+      "path": "tests/kicad-versioned.test.mjs",
+      "bytes": 2231,
+      "sha256": "5d25cc58c9ab93bdf7f14a9445e63401dd3fe333fd01a756d44de456409a472f"
+    },
+    {
       "path": "tests/kicad_native_test.py",
       "bytes": 4995,
       "sha256": "c628cc27e39311543cc2ce82c3b01c88ec36e8646c96347cb0c0177c4654ae72"
@@ -788,6 +938,26 @@
       "path": "tests/review-export.test.mjs",
       "bytes": 5176,
       "sha256": "0aae24ec4f3b544e43fd728d5d2223ee514d65a2008fe52f34cbc081cbfe8f3b"
+    },
+    {
+      "path": "tests/routed-cli.test.mjs",
+      "bytes": 2505,
+      "sha256": "af23335439631667ce0d2b45370b75a4fc4515b134b6f54f7dac218ffcc78de9"
+    },
+    {
+      "path": "tests/routed-kicad.test.mjs",
+      "bytes": 6222,
+      "sha256": "9941356bf9f419631870022aab8b4a3ecac20213ba81358d5281c53170352f0e"
+    },
+    {
+      "path": "tests/routed_browser_test.py",
+      "bytes": 6882,
+      "sha256": "87544ba1b868a6bc20783a777970beb26017af6fe523227f42da56166f0c0737"
+    },
+    {
+      "path": "tests/routed_kicad_native_test.py",
+      "bytes": 10421,
+      "sha256": "92bfad5bc52499389e68e12ad6dece43ba66361b33f73a127133f4de1628f7bf"
     },
     {
       "path": "tests/routing.test.mjs",

@@ -128,3 +128,7 @@ CSV/JSON import with explicit unit conversion; limited LEF MACRO/PIN/PORT RECT i
 JSON is authoritative. Full LEF/DEF/GDS/ODB++/IPC-2581/native-vendor round trips, route-dependent assignment co-optimization, electrically verified shielding, IR-drop/electromigration, SI/PI/thermal/mechanical signoff, foundry certification, multi-user authorization, and industrial design qualification remain unimplemented or unqualified. [Competitive evidence](docs/COMPETITIVE-EVIDENCE-V0.3.0.md) distinguishes shipped features from these gaps.
 
 See [MIT license](LICENSE), [security](SECURITY.md), [contributing](CONTRIBUTING.md), and [format](docs/FORMAT.md). The guarded publisher is a maintainer utility for this prepared base-commit overlay, not needed to run a clone. It publishes a review branch, never directly changes main, and requires the expected base commit. [Recovery of the blocked staged release](docs/RELEASE-RECOVERY.md).
+
+## Routed native handoff
+
+v0.4.0 adds checked native KiCad traces, vias, pads and keepouts, a routed browser handoff panel and source-bound CLI replay. Start with [the routed handoff guide](docs/ROUTED-HANDOFF.md) and [the reproducible example](examples/routed-handoff). Measured tests are in [release qualification](docs/release-qualification-v0.4.0.json), [native copper results](docs/routed-kicad-native-results.json), and the browser results in `docs/`. These are bounded engineering checks, not commercial superiority or manufacturing signoff.

@@ -1,3 +1,5 @@
+import { mountRoutedExport } from './routed-export-ui.js';
+let routedPanel=null;
 import { normalizeProject, KINDS, worldPoint, indexProject } from './core/model.js';
 import { escapeHTML } from './core/exporters.js';
 import { INTEROP_VERSION, importKiCad, exportKiCad, verifyKiCadExport, objectDigest } from './core/terminal-interop.js';
@@ -17,7 +19,7 @@ $('interop').innerHTML=`<header><div class="logo" aria-hidden="true">${'<i></i>'
 <section class="panel"><h3>REVIEW BOUNDARIES</h3><h2>Three checks, different meanings</h2><p><strong>Import:</strong> coordinates, units, references and net identities are parsed; omitted content is reported.</p><p><strong>Intent:</strong> explicit graph connectivity is compared with a separate contract. Equal labels alone do not connect ports.</p><p><strong>Export:</strong> pin coordinates, nets, pad size and side are re-read and compared with the expected source and geometry.</p><p class="hint">No electrical, thermal, mechanical, manufacturing or regulatory approval is implied.</p></section></div></div></main><footer>Local-only • No cloud service, account, telemetry or external runtime dependencies • Save JSON to move between this workbench and the planner. Local storage is read only after an explicit request.</footer>`;
 function notice(s,bad=false){$('notice').textContent=s;$('notice').className='show'+(bad?' bad':'');clearTimeout(timer);timer=setTimeout(()=>$('notice').className='',6500);}
 function guarded(fn){return async()=>{try{await fn();}catch(e){notice(e.message,true);}};}
-function invalidate(){review=null;eco=null;generated=null;$('applyEco').disabled=true;['saveBoard','saveFootprint','saveReceipt'].forEach(k=>$(k).disabled=true);$('exportInfo').textContent='No current verified output.';}
+function invalidate(){routedPanel?.invalidate();review=null;eco=null;generated=null;$('applyEco').disabled=true;['saveBoard','saveFootprint','saveReceipt'].forEach(k=>$(k).disabled=true);$('exportInfo').textContent='No current verified output.';}
 function setProject(p){fileEpoch++;contractEpoch++;project=normalizeProject(p);pending=null;$('applyImport').disabled=true;invalidate();render();}
 function parseContract(){return JSON.parse($('contractText').value);}
 function render(){
@@ -63,4 +65,5 @@ $('undo').onclick=guarded(()=>{if(!previous)throw new Error('Nothing to undo');c
 for(const k of ['exportKind','diameter','side'])$(k).oninput=()=>{generated=null;['saveBoard','saveFootprint','saveReceipt'].forEach(id=>$(id).disabled=true);$('exportInfo').textContent='Settings changed. Rebuild and verify.';};
 $('makeExport').onclick=guarded(()=>{generated=null;['saveBoard','saveFootprint','saveReceipt'].forEach(id=>$(id).disabled=true);const options=exportSpec(),out=exportKiCad(project,options),r=verifyKiCadExport(project,out.board,out.receipt,options);if(!r.ok)throw new Error(r.issues.join('; '));generated=out;$('exportInfo').textContent=`${r.checked} terminals independently re-read and matched\n${out.receipt.warnings.join('\n\n')}\nBoard SHA-256: ${r.boardSHA256}`;['saveBoard','saveFootprint','saveReceipt'].forEach(k=>$(k).disabled=false);});
 for(const [button,suffix,key]of [['saveBoard','kicad_pcb','board'],['saveFootprint','kicad_mod','footprint'],['saveReceipt','receipt.json','receipt']])$(button).onclick=guarded(()=>{if(!generated||!verifyKiCadExport(project,generated.board,generated.receipt,exportSpec()).ok)throw new Error('No current verified output');download('OpenBumpPlan_PinMap.'+suffix,generated[key]);});
+routedPanel=mountRoutedExport({container:document.querySelector('.right'),getProject:()=>project,setProject:p=>{previous=project;contract=null;$('contractText').value='';setProject(p);notice('Synthetic routed project loaded; supply a separately reviewed intent contract.');}});
 render();

@@ -384,6 +384,790 @@ function regressionCheck(before,after,{draft=true}={}) {
 }
 
 return {DRAFT_CODES,issueKey,blockedPosition,compatible,analyze,regressionCheck};})();
+__mods["src/core/routing.js"]=(()=>{
+const { assertProject, clone, effectiveSignals, worldPoint, transformPoint, stableStringify }=__mods["src/core/model.js"];
+const { analyze }=__mods["src/core/rules.js"];
+const { EPS, manhattan }=__mods["src/core/geometry.js"];
+function routingDesignKey(project) {
+  const p = clone(project); delete p.audit; delete p.revision;
+  return stableStringify(p); // Full canonical content, not the 32-bit display fingerprint.
+}
+function finite(value, name, min, max, integer = false) {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < min || value > max || integer && !Number.isInteger(value)) {
+    throw new Error(`${name} must be ${integer?'an integer':'finite'} in [${min}, ${max}].`);
+  }
+  return value;
+}
+function context(project, fromKind, toKind, options = {}) {
+  assertProject(project);
+  if (!project.rules.allowedStagePairs.some(([a,b]) => a === fromKind && b === toKind)) throw new Error('Routing requires an allowed stage.');
+  const ctx = effectiveSignals(project);
+  const edges = project.connections.filter(e => ctx.ports.get(e.from).kind === fromKind && ctx.ports.get(e.to).kind === toKind);
+  if (!edges.length || edges.length > 512) throw new Error('Routing requires 1 to 512 assignments in the selected stage.');
+  const pitch = finite(options.pitch ?? 100,'pitch',0.001,1e7);
+  const layers = finite(options.layers ?? 2,'layers',1,8,true);
+  const clearance = finite(options.clearance ?? 0,'clearance',0,pitch*8);
+  const viaCost = finite(options.viaCost ?? 4*pitch,'viaCost',0,1e9);
+  const startLayer = finite(options.startLayer ?? 0,'startLayer',0,layers-1,true), endLayer = finite(options.endLayer ?? 0,'endLayer',0,layers-1,true);
+  const points = edges.flatMap(e=>[worldPoint(ctx.ports.get(e.from),ctx),worldPoint(ctx.ports.get(e.to),ctx)]);
+  const originX = finite(options.originX ?? (Math.floor(Math.min(...points.map(p=>p.x))/pitch)-3)*pitch,'originX',-1e9,1e9);
+  const originY = finite(options.originY ?? (Math.floor(Math.min(...points.map(p=>p.y))/pitch)-3)*pitch,'originY',-1e9,1e9);
+  const columns = finite(options.columns ?? Math.ceil((Math.max(...points.map(p=>p.x))-originX)/pitch)+4,'columns',1,1024,true);
+  const rows = finite(options.rows ?? Math.ceil((Math.max(...points.map(p=>p.y))-originY)/pitch)+4,'rows',1,1024,true);
+  const plane = columns*rows, count = plane*layers;
+  if (count > 262144) throw new Error('Routing grid exceeds 262,144 cells across all layers; increase pitch or restrict the window.');
+  const config = {fromKind,toKind,pitch,layers,clearance,viaCost,startLayer,endLayer,originX,originY,columns,rows};
+  const node = (x,y,z) => z*plane+y*columns+x;
+  const coords = n => [n%columns,Math.floor(n/columns)%rows,Math.floor(n/plane)];
+  function endpoint(port, z) {
+    const p = worldPoint(port,ctx), x = Math.round((p.x-originX)/pitch), y = Math.round((p.y-originY)/pitch);
+    if (Math.abs(originX+x*pitch-p.x)>EPS || Math.abs(originY+y*pitch-p.y)>EPS) throw new Error(`OFF_GRID: ${port.id} is not on the declared routing grid. No silent snapping is allowed.`);
+    if (x<0 || y<0 || x>=columns || y>=rows) throw new Error(`OUT_OF_GRID: ${port.id}.`);
+    return node(x,y,z);
+  }
+  const endpoints = new Map(edges.map(e=>[e.id,[endpoint(ctx.ports.get(e.from),startLayer),endpoint(ctx.ports.get(e.to),endLayer)]]));
+  const blockedCells = new Set(), siteOwners = new Map(); let obstacleOps = 0;
+  const inflate = clearance + pitch/2;
+  function raster(rect, fn) {
+    const x0=Math.max(0,Math.ceil((rect.x-inflate-originX)/pitch-EPS)), x1=Math.min(columns-1,Math.floor((rect.x+rect.width+inflate-originX)/pitch+EPS));
+    const y0=Math.max(0,Math.ceil((rect.y-inflate-originY)/pitch-EPS)), y1=Math.min(rows-1,Math.floor((rect.y+rect.height+inflate-originY)/pitch+EPS));
+    for (let y=y0; y<=y1; y++) for (let x=x0; x<=x1; x++) {
+      if (++obstacleOps > 2000000) throw new Error('Obstacle rasterization budget exhausted.');
+      fn(y*columns+x);
+    }
+  }
+  for (const k of project.keepouts.filter(k=>k.kinds.includes(fromKind)||k.kinds.includes(toKind))) {
+    const corners = [[0,0],[k.width,0],[0,k.height],[k.width,k.height]].map(([x,y])=>transformPoint({x:k.x+x,y:k.y+y},ctx.dies.get(k.dieId)));
+    const x=Math.min(...corners.map(p=>p.x)), y=Math.min(...corners.map(p=>p.y));
+    raster({x,y,width:Math.max(...corners.map(p=>p.x))-x,height:Math.max(...corners.map(p=>p.y))-y},cell=>blockedCells.add(cell));
+  }
+  // Conservative site columns: active terminals and reserved/NC positions block all
+  // route layers except for a route's own terminals. Empty candidate sites are not copper.
+  for (const p of project.ports.filter(p=>[fromKind,toKind].includes(p.kind) && (['reserved','nc'].includes(p.role)||ctx.incoming.has(p.id)||ctx.outgoing.has(p.id)))) {
+    const q=worldPoint(p,ctx);
+    raster({...q,width:0,height:0},cell=>{if(!siteOwners.has(cell))siteOwners.set(cell,new Set());siteOwners.get(cell).add(p.id);});
+  }
+  function staticBlocked(n,e) {
+    const cell=n%plane;
+    return blockedCells.has(cell) || [...(siteOwners.get(cell)||[])].some(id=>id!==e.from&&id!==e.to);
+  }
+  const radius = Math.ceil(clearance/pitch);
+  function halo(n) {
+    const [x,y,z]=coords(n), result=[];
+    for(let dy=-radius;dy<=radius;dy++)for(let dx=-radius;dx<=radius;dx++) {
+      if(x+dx>=0&&x+dx<columns&&y+dy>=0&&y+dy<rows)result.push(node(x+dx,y+dy,z));
+    }
+    return result;
+  }
+  return {ctx,edges,config,node,coords,plane,count,endpoints,staticBlocked,halo};
+}
+class MinHeap {
+  constructor(){this.items=[];}
+  push(item){const a=this.items;a.push(item);let i=a.length-1;while(i>0){const p=(i-1)>>1;if(a[p][0]<=item[0])break;a[i]=a[p];i=p;}a[i]=item;}
+  pop(){const a=this.items,top=a[0],last=a.pop();if(a.length){let i=0;while(i*2+1<a.length){let child=i*2+1;if(child+1<a.length&&a[child+1][0]<a[child][0])child++;if(a[child][0]>=last[0])break;a[i]=a[child];i=child;}a[i]=last;}return top;}
+  get size(){return this.items.length;}
+}
+function pathSearch(c, edge, occupied, budget, penalty = null) {
+  const [start,goal]=c.endpoints.get(edge.id), [gx,gy,gz]=c.coords(goal), {pitch,viaCost,columns,rows,layers}=c.config;
+  if(c.staticBlocked(start,edge)||c.staticBlocked(goal,edge)||!penalty&&(occupied.has(start)||occupied.has(goal)))return {path:null,reason:'blocked-terminal'};
+  const dist=new Float64Array(c.count).fill(Infinity), prev=new Int32Array(c.count).fill(-1), closed=new Uint8Array(c.count), heap=new MinHeap();
+  const h=n=>{const [x,y,z]=c.coords(n);return (Math.abs(x-gx)+Math.abs(y-gy))*pitch+Math.abs(z-gz)*viaCost;};
+  dist[start]=0;heap.push([h(start),start,0]);
+  while(heap.size){
+    if(budget.expansions>=budget.maxExpansions||performance.now()-budget.started>=budget.timeLimitMs)return {path:null,reason:'search-budget'};
+    const [,n,g]=heap.pop();if(closed[n]||g!==dist[n])continue;closed[n]=1;budget.expansions++;
+    if(n===goal){const path=[];for(let v=goal;v!==-1;v=prev[v])path.push(c.coords(v));return {path:path.reverse(),reason:null};}
+    const [x,y,z]=c.coords(n), neighbours=[];
+    if(x)neighbours.push([n-1,pitch]);if(x+1<columns)neighbours.push([n+1,pitch]);if(y)neighbours.push([n-columns,pitch]);if(y+1<rows)neighbours.push([n+columns,pitch]);
+    if(z)neighbours.push([n-c.plane,viaCost]);if(z+1<layers)neighbours.push([n+c.plane,viaCost]);
+    for(const [v,cost]of neighbours){if(closed[v]||c.staticBlocked(v,edge)||!penalty&&occupied.has(v))continue;const ng=g+cost+(penalty?penalty(v):0);if(ng<dist[v]){dist[v]=ng;prev[v]=n;heap.push([ng+h(v),v,ng]);}}
+  }
+  return {path:null,reason:'no-path-with-current-reservations'};
+}
+function routeMetrics(routes,pitch){let wireLength=0,vias=0;for(const r of routes)for(let i=1;i<r.path.length;i++){if(r.path[i][2]!==r.path[i-1][2])vias++;else wireLength+=pitch;}return {routed:routes.length,wireLength,vias};}
+
+/** Sequential multi-order A* supplies geometric route witnesses, not global routing
+ * infeasibility proofs or foundry-qualified conductor/return-path signoff. */
+function routeStage(project,fromKind='pad',toKind='ball',options={}) {
+  const c=context(project,fromKind,toKind,options), before=analyze(project);
+  const maxExpansions=finite(options.maxExpansions??500000,'maxExpansions',1,2000000,true), timeLimitMs=finite(options.timeLimitMs??5000,'timeLimitMs',1,60000);
+  const orderTrials=finite(options.orderTrials??3,'orderTrials',1,3,true);
+  const budget={expansions:0,maxExpansions,timeLimitMs,started:performance.now()};
+  let best={routes:[],failures:c.edges.map(e=>({connectionId:e.id,reason:'not-attempted'}))};
+  const result={type:'openbumpplan-route-witness',schemaVersion:1,designKey:routingDesignKey(project),config:c.config,routes:[],failures:[],metrics:{routed:0,wireLength:0,vias:0},verified:false};
+  if(!before.complete||before.detailsTruncated||before.errors)return {...result,status:'input-invalid',failures:best.failures,message:'Repair hard planning violations and incomplete analysis before routing.'};
+  const length=e=>manhattan(worldPoint(c.ctx.ports.get(e.from),c.ctx),worldPoint(c.ctx.ports.get(e.to),c.ctx));
+  const longest=[...c.edges].sort((a,b)=>length(b)-length(a)||a.id.localeCompare(b.id));
+  const orders=[longest,[...longest].reverse(),[...c.edges].sort((a,b)=>a.id.localeCompare(b.id))];
+  let attemptedOrders=0;
+  for(const order of orders.slice(0,orderTrials)){
+    attemptedOrders++;const occupied=new Set(), routes=[],failures=[];
+    for(const edge of order){
+      const path=pathSearch(c,edge,occupied,budget);
+      if(!path.path){failures.push({connectionId:edge.id,reason:path.reason});continue;}
+      routes.push({connectionId:edge.id,path:path.path});
+      for(const [x,y,z]of path.path)for(const n of c.halo(c.node(x,y,z)))occupied.add(n);
+    }
+    if(attemptedOrders===1||routes.length>best.routes.length||routes.length===best.routes.length&&routeMetrics(routes,c.config.pitch).wireLength<routeMetrics(best.routes,c.config.pitch).wireLength)best={routes,failures};
+    if(!failures.length||budget.expansions>=maxExpansions||performance.now()-budget.started>=timeLimitMs)break;
+  }
+  Object.assign(result,best,{metrics:routeMetrics(best.routes,c.config.pitch),expansions:budget.expansions,attemptedOrders,elapsedMs:performance.now()-budget.started});
+  const verification=verifyRoutes(project,result);result.verification=verification;result.verified=verification.ok;
+  result.status=verification.ok?'routed':best.failures.length?'partial':'constraint-failed';
+  result.message=verification.ok?'All selected-stage routes independently checked on the declared conservative grid. Not electrical or manufacturing signoff.':
+    'No fully valid witness was found within the route-order/search budget. This is NOT proof that the design is unroutable.';
+  return result;
+}
+
+/** Search-independent witness check: never trust solver status, claimed metrics,
+ * or completeness. Validate every segment, obstacle, terminal and inter-route gap. */
+function verifyRoutes(project,witness) {
+  const issues=[];const add=(code,message)=>{if(issues.length<1000)issues.push({code,message});};
+  try {
+    if(!witness||witness.type!=='openbumpplan-route-witness'||witness.schemaVersion!==1)throw new Error('Unsupported route witness.');
+    if(witness.designKey!==routingDesignKey(project))throw new Error('STALE_DESIGN: route witness belongs to different design content.');
+    const c=context(project,witness.config.fromKind,witness.config.toKind,witness.config);
+    if(!Array.isArray(witness.routes)||witness.routes.length>c.edges.length)throw new Error('Invalid route list.');
+    const edgeMap=new Map(c.edges.map(e=>[e.id,e])),seen=new Set(),occupied=new Map(),lengths=new Map();let checkedNodes=0;
+    const planning=analyze(project);if(!planning.complete||planning.detailsTruncated||planning.errors)add('PLANNING_INVALID','Input does not pass a complete hard-rule check.');
+    for(const route of witness.routes){
+      const e=edgeMap.get(route.connectionId);
+      if(!e||seen.has(route.connectionId)){add('ROUTE_ID','Unknown or duplicate routed connection.');continue;}seen.add(e.id);
+      if(!Array.isArray(route.path)||!route.path.length){add('EMPTY_PATH',e.id);continue;}
+      const nodes=[];let valid=true;
+      for(const xyz of route.path){
+        if(++checkedNodes>1000000)throw new Error('Route witness exceeds the one-million-node verification limit.');
+        if(!Array.isArray(xyz)||xyz.length!==3||xyz.some(v=>!Number.isInteger(v))||xyz[0]<0||xyz[0]>=c.config.columns||xyz[1]<0||xyz[1]>=c.config.rows||xyz[2]<0||xyz[2]>=c.config.layers){add('INVALID_NODE',e.id);valid=false;break;}
+        const n=c.node(...xyz);nodes.push(n);
+        if(c.staticBlocked(n,e))add('OBSTACLE',`${e.id}: obstacle/site column at ${xyz.join(',')}.`);
+        if(occupied.has(n))add('ROUTE_CLEARANCE',`${e.id} conflicts with ${occupied.get(n)} at ${xyz.join(',')}.`);
+      }
+      if(!valid)continue;
+      const [start,end]=c.endpoints.get(e.id);
+      if(nodes[0]!==start||nodes.at(-1)!==end)add('ENDPOINT_MISMATCH',e.id);
+      if(new Set(nodes).size!==nodes.length)add('ROUTE_LOOP',e.id);
+      let wireLength=0;
+      for(let i=1;i<route.path.length;i++){
+        const a=route.path[i-1],b=route.path[i];
+        if(Math.abs(a[0]-b[0])+Math.abs(a[1]-b[1])+Math.abs(a[2]-b[2])!==1)add('NON_ADJACENT_STEP',e.id);
+        else if(a[2]===b[2])wireLength+=c.config.pitch;
+      }
+      if(wireLength>project.rules.maxLength+EPS)add('ROUTED_LENGTH_LIMIT',e.id);
+      lengths.set(e.id,wireLength);
+      for(const n of nodes)for(const h of c.halo(n))occupied.set(h,e.id);
+    }
+    for(const e of c.edges)if(!seen.has(e.id))add('MISSING_ROUTE',e.id);
+    const pairs=new Map();
+    for(const e of c.edges){const s=c.ctx.signals.get(e.from);if(s.pair){if(!pairs.has(s.pair))pairs.set(s.pair,[]);pairs.get(s.pair).push(e);}}
+    for(const [pair,edges]of pairs)if(edges.length===2&&edges.every(e=>lengths.has(e.id))&&Math.abs(lengths.get(edges[0].id)-lengths.get(edges[1].id))>project.rules.pairMaxSkew+EPS)add('ROUTED_PAIR_SKEW',pair);
+    const metrics=routeMetrics(witness.routes.filter(r=>Array.isArray(r.path)&&r.path.every(p=>Array.isArray(p)&&p.length===3)),c.config.pitch);
+    if(stableStringify(metrics)!==stableStringify(witness.metrics))add('METRICS_MISMATCH','Claimed routing metrics do not match the witness.');
+    return {ok:issues.length===0,issues,metrics,checkedNodes,complete:seen.size===c.edges.length};
+  } catch(error){add('INVALID_WITNESS',error.message);return {ok:false,issues,complete:false};}
+}
+
+function exportRoutesSVG(project,witness) {
+  // Even partial routes are useful for debugging, but the title never calls them clear.
+  const checked=verifyRoutes(project,witness);
+  if(!witness?.config||!Array.isArray(witness.routes))throw new Error('Invalid route witness.');
+  const c=witness.config, esc=s=>String(s).replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+  const palette=['#2563eb','#dc2626','#059669','#7c3aed','#d97706','#0891b2','#be185d','#475569'];
+  const lines=[];
+  for(const r of witness.routes)for(let i=1;i<r.path.length;i++){
+    const a=r.path[i-1],b=r.path[i];if(![...a,...b].every(Number.isFinite))continue;
+    const title=esc(`${r.connectionId} / routing layer ${a[2]}`);
+    if(a[2]!==b[2])lines.push(`<circle cx="${a[0]}" cy="${a[1]}" r=".22" fill="none" stroke="#111827" stroke-width=".08"><title>${title} via</title></circle>`);
+    else lines.push(`<path d="M${a[0]},${a[1]} L${b[0]},${b[1]}" stroke="${palette[a[2]]||'#111827'}" stroke-width=".12" fill="none"><title>${title}</title></path>`);
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1 -3 ${Number(c.columns)+1} ${Number(c.rows)+4}" role="img"><title>${esc(project.name)}: ${checked.ok?'checked grid witness':'NOT fully checked'} — planning, not signoff</title><rect x="-1" y="-3" width="${Number(c.columns)+1}" height="${Number(c.rows)+4}" fill="white"/><text x="0" y="-1.5" font-family="sans-serif" font-size=".7">${esc(checked.ok?'Checked routing grid — not signoff':'Partial / invalid routing — review required')}</text><g transform="translate(0,${Number(c.rows)-1}) scale(1,-1)">${lines.join('')}</g></svg>`;
+}
+
+
+/** Negotiated-congestion rip-up/reroute. Temporary collisions are allowed ONLY
+ * during search. The exact same fail-closed grid verifier gates final results.
+ * Historical congestion steers later searches out of scarce routing channels. */
+function routeNegotiated(project,fromKind='pad',toKind='ball',options={}) {
+  const started=performance.now();
+  const timeLimitMs=finite(options.timeLimitMs??15000,'timeLimitMs',1,60000);
+  const maxIterations=finite(options.maxIterations??20,'maxIterations',1,50,true);
+  const maxExpansions=finite(options.maxExpansions??2000000,'maxExpansions',1,2000000,true);
+  const base=routeStage(project,fromKind,toKind,{...options,timeLimitMs:Math.max(1,timeLimitMs/4),maxExpansions:Math.max(1,Math.floor(maxExpansions/4))});
+  if(base.verified||base.status==='input-invalid')return {...base,strategy:'negotiated-congestion',negotiationIterations:0};
+  const c=context(project,fromKind,toKind,options),occupancy=new Int32Array(c.count),history=new Float64Array(c.count);
+  const budget={started,timeLimitMs,maxExpansions,expansions:base.expansions||0};
+  const paths=new Map(base.routes.map(r=>[r.connectionId,r.path]));
+  const reserve=(path,sign)=>{const cells=new Set();for(const xyz of path)for(const h of c.halo(c.node(...xyz)))cells.add(h);for(const h of cells)occupancy[h]+=sign;};
+  for(const path of paths.values())reserve(path,1);
+  const degree=e=>c.endpoints.get(e.id).reduce((sum,n)=>sum+history[n],0);
+  let best=base,bestIssues=base.verification?.issues?.length??Infinity,iterations=0;
+  for(let iteration=1;iteration<=maxIterations;iteration++){
+    if(performance.now()-started>=timeLimitMs||budget.expansions>=maxExpansions)break;
+    iterations=iteration;const failures=[];
+    const order=[...c.edges].sort((a,b)=>Number(paths.has(a.id))-Number(paths.has(b.id))||degree(b)-degree(a)||a.id.localeCompare(b.id));
+    if(iteration%2===0)order.reverse();
+    for(const e of order){
+      if(paths.has(e.id)){reserve(paths.get(e.id),-1);paths.delete(e.id);}
+      const found=pathSearch(c,e,new Set(),budget,n=>c.config.pitch*(2+iteration)*(occupancy[n]+history[n]));
+      if(!found.path)failures.push({connectionId:e.id,reason:found.reason});
+      else{paths.set(e.id,found.path);reserve(found.path,1);}
+    }
+    for(let n=0;n<c.count;n++)if(occupancy[n]>1)history[n]+=occupancy[n]-1;
+    const routes=[...paths].map(([connectionId,path])=>({connectionId,path}));
+    const candidate={...base,routes,failures,metrics:routeMetrics(routes,c.config.pitch)};
+    const check=verifyRoutes(project,candidate);candidate.verification=check;candidate.verified=check.ok;
+    candidate.status=check.ok?'routed':failures.length?'partial':'constraint-failed';
+    if(check.ok||routes.length>best.routes.length||routes.length===best.routes.length&&check.issues.length<bestIssues){best=candidate;bestIssues=check.issues.length;}
+    if(check.ok)break;
+  }
+  return {...best,strategy:'negotiated-congestion',negotiationIterations:iterations,expansions:budget.expansions,elapsedMs:performance.now()-started,
+    message:best.verified?'A congestion-repaired route witness passed an independent grid check. No electrical or manufacturing signoff is implied.':'Negotiation budget exhausted without a valid complete witness. This is NOT a proof of unroutability.'};
+}
+
+return {routingDesignKey,routeStage,verifyRoutes,exportRoutesSVG,routeNegotiated};})();
+__mods["src/core/spatial-index.js"]=(()=>{
+/** Deterministic, conservative broad phase for continuous copper geometry.
+ * This module never declares clearance to be satisfied. It only removes pairs
+ * whose enclosing boxes are too far apart even at the largest enclosed radius.
+ * The independent capsule/disc distance calculation remains the authority.
+ *
+ * A caller-supplied work meter bounds both construction and traversal. Results
+ * are original input indices, sorted to make diagnostic ordering reproducible.
+ */
+const LEAF_SIZE = 8;
+const MAX_OBJECTS = 1_000_000;
+
+function checkedBox(value) {
+  if (!value || !['minX', 'maxX', 'minY', 'maxY', 'radius'].every(k => Number.isFinite(value[k])) ||
+      value.minX > value.maxX || value.minY > value.maxY || value.radius < 0) {
+    throw new Error('Invalid continuous-geometry spatial box.');
+  }
+  return {minX:value.minX, maxX:value.maxX, minY:value.minY, maxY:value.maxY, radius:value.radius};
+}
+
+function buildSpatialIndex(objects, spend = () => {}) {
+  if (!Array.isArray(objects) || objects.length > MAX_OBJECTS || typeof spend !== 'function') {
+    throw new Error('Invalid or oversized continuous-geometry spatial index.');
+  }
+  const entries = objects.map((object, index) => {
+    spend();
+    return {...checkedBox(object), index};
+  });
+  function build(items) {
+    if (!items.length) return null;
+    const bounds = {minX:Infinity, maxX:-Infinity, minY:Infinity, maxY:-Infinity, radius:0};
+    for (const item of items) {
+      spend();
+      bounds.minX = Math.min(bounds.minX, item.minX);
+      bounds.maxX = Math.max(bounds.maxX, item.maxX);
+      bounds.minY = Math.min(bounds.minY, item.minY);
+      bounds.maxY = Math.max(bounds.maxY, item.maxY);
+      bounds.radius = Math.max(bounds.radius, item.radius);
+    }
+    if (items.length <= LEAF_SIZE) return {...bounds, items};
+    const axis = bounds.maxX - bounds.minX >= bounds.maxY - bounds.minY ? 'X' : 'Y';
+    const center = a => a['min' + axis] / 2 + a['max' + axis] / 2;
+    items.sort((a, b) => center(a) - center(b) || a.index - b.index);
+    const middle = Math.floor(items.length / 2);
+    return {...bounds, left:build(items.slice(0, middle)), right:build(items.slice(middle))};
+  }
+  return build(entries);
+}
+
+function possible(a, b, padding) {
+  // Compare coordinate gaps instead of rounding inflated box boundaries. Each
+  // gap is a lower bound on centerline distance; b.radius is an upper bound for
+  // every descendant. Inclusive tests deliberately retain boundary contact.
+  const sum = a.radius + b.radius + padding;
+  // Outward allowance also covers the different floating-point grouping of
+  // (rA + rB + clearance) + tolerance in the narrow phase.
+  const radius = sum + 8 * Number.EPSILON * Math.max(1, a.radius, b.radius, padding);
+  const dx = Math.max(0, a.minX - b.maxX, b.minX - a.maxX);
+  const dy = Math.max(0, a.minY - b.maxY, b.minY - a.maxY);
+  return dx <= radius && dy <= radius;
+}
+
+function nearbyIndices(index, object, padding = 0, spend = () => {}) {
+  const query = checkedBox(object);
+  if (!Number.isFinite(padding) || padding < 0 || typeof spend !== 'function') {
+    throw new Error('Invalid continuous-geometry spatial query.');
+  }
+  const result = [], stack = index ? [index] : [];
+  while (stack.length) {
+    spend();
+    const node = stack.pop();
+    if (!possible(query, node, padding)) continue;
+    if (node.items) {
+      for (const item of node.items) {
+        spend();
+        if (possible(query, item, padding)) result.push(item.index);
+      }
+    } else {
+      stack.push(node.right, node.left);
+    }
+  }
+  return result.sort((a, b) => a - b);
+}
+
+return {buildSpatialIndex,nearbyIndices};})();
+__mods["src/core/copper.js"]=(()=>{
+const { assertProject, clone, effectiveSignals, worldPoint, transformPoint, stableStringify }=__mods["src/core/model.js"];
+const { analyze }=__mods["src/core/rules.js"];
+const { buildSpatialIndex, nearbyIndices }=__mods["src/core/spatial-index.js"];
+/** Continuous-coordinate capsule/disc geometry. Deliberately does not import
+ * routing.js, its rasterizer, its cell halo, or its path checker. This validates
+ * a DECLARED simplified technology, not a foundry deck or a 3D field solution. */
+const TOL=1e-8;
+function normalizeTechnology(technology) {
+  if(!technology||technology.units!=='um')throw new Error('Explicit copper technology with units="um" is required.');
+  const keys=['units','traceWidth','viaDiameter','padDiameter','clearance'];
+  if(Object.keys(technology).some(k=>!keys.includes(k)))throw new Error('Unknown copper technology field.');
+  for(const k of keys.slice(1))if(!Number.isFinite(technology[k])||technology[k]<(k==='clearance'?0:1e-5)||technology[k]>1e7)throw new Error(`Invalid copper ${k}.`);
+  return Object.fromEntries(keys.map(k=>[k,technology[k]]));
+}
+function key(project){const p=clone(project);delete p.audit;delete p.revision;return stableStringify(p);}
+function box(a,b,radius,layer,connectionId,kind){return {minX:Math.min(a.x,b.x),maxX:Math.max(a.x,b.x),minY:Math.min(a.y,b.y),maxY:Math.max(a.y,b.y),radius,layer,connectionId,kind};}
+function boxDistance(a,b) {
+  const dx=Math.max(0,a.minX-b.maxX,b.minX-a.maxX),dy=Math.max(0,a.minY-b.maxY,b.minY-a.maxY);
+  return Math.hypot(dx,dy);
+}
+function verifyCopper(project,witness,technology,options={}) {
+  const issues=[];let comparisons=0,spatialVisits=0,totalIssues=0;
+  const add=(code,message,objects=[])=>{totalIssues++;if(issues.length<1000)issues.push({code,message,objects});};
+  try {
+    assertProject(project);const tech=normalizeTechnology(technology);
+    if(!options||typeof options!=='object'||Array.isArray(options)||Object.keys(options).some(k=>!['maxComparisons','maxSpatialVisits'].includes(k)))throw new Error('Unknown continuous-geometry verification option.');
+    const maxComparisons=options.maxComparisons??2000000;
+    const maxSpatialVisits=options.maxSpatialVisits??10000000;
+    if(!Number.isInteger(maxSpatialVisits)||maxSpatialVisits<1||maxSpatialVisits>50000000)throw new Error('Invalid continuous-geometry spatial-work budget.');
+    const spend=()=>{if(++spatialVisits>maxSpatialVisits)throw new Error('Continuous geometry spatial-work budget exceeded; no all-clear result.');};
+    if(!Number.isInteger(maxComparisons)||maxComparisons<1||maxComparisons>10000000)throw new Error('Invalid continuous-geometry comparison budget.');
+    if(witness?.type!=='openbumpplan-route-witness'||witness.schemaVersion!==1||witness.designKey!==key(project))throw new Error('Missing, stale or unsupported route witness.');
+    const c=witness.config,ctx=effectiveSignals(project);
+    if(!c||!project.rules.allowedStagePairs.some(([a,b])=>a===c.fromKind&&b===c.toKind))throw new Error('Invalid routing stage.');
+    for(const v of ['pitch','originX','originY'])if(!Number.isFinite(c[v])||Math.abs(c[v])>1e9)throw new Error('Invalid grid coordinate system.');
+    if(c.pitch<=0||!Number.isInteger(c.layers)||c.layers<1||c.layers>8||!Number.isInteger(c.columns)||!Number.isInteger(c.rows)||c.columns<1||c.rows<1||c.columns*c.rows*c.layers>262144||![c.startLayer,c.endLayer].every(z=>Number.isInteger(z)&&z>=0&&z<c.layers))throw new Error('Invalid grid bounds.');
+    const expected=project.connections.filter(e=>ctx.ports.get(e.from).kind===c.fromKind&&ctx.ports.get(e.to).kind===c.toKind),edgeMap=new Map(expected.map(e=>[e.id,e]));
+    if(!Array.isArray(witness.routes)||witness.routes.length>expected.length||!expected.length)throw new Error('Invalid route collection.');
+    const planning=analyze(project);if(!planning.complete||planning.detailsTruncated||planning.errors)add('PLANNING_INVALID','Configured hard rules are not fully satisfied.');
+    const primitives=[],seen=new Set(),lengths=new Map();let nodes=0,wireLength=0,vias=0;
+    const xy=xyz=>({x:c.originX+xyz[0]*c.pitch,y:c.originY+xyz[1]*c.pitch});
+    for(const route of witness.routes){
+      const e=edgeMap.get(route.connectionId);
+      if(!e||seen.has(e.id))throw new Error('Unknown or duplicate route ID.');seen.add(e.id);
+      if(!Array.isArray(route.path)||!route.path.length)throw new Error('Empty path.');
+      for(const v of route.path){
+        if(++nodes>1000000)throw new Error('Continuous geometry node budget exceeded.');
+        if(!Array.isArray(v)||v.length!==3||v.some(n=>!Number.isInteger(n))||v[0]<0||v[0]>=c.columns||v[1]<0||v[1]>=c.rows||v[2]<0||v[2]>=c.layers)throw new Error('Invalid route coordinate.');
+      }
+      const first=xy(route.path[0]),last=xy(route.path.at(-1)),start=worldPoint(ctx.ports.get(e.from),ctx),end=worldPoint(ctx.ports.get(e.to),ctx);
+      if(Math.hypot(first.x-start.x,first.y-start.y)>TOL||Math.hypot(last.x-end.x,last.y-end.y)>TOL||route.path[0][2]!==c.startLayer||route.path.at(-1)[2]!==c.endLayer)add('ENDPOINT_MISMATCH',e.id,[e.id]);
+      if(new Set(route.path.map(p=>p.join(','))).size!==route.path.length)add('LOOP',e.id,[e.id]);
+      let length=0,run=null;
+      const flush=()=>{if(run){primitives.push(box(run.start,run.end,tech.traceWidth/2,run.z,e.id,'trace'));run=null;}};
+      if(route.path.length===1)primitives.push(box(first,first,tech.traceWidth/2,c.startLayer,e.id,'terminal'));
+      for(let i=1;i<route.path.length;i++){
+        const a=route.path[i-1],b=route.path[i],dx=b[0]-a[0],dy=b[1]-a[1],dz=b[2]-a[2];
+        if(Math.abs(dx)+Math.abs(dy)+Math.abs(dz)!==1)throw new Error('Non-adjacent/diagonal route step.');
+        if(dz){flush();vias++;const p=xy(a);for(const z of [a[2],b[2]])primitives.push(box(p,p,tech.viaDiameter/2,z,e.id,'via'));}
+        else{
+          const direction=dx?`x${dx}`:`y${dy}`;
+          if(run&&run.z===a[2]&&run.direction===direction)run.end=xy(b);
+          else{flush();run={start:xy(a),end:xy(b),z:a[2],direction};}
+          length+=c.pitch;
+        }
+      }
+      flush();lengths.set(e.id,length);wireLength+=length;
+      if(length>project.rules.maxLength+TOL)add('ROUTED_LENGTH_LIMIT',e.id,[e.id]);
+    }
+    for(const e of expected)if(!seen.has(e.id))add('MISSING_ROUTE',e.id,[e.id]);
+    const pairGroups=new Map();for(const e of expected){const signal=ctx.signals.get(e.from);if(signal.pair){if(!pairGroups.has(signal.pair))pairGroups.set(signal.pair,[]);pairGroups.get(signal.pair).push(e.id);}}
+    for(const [pair,ids]of pairGroups)if(ids.length===2&&ids.every(id=>lengths.has(id))&&Math.abs(lengths.get(ids[0])-lengths.get(ids[1]))>project.rules.pairMaxSkew+TOL)add('ROUTED_PAIR_SKEW',pair,ids);
+    const obstacles=[];
+    for(const k of project.keepouts.filter(k=>k.kinds.includes(c.fromKind)||k.kinds.includes(c.toKind))){
+      const corners=[[0,0],[k.width,0],[0,k.height],[k.width,k.height]].map(([x,y])=>transformPoint({x:k.x+x,y:k.y+y},ctx.dies.get(k.dieId)));
+      obstacles.push({minX:Math.min(...corners.map(p=>p.x)),maxX:Math.max(...corners.map(p=>p.x)),minY:Math.min(...corners.map(p=>p.y)),maxY:Math.max(...corners.map(p=>p.y)),radius:0,id:k.id,kind:'keepout'});
+    }
+    for(const p of project.ports.filter(p=>[c.fromKind,c.toKind].includes(p.kind)&&(['reserved','nc'].includes(p.role)||ctx.incoming.has(p.id)||ctx.outgoing.has(p.id)))){
+      const pos=worldPoint(p,ctx);obstacles.push({...box(pos,pos,tech.padDiameter/2,-1,'','pad'),id:p.id});
+    }
+    const near=(a,b)=>{
+      if(++comparisons>maxComparisons)throw new Error('Continuous geometry comparison budget exceeded; no all-clear result.');
+      const distance=boxDistance(a,b),required=a.radius+b.radius+tech.clearance;
+      // Contact is forbidden independently of clearance tolerance. A tiny
+      // positive clearance must never turn touching/overlapping copper into a pass.
+      return distance<=a.radius+b.radius+TOL || distance<required-TOL;
+    };
+    // The broad phase is conservative only: every returned pair still passes
+    // through the unchanged continuous Euclidean narrow-phase calculation.
+    // Keep original diagnostic order, and never charge distant pairs as actual
+    // distance comparisons. Index construction/traversal has its own hard cap.
+    const padding=tech.clearance+TOL;
+    for(let z=0;z<c.layers;z++){
+      const list=primitives.filter(p=>p.layer===z).sort((a,b)=>(a.minX-a.radius)-(b.minX-b.radius));
+      const index=buildSpatialIndex(list,spend);
+      for(let i=0;i<list.length;i++){
+        const a=list[i];
+        for(const j of nearbyIndices(index,a,padding,spend)){
+          const b=list[j];
+          if(j<i&&a.connectionId!==b.connectionId&&near(a,b))add('COPPER_CLEARANCE',`${a.kind}/${b.kind} separation violates declared width/clearance.`,[a.connectionId,b.connectionId]);
+        }
+      }
+    }
+    const obstacleIndex=buildSpatialIndex(obstacles,spend);
+    for(const a of primitives){
+      const e=edgeMap.get(a.connectionId);
+      for(const i of nearbyIndices(obstacleIndex,a,padding,spend)){
+        const b=obstacles[i];
+        if(b.kind==='pad'&&(b.id===e.from||b.id===e.to))continue;
+        if(near(a,b))add(b.kind==='pad'?'PAD_CLEARANCE':'COPPER_KEEPOUT',`${a.connectionId} violates ${b.kind} clearance at ${b.id}.`,[a.connectionId,b.id]);
+      }
+    }
+    // Stage-local pad discs are indexed separately from route layers. This
+    // preserves the all-layer obstacle semantics and own-terminal exclusions.
+    const pads=obstacles.filter(p=>p.kind==='pad');
+    const padIndex=buildSpatialIndex(pads,spend);
+    for(let i=0;i<pads.length;i++)for(const j of nearbyIndices(padIndex,pads[i],padding,spend)){
+      if(j<i&&ctx.ports.get(pads[i].id).kind===ctx.ports.get(pads[j].id).kind&&near(pads[i],pads[j]))add('PAD_PAD_CLEARANCE','Occupied/reserved pads overlap or violate spacing.',[pads[i].id,pads[j].id]);
+    }
+    const metrics={routed:seen.size,wireLength,vias};
+    if(stableStringify(metrics)!==stableStringify(witness.metrics))add('METRICS_MISMATCH','Route metrics do not match physical path lengths and layer transitions.');
+    return {ok:totalIssues===0,complete:true,technology:tech,scope:'Declared round-capped trace widths, circular pads/vias and axis-aligned keepouts on each routing layer; no electrical/thermal/foundry signoff.',metrics,primitives:primitives.length,comparisons,spatialVisits,algorithm:'aabb-bvh-v1',totalIssues,issues};
+  }catch(error){add('INVALID_OR_INCOMPLETE',error.message);return {ok:false,complete:false,comparisons,spatialVisits,algorithm:'aabb-bvh-v1',totalIssues,issues};}
+}
+
+return {normalizeTechnology,boxDistance,verifyCopper};})();
+__mods["src/core/hash.js"]=(()=>{
+/** SHA-256 for checksum-only use when Web Crypto is absent (e.g. a sandboxed
+ * offline document). Algorithm: RFC 6234 sections 4–6. No signing/key operations.
+ * Native Web Crypto is preferred by evidence.js. Cross-checked against Node/OpenSSL. */
+const K = new Uint32Array([
+  0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+  0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+  0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+  0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+  0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+  0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+  0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+  0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+]);
+const rotate = (v,n) => (v>>>n)|(v<<(32-n));
+function sha256Bytes(bytes) {
+  if(!(bytes instanceof Uint8Array)||bytes.length>64*1024*1024)throw new Error('SHA-256 fallback accepts at most 64 MiB of bytes.');
+  const length=bytes.length,size=Math.ceil((length+9)/64)*64,padded=new Uint8Array(size);
+  padded.set(bytes);padded[length]=128;
+  const view=new DataView(padded.buffer);
+  view.setUint32(size-8,Math.floor(length/0x20000000));view.setUint32(size-4,(length*8)>>>0);
+  const H=new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]),w=new Uint32Array(64);
+  for(let offset=0;offset<size;offset+=64){
+    for(let i=0;i<16;i++)w[i]=view.getUint32(offset+i*4);
+    for(let i=16;i<64;i++){
+      const a=w[i-15],b=w[i-2],s0=rotate(a,7)^rotate(a,18)^(a>>>3),s1=rotate(b,17)^rotate(b,19)^(b>>>10);
+      w[i]=(w[i-16]+s0+w[i-7]+s1)>>>0;
+    }
+    let [a,b,c,d,e,f,g,h]=H;
+    for(let i=0;i<64;i++){
+      const S1=rotate(e,6)^rotate(e,11)^rotate(e,25),choose=(e&f)^(~e&g),t1=(h+S1+choose+K[i]+w[i])>>>0;
+      const S0=rotate(a,2)^rotate(a,13)^rotate(a,22),majority=(a&b)^(a&c)^(b&c),t2=(S0+majority)>>>0;
+      h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0;
+    }
+    const state=[a,b,c,d,e,f,g,h];for(let i=0;i<8;i++)H[i]=(H[i]+state[i])>>>0;
+  }
+  return [...H].map(x=>x.toString(16).padStart(8,'0')).join('');
+}
+
+return {sha256Bytes};})();
+__mods["src/core/sexpr.js"]=(()=>{
+/** Bounded, non-evaluating KiCad S-expression reader. No regex-based tree parsing.
+ * Strings remain strings, including numeric pin identifiers and Unicode names. */
+function parseSExpression(text, {maxBytes=5*1024*1024, maxNodes=400000, maxDepth=64}={}) {
+  for (const [key,value,cap] of [['maxBytes',maxBytes,5*1024*1024],['maxNodes',maxNodes,400000],['maxDepth',maxDepth,128]]) {
+    if (!Number.isSafeInteger(value)||value<1||value>cap) throw new Error(`Invalid ${key} budget`);
+  }
+  if (typeof text!=='string'||new TextEncoder().encode(text).length>maxBytes||text.includes('\0')) throw new Error('Expected NUL-free text within the byte budget');
+  let i=text.charCodeAt(0)===0xFEFF?1:0,count=0,root=null;
+  const stack=[];
+  function append(value) {
+    if (++count>maxNodes) throw new Error('S-expression node budget exceeded');
+    if (stack.length) stack.at(-1).push(value);
+    else if (root===null) root=value;
+    else throw new Error('More than one S-expression root');
+  }
+  while (i<text.length) {
+    const c=text[i];
+    if (/\s/.test(c)) {i++;continue;}
+    if (c===';') {while(i<text.length&&text[i]!=='\n')i++;continue;}
+    if (c==='(') {const node=[];append(node);stack.push(node);if(stack.length>maxDepth)throw new Error('S-expression depth budget exceeded');i++;continue;}
+    if (c===')') {if(!stack.length)throw new Error(`Unmatched closing parenthesis at ${i}`);stack.pop();i++;continue;}
+    let word='';
+    if (c==='"') {
+      i++;let closed=false;
+      while(i<text.length) {
+        const q=text[i++];
+        if(q==='"'){closed=true;break;}
+        if(q==='\\') {
+          const e=text[i++],esc={'"':'"','\\':'\\','n':'\n','r':'\r','t':'\t'};
+          if(!Object.hasOwn(esc,e))throw new Error('Unsupported string escape');
+          word+=esc[e];
+        } else {if(q.charCodeAt(0)<32)throw new Error('Unescaped control character in string');word+=q;}
+      }
+      if(!closed)throw new Error('Unterminated quoted string');
+      if(i<text.length&&!/[\s();]/.test(text[i]))throw new Error('Missing separator after quoted string');
+    } else {
+      while(i<text.length&&!/[\s();]/.test(text[i])) {
+        if(text[i]==='"'||text.charCodeAt(i)<32)throw new Error('Invalid unquoted atom');
+        word+=text[i++];
+      }
+      if(!word)throw new Error(`Invalid token at ${i}`);
+    }
+    append(word);
+  }
+  if(stack.length||!Array.isArray(root)||!root.length)throw new Error('Incomplete or empty S-expression');
+  return root;
+}
+function children(node, name) {return node.filter(v=>Array.isArray(v)&&v[0]===name);}
+function singleton(node,name,required=false) {
+  const found=children(node,name);
+  if(found.length>1||required&&!found.length)throw new Error(`Expected ${required?'exactly':'at most'} one ${name}`);
+  return found[0];
+}
+function finiteDecimal(value, label='number') {
+  if(typeof value!=='string'||!/^[-+]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(value))throw new Error(`Invalid ${label}`);
+  const n=Number(value);if(!Number.isFinite(n)||Math.abs(n)>1e6)throw new Error(`${label} out of range`);return n;
+}
+function identifier(value, label='identifier', empty=false) {
+  if(typeof value!=='string'||(!empty&&!value.length)||value.length>512||/[\u0000-\u001f\u007f]/.test(value))throw new Error(`Invalid ${label}`);
+  if(new TextDecoder().decode(new TextEncoder().encode(value))!==value)throw new Error(`Malformed Unicode in ${label}`);
+  return value;
+}
+
+return {parseSExpression,children,singleton,finiteDecimal,identifier};})();
+__mods["src/core/routed-kicad.js"]=(()=>{
+const { normalizeProject, effectiveSignals, worldPoint, transformPoint, stableStringify }=__mods["src/core/model.js"];
+const { verifyRoutes }=__mods["src/core/routing.js"];
+const { normalizeTechnology, verifyCopper }=__mods["src/core/copper.js"];
+const { sha256Bytes }=__mods["src/core/hash.js"];
+const { parseSExpression, identifier }=__mods["src/core/sexpr.js"];
+/** A deliberately bounded native handoff: one routing stage, two copper layers,
+ * circular SMD terminals and full through vias. Not a foundry signoff adapter. */
+const ROUTED_KICAD_SCHEMA = 'openbumpplan.routed-kicad/v1';
+const digest = value => sha256Bytes(new TextEncoder().encode(typeof value === 'string' ? value : stableStringify(value)));
+const quote = value => JSON.stringify(identifier(value, 'native identifier', true));
+const order = (a, b) => a < b ? -1 : a > b ? 1 : 0;
+const layer = z => z === 0 ? 'F.Cu' : 'B.Cu';
+
+// KiCad coordinates are integer nanometres in a signed 32-bit representation.
+// Leave a small range margin; do not silently round genuine sub-nanometre input.
+function nm(value, name) {
+  if (!Number.isFinite(value) || Math.abs(value * 1000) > 2000000000 ||
+      Math.abs(value * 1000 - Math.round(value * 1000)) > 0.00001) {
+    throw new Error(`${name}: require representable 1 nm geometry within +/-2 m`);
+  }
+  return Math.round(value * 1000);
+}
+const mm = value => (value / 1000000).toFixed(6);
+function specification(options) {
+  const keys = ['viaDrill', 'boardThickness', 'edgeMargin'];
+  if (!options || Array.isArray(options) || typeof options !== 'object' ||
+      Object.keys(options).some(k => !keys.includes(k))) throw new Error('Supply explicit viaDrill, boardThickness and edgeMargin in um');
+  const result = {};
+  for (const key of keys) {
+    nm(options[key], key);
+    if (options[key] <= 0) throw new Error(`${key} must be positive`);
+    result[key] = options[key];
+  }
+  return result;
+}
+
+function exportRoutedKiCad(project, witness, technology, options) {
+  const p = normalizeProject(project), tech = normalizeTechnology(technology), spec = specification(options);
+  for (const [name, value] of Object.entries(tech)) if (name !== 'units') nm(value, name);
+  if (spec.viaDrill >= tech.viaDiameter) throw new Error('Via drill must be smaller than copper via diameter');
+  if (witness?.config?.layers > 2) throw new Error('Native routed export supports one or two routing layers; blind/buried vias are not inferred');
+  const grid = verifyRoutes(p, witness), copper = verifyCopper(p, witness, tech);
+  if (!grid.ok || !copper.ok) throw new Error(`Current grid and continuous copper checks must both pass: ${JSON.stringify({grid: grid.issues, copper: copper.issues}).slice(0,1500)}`);
+  const c = witness.config, ctx = effectiveSignals(p);
+  const edges = p.connections.filter(e => ctx.ports.get(e.from).kind === c.fromKind && ctx.ports.get(e.to).kind === c.toKind);
+  const byEdge = new Map(edges.map(e => [e.id, e])), active = new Set(edges.flatMap(e => [e.from, e.to]));
+  const relevant = n => n.kind === c.fromKind || n.kind === c.toKind;
+  const ports = p.ports.filter(n => relevant(n) && (active.has(n.id) || ['reserved', 'nc'].includes(n.role) || ctx.incoming.has(n.id) || ctx.outgoing.has(n.id)));
+  const padMap = ports.map(n => {
+    const xy = worldPoint(n, ctx), net = ctx.signals.get(n.id).net || '';
+    identifier(n.id, 'pad identity'); identifier(net, 'net identity', true);
+    if (net && !active.has(n.id)) throw new Error(`Unrouted named terminal ${n.id} in selected stage`);
+    if (active.has(n.id) && !net) throw new Error(`Routed terminal ${n.id} has no net name`);
+    if (['reserved', 'nc'].includes(n.role) && net) throw new Error(`Reserved/NC terminal ${n.id} has a net`);
+    return {id: n.id, kind: n.kind, net, x: nm(xy.x, n.id + ' x'), y: nm(-xy.y, n.id + ' y'), layer: layer(n.kind === c.fromKind ? c.startLayer : c.endLayer)};
+  }).sort((a, b) => order(a.id, b.id));
+  // This router does not synthesize shared multi-terminal net trees. Prevent a
+  // collection of disconnected pairs from being presented as a routed native net.
+  const netEdges = new Map();
+  for (const e of edges) {
+    const net = ctx.signals.get(e.from).net;
+    if (netEdges.has(net)) throw new Error(`Multiple routed branches share net ${net}; native multi-terminal tree routing is not supported`);
+    netEdges.set(net, e.id);
+  }
+  const names = [...new Set(padMap.map(n => n.net).filter(Boolean))].sort(order), codes = new Map(names.map((n, i) => [n, i + 1]));
+  const width = nm(tech.traceWidth, 'trace width'), viaDiameter = nm(tech.viaDiameter, 'via diameter'), padDiameter = nm(tech.padDiameter, 'pad diameter');
+  const segments = [], vias = [];
+  const point = v => [nm(c.originX + v[0] * c.pitch, 'route x'), nm(-c.originY - v[1] * c.pitch, 'route y')];
+  for (const route of [...witness.routes].sort((a, b) => order(a.connectionId, b.connectionId))) {
+    const net = ctx.signals.get(byEdge.get(route.connectionId).from).net;
+    let run = null;
+    const flush = () => { if (run) { segments.push(run); run = null; } };
+    for (let i = 1; i < route.path.length; i++) {
+      const a = route.path[i - 1], b = route.path[i], start = point(a), end = point(b);
+      if (a[2] !== b[2]) { flush(); vias.push({at: start, net}); }
+      else {
+        const direction = [Math.sign(b[0] - a[0]), Math.sign(b[1] - a[1])].join(',');
+        if (run && run.layer === layer(a[2]) && run.direction === direction) run.end = end;
+        else { flush(); run = {start, end, layer: layer(a[2]), net, direction}; }
+      }
+    }
+    flush();
+  }
+  const keepouts = p.keepouts.filter(k => k.kinds.includes(c.fromKind) || k.kinds.includes(c.toKind)).map(k => ({id:k.id, points:[[0,0],[k.width,0],[k.width,k.height],[0,k.height]].map(([x,y]) => {
+    const q = transformPoint({x:k.x+x,y:k.y+y},ctx.dies.get(k.dieId));
+    return [nm(q.x,'keepout x'),nm(-q.y,'keepout y')];
+  })})).sort((a,b)=>order(a.id,b.id));
+  const radii = [width, viaDiameter, padDiameter];
+  const points = padMap.map(p => [p.x, p.y]).concat(segments.flatMap(s=>[s.start,s.end]),vias.map(v=>v.at),keepouts.flatMap(k=>k.points));
+  const margin = nm(spec.edgeMargin, 'edge margin') + Math.ceil(Math.max(...radii) / 2);
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+  for (const [x,y] of points) {x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);}
+  const outline = [[x0-margin,y0-margin],[x1+margin,y0-margin],[x1+margin,y1+margin],[x0-margin,y1+margin]];
+  for (const xy of outline) for (const v of xy) nm(v/1000, 'outline coordinate');
+  const lines = [`(kicad_pcb (version 20221018) (generator openbumpplan)`,
+    `  (general (thickness ${mm(nm(spec.boardThickness,'thickness'))}))`, '  (paper "A4")',
+    '  (layers (0 "F.Cu" signal) (31 "B.Cu" signal) (34 "B.Paste" user) (35 "F.Paste" user) (36 "B.SilkS" user) (37 "F.SilkS" user) (38 "B.Mask" user) (39 "F.Mask" user) (44 "Edge.Cuts" user) (48 "B.Fab" user) (49 "F.Fab" user))',
+    '  (setup (pad_to_mask_clearance 0))', '  (net 0 "")',
+    ...names.map(n => `  (net ${codes.get(n)} ${quote(n)})`)];
+  for (const [kind, z, ref] of [[c.fromKind,c.startLayer,'FROM'],[c.toKind,c.endLayer,'TO']]) {
+    const side = layer(z), letter = side[0];
+    lines.push(`  (footprint "OpenBumpPlan:Routed_${kind}" (layer ${quote(side)}) (at 0 0) (attr smd)`,
+      '    (descr "Verified planning-stage route handoff; not manufacturing approval")',
+      `    (fp_text reference "${ref}" (at 0 0) (layer "${letter}.SilkS") hide (effects (font (size 1 1) (thickness 0.15))))`,
+      `    (fp_text value "${kind}" (at 0 0) (layer "${letter}.Fab") hide (effects (font (size 1 1) (thickness 0.15))))`);
+    for (const n of padMap.filter(n => n.kind === kind)) lines.push(`    (pad ${quote(n.id)} smd circle (at ${mm(n.x)} ${mm(n.y)}) (size ${mm(padDiameter)} ${mm(padDiameter)}) (layers "${letter}.Cu" "${letter}.Paste" "${letter}.Mask")${n.net ? ` (net ${codes.get(n.net)} ${quote(n.net)})` : ''})`);
+    lines.push('  )');
+  }
+  for (const s of segments) lines.push(`  (segment (start ${s.start.map(mm).join(' ')}) (end ${s.end.map(mm).join(' ')}) (width ${mm(width)}) (layer ${quote(s.layer)}) (net ${codes.get(s.net)}))`);
+  for (const v of vias) lines.push(`  (via (at ${v.at.map(mm).join(' ')}) (size ${mm(viaDiameter)}) (drill ${mm(nm(spec.viaDrill,'via drill'))}) (layers "F.Cu" "B.Cu") (net ${codes.get(v.net)}))`);
+  for (const k of keepouts) lines.push(`  (zone (net 0) (net_name "") (layers "F.Cu" "B.Cu") (hatch edge 0.5) (keepout (tracks not_allowed) (vias not_allowed) (pads not_allowed) (copperpour not_allowed) (footprints allowed)) (polygon (pts ${k.points.map(q=>`(xy ${q.map(mm).join(' ')})`).join(' ')})))`);
+  for (let i=0;i<4;i++) lines.push(`  (gr_line (start ${outline[i].map(mm).join(' ')}) (end ${outline[(i+1)%4].map(mm).join(' ')}) (stroke (width 0.05) (type default)) (layer "Edge.Cuts"))`);
+  lines.push(')');
+  const board = lines.join('\n') + '\n';
+  // Enforce parser capacity before returning a file our own replay cannot read.
+  parseSExpression(board);
+  const receipt = {schema:ROUTED_KICAD_SCHEMA, projectSHA256:digest(p), witnessSHA256:digest(witness), technologySHA256:digest(tech), specification:spec,
+    stage:[c.fromKind,c.toKind], nativeCopperLayers:['F.Cu','B.Cu'], boardSHA256:digest(board),
+    counts:{pads:padMap.length,segments:segments.length,vias:vias.length,keepouts:keepouts.length},
+    metrics:{wireLengthUm:witness.metrics.wireLength,viaTransitions:witness.metrics.vias},
+    warnings:['One selected routing stage only; not a complete die/package/PCB manufacturing conversion.',
+      'Uniform circular pads and trace/via dimensions come from the explicitly supplied simplified technology, not a foundry deck.',
+      'Through vias connect F.Cu and B.Cu. Blind/buried vias and multilayer stackup are not inferred.',
+      'Rectangular Edge.Cuts is an automatically generated clearance envelope, NOT the original package mechanical outline.',
+      'Clearance, length and mapping rules are checked against the source; native manufacturing rules must be configured separately.',
+      'Receipt replay binds this generated board to source data; external native DRC and electrical/thermal/mechanical signoff remain necessary.']};
+  return {board,receipt};
+}
+
+/** Source-bound structural replay, not a substitute for an independent native
+ * parser. Recomputing a receipt hash cannot authorize changed tracks or nets. */
+function verifyRoutedKiCad(project,witness,technology,board,receipt,expectedOptions) {
+  try {
+    const expected=exportRoutedKiCad(project,witness,technology,expectedOptions),issues=[];
+    if(!receipt || receipt.schema!==ROUTED_KICAD_SCHEMA)throw new Error('Unsupported routed handoff receipt');
+    if(receipt.boardSHA256!==digest(board))issues.push('Board byte checksum differs from receipt');
+    const {boardSHA256:unused,...identity}=receipt,{boardSHA256:ignored,...expectedIdentity}=expected.receipt;
+    if(stableStringify(identity)!==stableStringify(expectedIdentity))issues.push('Receipt differs from independently supplied source, routes, technology or specification');
+    if(stableStringify(parseSExpression(board))!==stableStringify(parseSExpression(expected.board)))issues.push('Native structure differs from current checked source geometry');
+    return {ok:issues.length===0,complete:true,issues,counts:expected.receipt.counts};
+  } catch(error) {return {ok:false,complete:false,issues:[error.message]};}
+}
+
+return {ROUTED_KICAD_SCHEMA,exportRoutedKiCad,verifyRoutedKiCad};})();
+__mods["src/core/routed-demo.js"]=(()=>{
+const { emptyProject, normalizeProject }=__mods["src/core/model.js"];
+const { routingDesignKey }=__mods["src/core/routing.js"];
+/** Synthetic crossing fixture: a top-layer horizontal route and a vertical
+ * route that changes to the back layer and returns through two explicit vias. */
+function routedHandoffDemo() {
+  const p=emptyProject('Synthetic two-layer routed handoff');
+  p.rules={...p.rules,maxLength:100000,groundRadius:0,powerRadius:0,minGroundRatio:0,clockGroundMin:0,maxCrossings:10};
+  const pitch=1000,originX=-7000,originY=-3000;
+  const port=(id,kind,x,y,net='')=>({id,kind,x:originX+x*pitch,y:originY+y*pitch,net,role:'any'});
+  p.ports=[port('H_IN','pad',1,5,'HORIZONTAL'),port('H_OUT','ball',9,5),port('V_IN','pad',5,1,'VERTICAL'),port('V_OUT','ball',5,9),{...port('RESERVED','ball',1,10),role:'reserved'}];
+  p.connections=[{id:'H',from:'H_IN',to:'H_OUT'},{id:'V',from:'V_IN',to:'V_OUT'}];
+  p.keepouts=[{id:'FIXTURE_KEEPOUT',kinds:['pad','ball'],x:originX+10000,y:originY+10000,width:500,height:500}];
+  const project=normalizeProject(p);
+  const routes=[{connectionId:'H',path:Array.from({length:9},(_,i)=>[1+i,5,0])},
+    {connectionId:'V',path:[[5,1,0],[5,2,0],...Array.from({length:7},(_,i)=>[5,i+2,1]),[5,8,0],[5,9,0]]}];
+  const witness={type:'openbumpplan-route-witness',schemaVersion:1,designKey:routingDesignKey(project),
+    config:{fromKind:'pad',toKind:'ball',pitch,originX,originY,columns:12,rows:12,layers:2,clearance:0,viaCost:4000,startLayer:0,endLayer:0},
+    routes,metrics:{routed:2,wireLength:16000,vias:2}};
+  return {project,witness,technology:{units:'um',traceWidth:250,viaDiameter:600,padDiameter:500,clearance:200},specification:{viaDrill:300,boardThickness:1600,edgeMargin:1000}};
+}
+
+return {routedHandoffDemo};})();
+__mods["src/routed-export-ui.js"]=(()=>{
+const { exportRoutedKiCad, verifyRoutedKiCad }=__mods["src/core/routed-kicad.js"];
+const { routedHandoffDemo }=__mods["src/core/routed-demo.js"];
+const { exportRoutesSVG }=__mods["src/core/routing.js"];
+/** Mounted inside the existing workbench, sharing its current project. */
+function mountRoutedExport({container,getProject,setProject}) {
+  const panel=document.createElement('section');panel.className='panel';panel.id='routedHandoff';
+  panel.innerHTML=`<h3>05 / ROUTED HANDOFF</h3><h2>Send checked copper to KiCad</h2>
+  <p class="hint">Export one routing stage with actual traces, through vias and circular SMD pads. Source grid and continuous copper checks must pass first.</p>
+  <label>Route witness JSON<input id="routedWitnessFile" type="file" accept=".json"></label>
+  <p id="routedWitnessInfo" class="hint">No route witness loaded.</p>
+  <label>Explicit technology (µm)<textarea id="routedTechnology" spellcheck="false" aria-label="Routed handoff technology" style="min-height:150px"></textarea></label>
+  <label>Native via / board specification (µm)<textarea id="routedSpecification" spellcheck="false" aria-label="Routed handoff specification" style="min-height:110px"></textarea></label>
+  <details><summary>Try a synthetic routed example</summary><p class="hint">Replaces only the current workbench project and clears its previous intent contract. The sample settings are not manufacturing recommendations.</p><button id="routedSample">Load routed sample</button></details>
+  <div class="row"><button id="routedBuild" class="primary">Build checked routed board</button></div>
+  <pre id="routedResult" role="status" aria-live="polite">No routed output generated.</pre>
+  <div id="routedPreview" aria-label="Checked route preview"></div>
+  <div class="row"><button id="routedSaveBoard" disabled>Routed .kicad_pcb</button><button id="routedSaveReceipt" disabled>Routed receipt</button><button id="routedSaveInputs" disabled>Handoff inputs</button></div>
+  <p class="hint">Two copper layers only. The generated outline is a clearance envelope, not your mechanical package outline. Verify the exported board in KiCad with your native rules. No electrical, thermal or manufacturing signoff is implied.</p>`;
+  container.append(panel);
+  const $=id=>panel.querySelector('#'+id),json=v=>JSON.stringify(v,null,2);
+  let witness=null,generated=null,fileEpoch=0;
+  const buttons=['routedSaveBoard','routedSaveReceipt','routedSaveInputs'];
+  function invalidate(message='Source or settings changed. Rebuild and verify.') {
+    fileEpoch++;generated=null;buttons.forEach(id=>$(id).disabled=true);
+    $('routedResult').textContent=message;$('routedPreview').replaceChildren();
+  }
+  function fail(error){invalidate('Rejected: '+error.message);}
+  function download(name,value){const blob=new Blob([typeof value==='string'?value:json(value)],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
+  function inputs(){if(!witness)throw new Error('Load a route witness for the current project');return {project:getProject(),witness,technology:JSON.parse($('routedTechnology').value),specification:JSON.parse($('routedSpecification').value)};}
+  function replay(){const d=inputs();if(!generated)throw new Error('Build and verify current routed output first');const r=verifyRoutedKiCad(d.project,d.witness,d.technology,generated.board,generated.receipt,d.specification);if(!r.ok)throw new Error(r.issues.join('; '));return d;}
+  $('routedTechnology').value=json({units:'um',traceWidth:null,viaDiameter:null,padDiameter:null,clearance:null});
+  $('routedSpecification').value=json({viaDrill:null,boardThickness:null,edgeMargin:null});
+  $('routedWitnessFile').onchange=async()=>{
+    invalidate();witness=null;$('routedWitnessInfo').textContent='Reading route witness…';const epoch=fileEpoch;
+    try{const file=$('routedWitnessFile').files[0];if(!file||file.size>16*1024*1024)throw new Error('Choose route JSON at most 16 MiB');const text=await file.text();if(epoch!==fileEpoch)return;const value=JSON.parse(text);
+      if(value?.type!=='openbumpplan-route-witness'||value.schemaVersion!==1||!Array.isArray(value.routes))throw new Error('Expected a route witness, not an export receipt or project');
+      witness=value;$('routedWitnessInfo').textContent=`${value.routes.length} supplied routes; not yet verified against current project.`;
+    }catch(error){if(epoch===fileEpoch){$('routedWitnessInfo').textContent='No valid route witness.';fail(error);}}
+  };
+  for(const id of ['routedTechnology','routedSpecification'])$(id).oninput=()=>invalidate();
+  $('routedSample').onclick=()=>{try{invalidate();const d=routedHandoffDemo();setProject(d.project);witness=d.witness;$('routedTechnology').value=json(d.technology);$('routedSpecification').value=json(d.specification);$('routedWitnessInfo').textContent='Synthetic two-layer example: 2 supplied routes.';$('routedResult').textContent='Synthetic example loaded. Build to check and export.';}catch(error){fail(error);}};
+  $('routedBuild').onclick=()=>{
+    invalidate('Checking source routes and continuous copper…');
+    try{const d=inputs(),r=exportRoutedKiCad(d.project,d.witness,d.technology,d.specification);
+      const checked=verifyRoutedKiCad(d.project,d.witness,d.technology,r.board,r.receipt,d.specification);
+      if(!checked.ok)throw new Error(checked.issues.join('; '));generated=r;
+      const c=r.receipt.counts;$('routedResult').textContent=`Source checks pass · native structure replay passes\n${c.pads} pads · ${c.segments} traces · ${c.vias} vias · ${c.keepouts} keepouts\n${r.receipt.metrics.wireLengthUm} µm routed length\nKiCad native DRC has NOT been run in this browser.\nBoard SHA-256: ${r.receipt.boardSHA256}`;
+      // SVG is produced by the escaping source renderer, never from file markup.
+      $('routedPreview').innerHTML=exportRoutesSVG(d.project,d.witness);buttons.forEach(id=>$(id).disabled=false);
+    }catch(error){fail(error);}
+  };
+  $('routedSaveBoard').onclick=()=>{try{replay();download('OpenBumpPlan_Routed.kicad_pcb',generated.board);}catch(error){fail(error);}};
+  $('routedSaveReceipt').onclick=()=>{try{replay();download('OpenBumpPlan_Routed.receipt.json',generated.receipt);}catch(error){fail(error);}};
+  $('routedSaveInputs').onclick=()=>{try{download('OpenBumpPlan_Routed.inputs.json',replay());}catch(error){fail(error);}};
+  return {invalidate};
+}
+
+return {mountRoutedExport};})();
 __mods["src/core/exporters.js"]=(()=>{
 const { VERSION, KINDS, effectiveSignals, worldPoint, transformPoint, fingerprint }=__mods["src/core/model.js"];
 const { analyze }=__mods["src/core/rules.js"];
@@ -523,112 +1307,48 @@ function exportPDF(p) {
 }
 
 return {escapeHTML,LAYER_COLORS,ROLE_COLORS,csvTable,exportPortsCSV,exportConnectionsCSV,exportJSON,layoutProject,diagram,exportSVG,exportICDMarkdown,exportICDHTML,exportPDF};})();
-__mods["src/core/sexpr.js"]=(()=>{
-/** Bounded, non-evaluating KiCad S-expression reader. No regex-based tree parsing.
- * Strings remain strings, including numeric pin identifiers and Unicode names. */
-function parseSExpression(text, {maxBytes=5*1024*1024, maxNodes=400000, maxDepth=64}={}) {
-  for (const [key,value,cap] of [['maxBytes',maxBytes,5*1024*1024],['maxNodes',maxNodes,400000],['maxDepth',maxDepth,128]]) {
-    if (!Number.isSafeInteger(value)||value<1||value>cap) throw new Error(`Invalid ${key} budget`);
+__mods["src/core/kicad-nets.js"]=(()=>{
+const { children, singleton, identifier }=__mods["src/core/sexpr.js"];
+/** KiCad stopped serializing internal net codes at format revision 20251028.
+ * Later footprint affine transforms are not supported by this point adapter.
+ * Revision history: KiCad pcb_io_kicad_sexpr.h, stable 10.0 format family.
+ */
+function readKiCadNetContext(root, board) {
+  const version = singleton(root, 'version');
+  let revision = 0;
+  if (version) {
+    if (version.length !== 2 || !/^\d{8}$/.test(version[1])) throw new Error('Invalid KiCad format revision');
+    revision = Number(version[1]);
+    if (revision < 20170101 || revision > 20260206) throw new Error('Unsupported KiCad format revision; newer transforms must not be silently ignored');
   }
-  if (typeof text!=='string'||new TextEncoder().encode(text).length>maxBytes||text.includes('\0')) throw new Error('Expected NUL-free text within the byte budget');
-  let i=text.charCodeAt(0)===0xFEFF?1:0,count=0,root=null;
-  const stack=[];
-  function append(value) {
-    if (++count>maxNodes) throw new Error('S-expression node budget exceeded');
-    if (stack.length) stack.at(-1).push(value);
-    else if (root===null) root=value;
-    else throw new Error('More than one S-expression root');
+  const nameOnly = revision >= 20251028, nets = new Map(), names = new Set();
+  if (board) for (const net of children(root, 'net')) {
+    if (nameOnly) throw new Error('Unexpected legacy net table in name-only KiCad format');
+    if (net.length !== 3 || !/^(0|[1-9]\d*)$/.test(net[1]) || !Number.isSafeInteger(Number(net[1]))) throw new Error('Invalid net declaration');
+    identifier(net[2], 'net name', true);
+    if (nets.has(net[1]) || names.has(net[2])) throw new Error('Duplicate net code/name');
+    if ((net[1] === '0') !== (net[2] === '')) throw new Error('Net zero must be the empty net');
+    nets.set(net[1], net[2]); names.add(net[2]);
   }
-  while (i<text.length) {
-    const c=text[i];
-    if (/\s/.test(c)) {i++;continue;}
-    if (c===';') {while(i<text.length&&text[i]!=='\n')i++;continue;}
-    if (c==='(') {const node=[];append(node);stack.push(node);if(stack.length>maxDepth)throw new Error('S-expression depth budget exceeded');i++;continue;}
-    if (c===')') {if(!stack.length)throw new Error(`Unmatched closing parenthesis at ${i}`);stack.pop();i++;continue;}
-    let word='';
-    if (c==='"') {
-      i++;let closed=false;
-      while(i<text.length) {
-        const q=text[i++];
-        if(q==='"'){closed=true;break;}
-        if(q==='\\') {
-          const e=text[i++],esc={'"':'"','\\':'\\','n':'\n','r':'\r','t':'\t'};
-          if(!Object.hasOwn(esc,e))throw new Error('Unsupported string escape');
-          word+=esc[e];
-        } else {if(q.charCodeAt(0)<32)throw new Error('Unescaped control character in string');word+=q;}
-      }
-      if(!closed)throw new Error('Unterminated quoted string');
-      if(i<text.length&&!/[\s();]/.test(text[i]))throw new Error('Missing separator after quoted string');
-    } else {
-      while(i<text.length&&!/[\s();]/.test(text[i])) {
-        if(text[i]==='"'||text.charCodeAt(i)<32)throw new Error('Invalid unquoted atom');
-        word+=text[i++];
-      }
-      if(!word)throw new Error(`Invalid token at ${i}`);
-    }
-    append(word);
-  }
-  if(stack.length||!Array.isArray(root)||!root.length)throw new Error('Incomplete or empty S-expression');
-  return root;
-}
-function children(node, name) {return node.filter(v=>Array.isArray(v)&&v[0]===name);}
-function singleton(node,name,required=false) {
-  const found=children(node,name);
-  if(found.length>1||required&&!found.length)throw new Error(`Expected ${required?'exactly':'at most'} one ${name}`);
-  return found[0];
-}
-function finiteDecimal(value, label='number') {
-  if(typeof value!=='string'||!/^[-+]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(value))throw new Error(`Invalid ${label}`);
-  const n=Number(value);if(!Number.isFinite(n)||Math.abs(n)>1e6)throw new Error(`${label} out of range`);return n;
-}
-function identifier(value, label='identifier', empty=false) {
-  if(typeof value!=='string'||(!empty&&!value.length)||value.length>512||/[\u0000-\u001f\u007f]/.test(value))throw new Error(`Invalid ${label}`);
-  if(new TextDecoder().decode(new TextEncoder().encode(value))!==value)throw new Error(`Malformed Unicode in ${label}`);
-  return value;
+  return {revision, nameOnly, board, nets};
 }
 
-return {parseSExpression,children,singleton,finiteDecimal,identifier};})();
-__mods["src/core/hash.js"]=(()=>{
-/** SHA-256 for checksum-only use when Web Crypto is absent (e.g. a sandboxed
- * offline document). Algorithm: RFC 6234 sections 4–6. No signing/key operations.
- * Native Web Crypto is preferred by evidence.js. Cross-checked against Node/OpenSSL. */
-const K = new Uint32Array([
-  0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
-  0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
-  0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
-  0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
-  0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
-  0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
-  0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
-  0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
-]);
-const rotate = (v,n) => (v>>>n)|(v<<(32-n));
-function sha256Bytes(bytes) {
-  if(!(bytes instanceof Uint8Array)||bytes.length>64*1024*1024)throw new Error('SHA-256 fallback accepts at most 64 MiB of bytes.');
-  const length=bytes.length,size=Math.ceil((length+9)/64)*64,padded=new Uint8Array(size);
-  padded.set(bytes);padded[length]=128;
-  const view=new DataView(padded.buffer);
-  view.setUint32(size-8,Math.floor(length/0x20000000));view.setUint32(size-4,(length*8)>>>0);
-  const H=new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]),w=new Uint32Array(64);
-  for(let offset=0;offset<size;offset+=64){
-    for(let i=0;i<16;i++)w[i]=view.getUint32(offset+i*4);
-    for(let i=16;i<64;i++){
-      const a=w[i-15],b=w[i-2],s0=rotate(a,7)^rotate(a,18)^(a>>>3),s1=rotate(b,17)^rotate(b,19)^(b>>>10);
-      w[i]=(w[i-16]+s0+w[i-7]+s1)>>>0;
-    }
-    let [a,b,c,d,e,f,g,h]=H;
-    for(let i=0;i<64;i++){
-      const S1=rotate(e,6)^rotate(e,11)^rotate(e,25),choose=(e&f)^(~e&g),t1=(h+S1+choose+K[i]+w[i])>>>0;
-      const S0=rotate(a,2)^rotate(a,13)^rotate(a,22),majority=(a&b)^(a&c)^(b&c),t2=(S0+majority)>>>0;
-      h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0;
-    }
-    const state=[a,b,c,d,e,f,g,h];for(let i=0;i<8;i++)H[i]=(H[i]+state[i])>>>0;
+function readKiCadPadNet(pad, context) {
+  const net = singleton(pad, 'net');
+  if (!net) return '';
+  if (context.nameOnly) {
+    if (net.length !== 2) throw new Error('Expected name-only pad net for this KiCad format revision');
+    return identifier(net[1], 'pad net name', true);
   }
-  return [...H].map(x=>x.toString(16).padStart(8,'0')).join('');
+  if (net.length !== 3 || !/^(0|[1-9]\d*)$/.test(net[1]) || !Number.isSafeInteger(Number(net[1]))) throw new Error('Invalid pad net reference');
+  const name = identifier(net[2], 'pad net name', true);
+  if (context.board && !(net[1] === '0' && name === '' && !context.nets.has('0')) && context.nets.get(net[1]) !== name) throw new Error('Unresolved/mismatched pad net');
+  return name;
 }
 
-return {sha256Bytes};})();
+return {readKiCadNetContext,readKiCadPadNet};})();
 __mods["src/core/terminal-interop.js"]=(()=>{
+const { readKiCadNetContext, readKiCadPadNet }=__mods["src/core/kicad-nets.js"];
 const { parseSExpression, children, singleton, finiteDecimal, identifier }=__mods["src/core/sexpr.js"];
 const { emptyProject, normalizeProject, indexProject, worldPoint, KINDS, stableStringify }=__mods["src/core/model.js"];
 const { sha256Bytes }=__mods["src/core/hash.js"];
@@ -658,14 +1378,7 @@ function importKiCad(text, options={}) {
   if(references!==null&&(!Array.isArray(references)||!references.length||references.some(r=>typeof r!=='string')||new Set(references).size!==references.length))throw new Error('references must be a nonempty unique string list');
   const root=parseSExpression(text),board=root[0]==='kicad_pcb';
   if(!board&&root[0]!=='footprint')throw new Error('Expected modern kicad_pcb or footprint root');
-  const nets=new Map(),names=new Set();
-  if(board)for(const net of children(root,'net')) {
-    if(net.length!==3||!/^(0|[1-9]\d*)$/.test(net[1])||!Number.isSafeInteger(Number(net[1])))throw new Error('Invalid net declaration');
-    identifier(net[2],'net name',true);
-    if(nets.has(net[1])||names.has(net[2]))throw new Error('Duplicate net code/name');
-    if((net[1]==='0')!==(net[2]===''))throw new Error('Net zero must be the empty net');
-    nets.set(net[1],net[2]);names.add(net[2]);
-  }
+  const netContext=readKiCadNetContext(root,board);
   const all=board?children(root,'footprint'):[root],selected=[],found=new Set(),refs=new Set();
   if(board&&children(root,'module').length)throw new Error('Legacy modules cannot be silently omitted');
   if(!all.length)throw new Error('No modern footprints found');
@@ -702,12 +1415,7 @@ function importKiCad(text, options={}) {
       if(width<=0||height<=0||shape==='circle'&&width!==height)throw new Error('Invalid positive pad dimensions');
       const ratio=singleton(pad,'roundrect_rratio');
       if(shape==='roundrect'&&(!ratio||ratio.length!==2||finiteDecimal(ratio[1])<0||finiteDecimal(ratio[1])>0.5))throw new Error('Invalid roundrect ratio');
-      const [px,py,rotation]=pos(pad,true),net=singleton(pad,'net');let netName='';
-      if(net) {
-        if(net.length!==3||!/^(0|[1-9]\d*)$/.test(net[1]))throw new Error('Invalid pad net reference');
-        netName=identifier(net[2],'pad net name',true);
-        if(board&&!(net[1]==='0'&&netName===''&&!nets.has('0'))&&nets.get(net[1])!==netName)throw new Error(`Unresolved/mismatched pad net on ${ref}:${number}`);
-      }
+      const [px,py,rotation]=pos(pad,true),netName=readKiCadPadNet(pad,netContext);
       const id=prefix+ref+':'+number;
       if(ids.has(id))throw new Error(`Duplicate physical pin identifier ${id}; split stacked pads explicitly`);ids.add(id);
       const locked=fp.includes('locked')||pad.includes('locked')||!!singleton(fp,'locked')||!!singleton(pad,'locked');
@@ -913,6 +1621,8 @@ function swappedInterfaceDemo() {
 
 return {interoperabilityDemo,swappedInterfaceDemo};})();
 __mods["src/interop-app.js"]=(()=>{
+const { mountRoutedExport }=__mods["src/routed-export-ui.js"];
+let routedPanel=null;
 const { normalizeProject, KINDS, worldPoint, indexProject }=__mods["src/core/model.js"];
 const { escapeHTML }=__mods["src/core/exporters.js"];
 const { INTEROP_VERSION, importKiCad, exportKiCad, verifyKiCadExport, objectDigest }=__mods["src/core/terminal-interop.js"];
@@ -932,7 +1642,7 @@ $('interop').innerHTML=`<header><div class="logo" aria-hidden="true">${'<i></i>'
 <section class="panel"><h3>REVIEW BOUNDARIES</h3><h2>Three checks, different meanings</h2><p><strong>Import:</strong> coordinates, units, references and net identities are parsed; omitted content is reported.</p><p><strong>Intent:</strong> explicit graph connectivity is compared with a separate contract. Equal labels alone do not connect ports.</p><p><strong>Export:</strong> pin coordinates, nets, pad size and side are re-read and compared with the expected source and geometry.</p><p class="hint">No electrical, thermal, mechanical, manufacturing or regulatory approval is implied.</p></section></div></div></main><footer>Local-only • No cloud service, account, telemetry or external runtime dependencies • Save JSON to move between this workbench and the planner. Local storage is read only after an explicit request.</footer>`;
 function notice(s,bad=false){$('notice').textContent=s;$('notice').className='show'+(bad?' bad':'');clearTimeout(timer);timer=setTimeout(()=>$('notice').className='',6500);}
 function guarded(fn){return async()=>{try{await fn();}catch(e){notice(e.message,true);}};}
-function invalidate(){review=null;eco=null;generated=null;$('applyEco').disabled=true;['saveBoard','saveFootprint','saveReceipt'].forEach(k=>$(k).disabled=true);$('exportInfo').textContent='No current verified output.';}
+function invalidate(){routedPanel?.invalidate();review=null;eco=null;generated=null;$('applyEco').disabled=true;['saveBoard','saveFootprint','saveReceipt'].forEach(k=>$(k).disabled=true);$('exportInfo').textContent='No current verified output.';}
 function setProject(p){fileEpoch++;contractEpoch++;project=normalizeProject(p);pending=null;$('applyImport').disabled=true;invalidate();render();}
 function parseContract(){return JSON.parse($('contractText').value);}
 function render(){
@@ -978,6 +1688,7 @@ $('undo').onclick=guarded(()=>{if(!previous)throw new Error('Nothing to undo');c
 for(const k of ['exportKind','diameter','side'])$(k).oninput=()=>{generated=null;['saveBoard','saveFootprint','saveReceipt'].forEach(id=>$(id).disabled=true);$('exportInfo').textContent='Settings changed. Rebuild and verify.';};
 $('makeExport').onclick=guarded(()=>{generated=null;['saveBoard','saveFootprint','saveReceipt'].forEach(id=>$(id).disabled=true);const options=exportSpec(),out=exportKiCad(project,options),r=verifyKiCadExport(project,out.board,out.receipt,options);if(!r.ok)throw new Error(r.issues.join('; '));generated=out;$('exportInfo').textContent=`${r.checked} terminals independently re-read and matched\n${out.receipt.warnings.join('\n\n')}\nBoard SHA-256: ${r.boardSHA256}`;['saveBoard','saveFootprint','saveReceipt'].forEach(k=>$(k).disabled=false);});
 for(const [button,suffix,key]of [['saveBoard','kicad_pcb','board'],['saveFootprint','kicad_mod','footprint'],['saveReceipt','receipt.json','receipt']])$(button).onclick=guarded(()=>{if(!generated||!verifyKiCadExport(project,generated.board,generated.receipt,exportSpec()).ok)throw new Error('No current verified output');download('OpenBumpPlan_PinMap.'+suffix,generated[key]);});
+routedPanel=mountRoutedExport({container:document.querySelector('.right'),getProject:()=>project,setProject:p=>{previous=project;contract=null;$('contractText').value='';setProject(p);notice('Synthetic routed project loaded; supply a separately reviewed intent contract.');}});
 render();
 
 return {};})();</script></body></html>

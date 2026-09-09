@@ -1,3 +1,4 @@
+import { readKiCadNetContext, readKiCadPadNet } from './kicad-nets.js';
 import { parseSExpression, children, singleton, finiteDecimal, identifier } from './sexpr.js';
 import { emptyProject, normalizeProject, indexProject, worldPoint, KINDS, stableStringify } from './model.js';
 import { sha256Bytes } from './hash.js';
@@ -28,14 +29,7 @@ export function importKiCad(text, options={}) {
   if(references!==null&&(!Array.isArray(references)||!references.length||references.some(r=>typeof r!=='string')||new Set(references).size!==references.length))throw new Error('references must be a nonempty unique string list');
   const root=parseSExpression(text),board=root[0]==='kicad_pcb';
   if(!board&&root[0]!=='footprint')throw new Error('Expected modern kicad_pcb or footprint root');
-  const nets=new Map(),names=new Set();
-  if(board)for(const net of children(root,'net')) {
-    if(net.length!==3||!/^(0|[1-9]\d*)$/.test(net[1])||!Number.isSafeInteger(Number(net[1])))throw new Error('Invalid net declaration');
-    identifier(net[2],'net name',true);
-    if(nets.has(net[1])||names.has(net[2]))throw new Error('Duplicate net code/name');
-    if((net[1]==='0')!==(net[2]===''))throw new Error('Net zero must be the empty net');
-    nets.set(net[1],net[2]);names.add(net[2]);
-  }
+  const netContext=readKiCadNetContext(root,board);
   const all=board?children(root,'footprint'):[root],selected=[],found=new Set(),refs=new Set();
   if(board&&children(root,'module').length)throw new Error('Legacy modules cannot be silently omitted');
   if(!all.length)throw new Error('No modern footprints found');
@@ -72,12 +66,7 @@ export function importKiCad(text, options={}) {
       if(width<=0||height<=0||shape==='circle'&&width!==height)throw new Error('Invalid positive pad dimensions');
       const ratio=singleton(pad,'roundrect_rratio');
       if(shape==='roundrect'&&(!ratio||ratio.length!==2||finiteDecimal(ratio[1])<0||finiteDecimal(ratio[1])>0.5))throw new Error('Invalid roundrect ratio');
-      const [px,py,rotation]=pos(pad,true),net=singleton(pad,'net');let netName='';
-      if(net) {
-        if(net.length!==3||!/^(0|[1-9]\d*)$/.test(net[1]))throw new Error('Invalid pad net reference');
-        netName=identifier(net[2],'pad net name',true);
-        if(board&&!(net[1]==='0'&&netName===''&&!nets.has('0'))&&nets.get(net[1])!==netName)throw new Error(`Unresolved/mismatched pad net on ${ref}:${number}`);
-      }
+      const [px,py,rotation]=pos(pad,true),netName=readKiCadPadNet(pad,netContext);
       const id=prefix+ref+':'+number;
       if(ids.has(id))throw new Error(`Duplicate physical pin identifier ${id}; split stacked pads explicitly`);ids.add(id);
       const locked=fp.includes('locked')||pad.includes('locked')||!!singleton(fp,'locked')||!!singleton(pad,'locked');

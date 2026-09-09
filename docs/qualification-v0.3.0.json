@@ -1,10 +1,10 @@
 {
   "version": "0.3.0",
   "environment": {
-    "node": "v22.16.0",
+    "node": "v22.23.2",
     "platform": "linux",
     "architecture": "x64",
-    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C"
+    "cpu": "AMD EPYC 9V74 80-Core Processor"
   },
   "scope": "Synthetic engine qualification only. No commercial tools were run. These are not industrial capacity, interactive UI latency, electrical signoff or comparative vendor results.",
   "protocol": {
@@ -18,12 +18,12 @@
       "candidateEdges": 288,
       "inputSHA256": "00249abea58052639d2be64f6fad783d890866bbeb806232bfe1a934a654696d",
       "runsMs": [
-        43.381,
-        15.004,
-        15.198
+        47.676,
+        17.925,
+        23.093
       ],
-      "medianMs": 15.198,
-      "standaloneProofCheckMs": 4.799,
+      "medianMs": 23.093,
+      "standaloneProofCheckMs": 7.23,
       "status": "certified-coupled-optimal",
       "subproblems": 1,
       "objectiveUm": 16000
@@ -34,12 +34,12 @@
       "candidateEdges": 1216,
       "inputSHA256": "9c62a1677d7006424f3aecd194b0d26f83b85e33e4be52537b9e27c056fb491d",
       "runsMs": [
-        81.995,
-        44.122,
-        54.612
+        100.133,
+        68.845,
+        61.363
       ],
-      "medianMs": 54.612,
-      "standaloneProofCheckMs": 17.035,
+      "medianMs": 68.845,
+      "standaloneProofCheckMs": 18.023,
       "status": "certified-coupled-optimal",
       "subproblems": 1,
       "objectiveUm": 64000
@@ -50,12 +50,12 @@
       "candidateEdges": 4992,
       "inputSHA256": "65767c08b854c84827111ba252d79a5d9a9ac18bb6231fff49087f0059a80c19",
       "runsMs": [
-        235.154,
-        185.017,
-        166.689
+        296.076,
+        230.096,
+        203.788
       ],
-      "medianMs": 185.017,
-      "standaloneProofCheckMs": 57.644,
+      "medianMs": 230.096,
+      "standaloneProofCheckMs": 63.775,
       "status": "certified-coupled-optimal",
       "subproblems": 1,
       "objectiveUm": 256000
@@ -66,12 +66,12 @@
       "candidateEdges": 20224,
       "inputSHA256": "39f240af1502216f17d3bec679aed0e9dc754580a4b24f0846e4d4c5b9c9e39d",
       "runsMs": [
-        1418.752,
-        1392.861,
-        1406.716
+        1627.166,
+        1530.179,
+        1543.466
       ],
-      "medianMs": 1406.716,
-      "standaloneProofCheckMs": 336.328,
+      "medianMs": 1543.466,
+      "standaloneProofCheckMs": 387.436,
       "status": "certified-coupled-optimal",
       "subproblems": 1,
       "objectiveUm": 1024000
@@ -83,8 +83,8 @@
     "currentComplete": 88,
     "recovered": 17,
     "regressed": 0,
-    "previousMedianMs": 0.329,
-    "currentMedianMs": 0.369,
+    "previousMedianMs": 0.359,
+    "currentMedianMs": 0.375,
     "options": {
       "pitch": 10,
       "layers": 1,
@@ -105,13 +105,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 570,
-          "elapsedMs": 2.564
+          "elapsedMs": 3.727
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 570,
-          "elapsedMs": 1.298,
+          "elapsedMs": 1.499,
           "iterations": 0
         }
       },
@@ -122,13 +122,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 370,
-          "elapsedMs": 1.124
+          "elapsedMs": 1.029
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 370,
-          "elapsedMs": 0.883,
+          "elapsedMs": 1.466,
           "iterations": 0
         }
       },
@@ -139,13 +139,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 320,
-          "elapsedMs": 0.448
+          "elapsedMs": 0.494
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 320,
-          "elapsedMs": 0.369,
+          "elapsedMs": 0.372,
           "iterations": 0
         }
       },
@@ -156,13 +156,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 510,
-          "elapsedMs": 1.314
+          "elapsedMs": 1.008
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 510,
-          "elapsedMs": 1.035,
+          "elapsedMs": 0.988,
           "iterations": 0
         }
       },
@@ -173,13 +173,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 330,
-          "elapsedMs": 1.979
+          "elapsedMs": 0.433
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 330,
-          "elapsedMs": 0.623,
+          "elapsedMs": 0.579,
           "iterations": 0
         }
       },
@@ -190,13 +190,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 400,
-          "elapsedMs": 1.078
+          "elapsedMs": 0.649
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 400,
-          "elapsedMs": 0.939,
+          "elapsedMs": 0.636,
           "iterations": 0
         }
       },
@@ -207,13 +207,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 490,
-          "elapsedMs": 0.839
+          "elapsedMs": 1.006
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 490,
-          "elapsedMs": 0.836,
+          "elapsedMs": 1.445,
           "iterations": 0
         }
       },
@@ -224,13 +224,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 490,
-          "elapsedMs": 0.66
+          "elapsedMs": 0.726
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 490,
-          "elapsedMs": 0.729,
+          "elapsedMs": 0.707,
           "iterations": 0
         }
       },
@@ -241,13 +241,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 480,
-          "elapsedMs": 0.726
+          "elapsedMs": 0.727
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 480,
-          "elapsedMs": 0.587,
+          "elapsedMs": 0.719,
           "iterations": 0
         }
       },
@@ -258,13 +258,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 380,
-          "elapsedMs": 0.959
+          "elapsedMs": 0.972
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 630,
-          "elapsedMs": 6.408,
+          "elapsedMs": 6.359,
           "iterations": 4
         }
       },
@@ -275,13 +275,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 490,
-          "elapsedMs": 1.139
+          "elapsedMs": 1.541
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 490,
-          "elapsedMs": 0.966,
+          "elapsedMs": 1.107,
           "iterations": 0
         }
       },
@@ -292,13 +292,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 280,
-          "elapsedMs": 1.218
+          "elapsedMs": 1.853
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 410,
-          "elapsedMs": 6.089,
+          "elapsedMs": 5.459,
           "iterations": 3
         }
       },
@@ -309,13 +309,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 490,
-          "elapsedMs": 3.219
+          "elapsedMs": 1.121
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 700,
-          "elapsedMs": 2.41,
+          "elapsedMs": 2.684,
           "iterations": 1
         }
       },
@@ -326,13 +326,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 370,
-          "elapsedMs": 0.747
+          "elapsedMs": 0.81
         },
         "current": {
           "verified": false,
           "routed": 6,
           "wireLength": 540,
-          "elapsedMs": 24.041,
+          "elapsedMs": 21.76,
           "iterations": 25
         }
       },
@@ -343,13 +343,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 610,
-          "elapsedMs": 0.459
+          "elapsedMs": 0.522
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 610,
-          "elapsedMs": 0.914,
+          "elapsedMs": 0.51,
           "iterations": 0
         }
       },
@@ -360,13 +360,13 @@
           "verified": false,
           "routed": 4,
           "wireLength": 330,
-          "elapsedMs": 0.329
+          "elapsedMs": 0.392
         },
         "current": {
           "verified": false,
           "routed": 6,
           "wireLength": 530,
-          "elapsedMs": 13.016,
+          "elapsedMs": 14.292,
           "iterations": 25
         }
       },
@@ -377,13 +377,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 370,
-          "elapsedMs": 0.427
+          "elapsedMs": 0.542
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 590,
-          "elapsedMs": 3.192,
+          "elapsedMs": 2.713,
           "iterations": 4
         }
       },
@@ -394,13 +394,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 520,
-          "elapsedMs": 0.364
+          "elapsedMs": 0.338
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 520,
-          "elapsedMs": 0.274,
+          "elapsedMs": 0.342,
           "iterations": 0
         }
       },
@@ -411,13 +411,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 660,
-          "elapsedMs": 0.546
+          "elapsedMs": 0.604
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 660,
-          "elapsedMs": 0.484,
+          "elapsedMs": 1.087,
           "iterations": 0
         }
       },
@@ -428,13 +428,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 820,
-          "elapsedMs": 0.407
+          "elapsedMs": 0.502
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 820,
-          "elapsedMs": 0.398,
+          "elapsedMs": 0.506,
           "iterations": 0
         }
       },
@@ -445,13 +445,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 620,
-          "elapsedMs": 0.291
+          "elapsedMs": 0.359
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 620,
-          "elapsedMs": 0.316,
+          "elapsedMs": 0.374,
           "iterations": 0
         }
       },
@@ -462,13 +462,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 620,
-          "elapsedMs": 0.194
+          "elapsedMs": 0.253
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 620,
-          "elapsedMs": 0.197,
+          "elapsedMs": 0.25,
           "iterations": 0
         }
       },
@@ -479,13 +479,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 550,
-          "elapsedMs": 0.703
+          "elapsedMs": 0.357
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 550,
-          "elapsedMs": 0.414,
+          "elapsedMs": 0.356,
           "iterations": 0
         }
       },
@@ -496,13 +496,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 390,
-          "elapsedMs": 0.332
+          "elapsedMs": 0.348
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 390,
-          "elapsedMs": 0.282,
+          "elapsedMs": 0.355,
           "iterations": 0
         }
       },
@@ -513,13 +513,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 520,
-          "elapsedMs": 0.373
+          "elapsedMs": 0.428
         },
         "current": {
           "verified": false,
           "routed": 6,
           "wireLength": 630,
-          "elapsedMs": 13.34,
+          "elapsedMs": 14.376,
           "iterations": 25
         }
       },
@@ -530,13 +530,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 350,
-          "elapsedMs": 0.474
+          "elapsedMs": 0.52
         },
         "current": {
           "verified": false,
           "routed": 6,
           "wireLength": 530,
-          "elapsedMs": 13.89,
+          "elapsedMs": 15.257,
           "iterations": 25
         }
       },
@@ -547,13 +547,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 0.341
+          "elapsedMs": 0.339
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 0.437,
+          "elapsedMs": 0.343,
           "iterations": 0
         }
       },
@@ -564,13 +564,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 0.362
+          "elapsedMs": 0.334
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 0.313,
+          "elapsedMs": 0.352,
           "iterations": 0
         }
       },
@@ -581,13 +581,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 420,
-          "elapsedMs": 0.302
+          "elapsedMs": 0.295
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 420,
-          "elapsedMs": 0.225,
+          "elapsedMs": 0.277,
           "iterations": 0
         }
       },
@@ -598,13 +598,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 150,
-          "elapsedMs": 0.128
+          "elapsedMs": 0.152
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 150,
-          "elapsedMs": 0.115,
+          "elapsedMs": 0.15,
           "iterations": 0
         }
       },
@@ -615,13 +615,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 570,
-          "elapsedMs": 0.175
+          "elapsedMs": 0.215
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 570,
-          "elapsedMs": 0.167,
+          "elapsedMs": 0.223,
           "iterations": 0
         }
       },
@@ -632,13 +632,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 520,
-          "elapsedMs": 0.88
+          "elapsedMs": 0.528
         },
         "current": {
           "verified": false,
           "routed": 6,
           "wireLength": 680,
-          "elapsedMs": 14.322,
+          "elapsedMs": 18.671,
           "iterations": 25
         }
       },
@@ -649,13 +649,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 610,
-          "elapsedMs": 0.29
+          "elapsedMs": 0.349
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 610,
-          "elapsedMs": 0.282,
+          "elapsedMs": 0.32,
           "iterations": 0
         }
       },
@@ -666,13 +666,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 450,
-          "elapsedMs": 0.21
+          "elapsedMs": 0.211
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 450,
-          "elapsedMs": 0.566,
+          "elapsedMs": 0.225,
           "iterations": 0
         }
       },
@@ -683,13 +683,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 400,
-          "elapsedMs": 0.528
+          "elapsedMs": 0.644
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 560,
-          "elapsedMs": 1.458,
+          "elapsedMs": 2.1,
           "iterations": 2
         }
       },
@@ -700,13 +700,13 @@
           "verified": false,
           "routed": 4,
           "wireLength": 310,
-          "elapsedMs": 0.394
+          "elapsedMs": 0.495
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 650,
-          "elapsedMs": 2.243,
+          "elapsedMs": 2.644,
           "iterations": 5
         }
       },
@@ -717,13 +717,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 640,
-          "elapsedMs": 0.206
+          "elapsedMs": 0.238
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 640,
-          "elapsedMs": 0.52,
+          "elapsedMs": 0.242,
           "iterations": 0
         }
       },
@@ -734,13 +734,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 790,
-          "elapsedMs": 0.436
+          "elapsedMs": 0.469
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 790,
-          "elapsedMs": 0.992,
+          "elapsedMs": 0.472,
           "iterations": 0
         }
       },
@@ -751,13 +751,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 540,
-          "elapsedMs": 0.347
+          "elapsedMs": 0.339
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 540,
-          "elapsedMs": 0.259,
+          "elapsedMs": 0.326,
           "iterations": 0
         }
       },
@@ -768,13 +768,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 680,
-          "elapsedMs": 0.485
+          "elapsedMs": 0.576
         },
         "current": {
           "verified": false,
           "routed": 6,
           "wireLength": 810,
-          "elapsedMs": 13.875,
+          "elapsedMs": 15.113,
           "iterations": 25
         }
       },
@@ -785,13 +785,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 490,
-          "elapsedMs": 0.325
+          "elapsedMs": 0.41
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 490,
-          "elapsedMs": 0.354,
+          "elapsedMs": 0.396,
           "iterations": 0
         }
       },
@@ -802,13 +802,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 490,
-          "elapsedMs": 0.183
+          "elapsedMs": 0.206
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 490,
-          "elapsedMs": 0.164,
+          "elapsedMs": 0.209,
           "iterations": 0
         }
       },
@@ -819,13 +819,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 270,
-          "elapsedMs": 0.143
+          "elapsedMs": 0.182
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 270,
-          "elapsedMs": 0.235,
+          "elapsedMs": 0.182,
           "iterations": 0
         }
       },
@@ -836,13 +836,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 510,
-          "elapsedMs": 0.319
+          "elapsedMs": 0.359
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 510,
-          "elapsedMs": 0.272,
+          "elapsedMs": 0.336,
           "iterations": 0
         }
       },
@@ -853,13 +853,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 390,
-          "elapsedMs": 0.225
+          "elapsedMs": 0.262
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 390,
-          "elapsedMs": 0.207,
+          "elapsedMs": 0.261,
           "iterations": 0
         }
       },
@@ -870,13 +870,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 280,
-          "elapsedMs": 0.139
+          "elapsedMs": 0.17
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 280,
-          "elapsedMs": 0.614,
+          "elapsedMs": 0.173,
           "iterations": 0
         }
       },
@@ -887,13 +887,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 410,
-          "elapsedMs": 0.278
+          "elapsedMs": 0.311
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 410,
-          "elapsedMs": 0.278,
+          "elapsedMs": 0.301,
           "iterations": 0
         }
       },
@@ -904,13 +904,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 390,
-          "elapsedMs": 0.159
+          "elapsedMs": 0.181
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 390,
-          "elapsedMs": 0.145,
+          "elapsedMs": 0.18,
           "iterations": 0
         }
       },
@@ -921,13 +921,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 500,
-          "elapsedMs": 0.301
+          "elapsedMs": 0.347
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 500,
-          "elapsedMs": 0.28,
+          "elapsedMs": 0.416,
           "iterations": 0
         }
       },
@@ -938,13 +938,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 480,
-          "elapsedMs": 0.278
+          "elapsedMs": 0.337
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 480,
-          "elapsedMs": 0.32,
+          "elapsedMs": 0.342,
           "iterations": 0
         }
       },
@@ -955,13 +955,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 420,
-          "elapsedMs": 0.465
+          "elapsedMs": 0.504
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 670,
-          "elapsedMs": 10.333,
+          "elapsedMs": 10.232,
           "iterations": 20
         }
       },
@@ -972,13 +972,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 480,
-          "elapsedMs": 0.376
+          "elapsedMs": 0.409
         },
         "current": {
           "verified": false,
           "routed": 6,
           "wireLength": 580,
-          "elapsedMs": 13.36,
+          "elapsedMs": 13.372,
           "iterations": 25
         }
       },
@@ -989,13 +989,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 580,
-          "elapsedMs": 0.492
+          "elapsedMs": 0.477
         },
         "current": {
           "verified": false,
           "routed": 6,
           "wireLength": 610,
-          "elapsedMs": 12.214,
+          "elapsedMs": 13.156,
           "iterations": 25
         }
       },
@@ -1006,13 +1006,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 470,
-          "elapsedMs": 0.509
+          "elapsedMs": 0.566
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 720,
-          "elapsedMs": 2.471,
+          "elapsedMs": 2.826,
           "iterations": 5
         }
       },
@@ -1023,13 +1023,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 310,
-          "elapsedMs": 0.224
+          "elapsedMs": 0.271
         },
         "current": {
           "verified": false,
           "routed": 6,
           "wireLength": 370,
-          "elapsedMs": 12.411,
+          "elapsedMs": 12.883,
           "iterations": 25
         }
       },
@@ -1040,13 +1040,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 510,
-          "elapsedMs": 0.355
+          "elapsedMs": 0.347
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 510,
-          "elapsedMs": 0.328,
+          "elapsedMs": 0.343,
           "iterations": 0
         }
       },
@@ -1057,13 +1057,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 0.182
+          "elapsedMs": 0.364
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 0.211,
+          "elapsedMs": 0.37,
           "iterations": 0
         }
       },
@@ -1074,13 +1074,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 340,
-          "elapsedMs": 0.143
+          "elapsedMs": 0.296
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 340,
-          "elapsedMs": 0.149,
+          "elapsedMs": 0.285,
           "iterations": 0
         }
       },
@@ -1091,13 +1091,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 510,
-          "elapsedMs": 0.241
+          "elapsedMs": 0.465
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 510,
-          "elapsedMs": 0.238,
+          "elapsedMs": 0.484,
           "iterations": 0
         }
       },
@@ -1108,13 +1108,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 560,
-          "elapsedMs": 0.316
+          "elapsedMs": 0.539
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 560,
-          "elapsedMs": 0.255,
+          "elapsedMs": 0.554,
           "iterations": 0
         }
       },
@@ -1125,13 +1125,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 470,
-          "elapsedMs": 0.199
+          "elapsedMs": 0.338
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 470,
-          "elapsedMs": 0.153,
+          "elapsedMs": 0.335,
           "iterations": 0
         }
       },
@@ -1142,13 +1142,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 540,
-          "elapsedMs": 0.195
+          "elapsedMs": 0.364
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 540,
-          "elapsedMs": 0.186,
+          "elapsedMs": 0.321,
           "iterations": 0
         }
       },
@@ -1159,13 +1159,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 420,
-          "elapsedMs": 0.185
+          "elapsedMs": 0.256
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 420,
-          "elapsedMs": 0.184,
+          "elapsedMs": 0.221,
           "iterations": 0
         }
       },
@@ -1176,13 +1176,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 560,
-          "elapsedMs": 0.295
+          "elapsedMs": 0.302
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 560,
-          "elapsedMs": 0.609,
+          "elapsedMs": 0.796,
           "iterations": 0
         }
       },
@@ -1193,13 +1193,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 350,
-          "elapsedMs": 0.15
+          "elapsedMs": 0.176
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 350,
-          "elapsedMs": 0.152,
+          "elapsedMs": 0.165,
           "iterations": 0
         }
       },
@@ -1210,13 +1210,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 430,
-          "elapsedMs": 0.416
+          "elapsedMs": 0.45
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 710,
-          "elapsedMs": 7.87,
+          "elapsedMs": 8.106,
           "iterations": 17
         }
       },
@@ -1227,13 +1227,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 480,
-          "elapsedMs": 0.235
+          "elapsedMs": 0.278
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 480,
-          "elapsedMs": 0.304,
+          "elapsedMs": 0.27,
           "iterations": 0
         }
       },
@@ -1244,13 +1244,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 330,
-          "elapsedMs": 0.242
+          "elapsedMs": 0.308
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 1.264,
+          "elapsedMs": 1.554,
           "iterations": 3
         }
       },
@@ -1261,13 +1261,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 510,
-          "elapsedMs": 0.437
+          "elapsedMs": 0.462
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 860,
-          "elapsedMs": 8.466,
+          "elapsedMs": 9.307,
           "iterations": 16
         }
       },
@@ -1278,13 +1278,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 400,
-          "elapsedMs": 0.537
+          "elapsedMs": 0.452
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 950,
-          "elapsedMs": 9.29,
+          "elapsedMs": 11.272,
           "iterations": 24
         }
       },
@@ -1295,13 +1295,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 380,
-          "elapsedMs": 0.314
+          "elapsedMs": 0.408
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 530,
-          "elapsedMs": 3.287,
+          "elapsedMs": 2.087,
           "iterations": 4
         }
       },
@@ -1312,13 +1312,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 470,
-          "elapsedMs": 0.235
+          "elapsedMs": 0.336
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 470,
-          "elapsedMs": 0.226,
+          "elapsedMs": 0.259,
           "iterations": 0
         }
       },
@@ -1329,13 +1329,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 550,
-          "elapsedMs": 0.407
+          "elapsedMs": 0.435
         },
         "current": {
           "verified": false,
           "routed": 6,
           "wireLength": 800,
-          "elapsedMs": 15.084,
+          "elapsedMs": 15.968,
           "iterations": 25
         }
       },
@@ -1346,13 +1346,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 590,
-          "elapsedMs": 0.172
+          "elapsedMs": 0.219
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 590,
-          "elapsedMs": 0.173,
+          "elapsedMs": 0.375,
           "iterations": 0
         }
       },
@@ -1363,13 +1363,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 440,
-          "elapsedMs": 0.722
+          "elapsedMs": 0.432
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 440,
-          "elapsedMs": 0.264,
+          "elapsedMs": 0.515,
           "iterations": 0
         }
       },
@@ -1380,13 +1380,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 0.228
+          "elapsedMs": 0.437
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 0.228,
+          "elapsedMs": 0.451,
           "iterations": 0
         }
       },
@@ -1397,13 +1397,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 330,
-          "elapsedMs": 0.143
+          "elapsedMs": 0.28
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 330,
-          "elapsedMs": 0.133,
+          "elapsedMs": 0.286,
           "iterations": 0
         }
       },
@@ -1414,13 +1414,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 350,
-          "elapsedMs": 0.149
+          "elapsedMs": 0.33
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 350,
-          "elapsedMs": 0.147,
+          "elapsedMs": 0.312,
           "iterations": 0
         }
       },
@@ -1431,13 +1431,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 490,
-          "elapsedMs": 0.329
+          "elapsedMs": 0.671
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 660,
-          "elapsedMs": 2.542,
+          "elapsedMs": 3.551,
           "iterations": 6
         }
       },
@@ -1448,13 +1448,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 510,
-          "elapsedMs": 0.204
+          "elapsedMs": 0.206
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 510,
-          "elapsedMs": 0.154,
+          "elapsedMs": 0.195,
           "iterations": 0
         }
       },
@@ -1465,13 +1465,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 390,
-          "elapsedMs": 0.8
+          "elapsedMs": 0.424
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 640,
-          "elapsedMs": 2.009,
+          "elapsedMs": 1.94,
           "iterations": 4
         }
       },
@@ -1482,13 +1482,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 420,
-          "elapsedMs": 0.159
+          "elapsedMs": 0.266
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 420,
-          "elapsedMs": 0.137,
+          "elapsedMs": 0.172,
           "iterations": 0
         }
       },
@@ -1499,13 +1499,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 470,
-          "elapsedMs": 0.254
+          "elapsedMs": 0.309
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 470,
-          "elapsedMs": 0.238,
+          "elapsedMs": 0.306,
           "iterations": 0
         }
       },
@@ -1516,13 +1516,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 0.166
+          "elapsedMs": 0.31
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 0.143,
+          "elapsedMs": 0.358,
           "iterations": 0
         }
       },
@@ -1533,13 +1533,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 580,
-          "elapsedMs": 0.273
+          "elapsedMs": 0.333
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 580,
-          "elapsedMs": 0.305,
+          "elapsedMs": 0.33,
           "iterations": 0
         }
       },
@@ -1550,13 +1550,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 580,
-          "elapsedMs": 0.266
+          "elapsedMs": 0.334
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 580,
-          "elapsedMs": 0.417,
+          "elapsedMs": 0.318,
           "iterations": 0
         }
       },
@@ -1567,13 +1567,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 410,
-          "elapsedMs": 0.894
+          "elapsedMs": 0.416
         },
         "current": {
           "verified": false,
           "routed": 6,
           "wireLength": 590,
-          "elapsedMs": 11.359,
+          "elapsedMs": 12.933,
           "iterations": 25
         }
       },
@@ -1584,7 +1584,7 @@
           "verified": true,
           "routed": 6,
           "wireLength": 400,
-          "elapsedMs": 0.148
+          "elapsedMs": 0.188
         },
         "current": {
           "verified": true,
@@ -1601,13 +1601,13 @@
           "verified": false,
           "routed": 5,
           "wireLength": 390,
-          "elapsedMs": 0.337
+          "elapsedMs": 0.405
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 720,
-          "elapsedMs": 5.389,
+          "elapsedMs": 5.384,
           "iterations": 11
         }
       },
@@ -1618,13 +1618,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 640,
-          "elapsedMs": 0.173
+          "elapsedMs": 0.22
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 640,
-          "elapsedMs": 0.172,
+          "elapsedMs": 0.206,
           "iterations": 0
         }
       },
@@ -1635,13 +1635,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 0.375
+          "elapsedMs": 0.332
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 460,
-          "elapsedMs": 0.329,
+          "elapsedMs": 0.326,
           "iterations": 0
         }
       },
@@ -1652,13 +1652,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 520,
-          "elapsedMs": 0.176
+          "elapsedMs": 0.214
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 520,
-          "elapsedMs": 0.162,
+          "elapsedMs": 0.19,
           "iterations": 0
         }
       },
@@ -1669,13 +1669,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 530,
-          "elapsedMs": 0.26
+          "elapsedMs": 0.305
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 530,
-          "elapsedMs": 0.264,
+          "elapsedMs": 0.313,
           "iterations": 0
         }
       },
@@ -1686,13 +1686,13 @@
           "verified": false,
           "routed": 4,
           "wireLength": 520,
-          "elapsedMs": 0.494
+          "elapsedMs": 0.549
         },
         "current": {
           "verified": false,
           "routed": 6,
           "wireLength": 940,
-          "elapsedMs": 13.961,
+          "elapsedMs": 15.869,
           "iterations": 25
         }
       },
@@ -1703,13 +1703,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 420,
-          "elapsedMs": 0.277
+          "elapsedMs": 0.307
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 420,
-          "elapsedMs": 0.238,
+          "elapsedMs": 0.299,
           "iterations": 0
         }
       },
@@ -1720,13 +1720,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 590,
-          "elapsedMs": 0.377
+          "elapsedMs": 0.342
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 590,
-          "elapsedMs": 0.36,
+          "elapsedMs": 0.325,
           "iterations": 0
         }
       },
@@ -1737,13 +1737,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 360,
-          "elapsedMs": 0.157
+          "elapsedMs": 0.182
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 360,
-          "elapsedMs": 0.14,
+          "elapsedMs": 0.189,
           "iterations": 0
         }
       },
@@ -1754,13 +1754,13 @@
           "verified": false,
           "routed": 4,
           "wireLength": 330,
-          "elapsedMs": 0.351
+          "elapsedMs": 0.768
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 600,
-          "elapsedMs": 2.905,
+          "elapsedMs": 2.976,
           "iterations": 6
         }
       },
@@ -1771,13 +1771,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 370,
-          "elapsedMs": 0.185
+          "elapsedMs": 0.197
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 370,
-          "elapsedMs": 0.138,
+          "elapsedMs": 0.175,
           "iterations": 0
         }
       },
@@ -1788,13 +1788,13 @@
           "verified": true,
           "routed": 6,
           "wireLength": 430,
-          "elapsedMs": 0.2
+          "elapsedMs": 0.198
         },
         "current": {
           "verified": true,
           "routed": 6,
           "wireLength": 430,
-          "elapsedMs": 0.167,
+          "elapsedMs": 0.191,
           "iterations": 0
         }
       }

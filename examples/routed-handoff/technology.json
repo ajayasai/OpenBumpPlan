@@ -1,0 +1,7 @@
+{
+  "units": "um",
+  "traceWidth": 250,
+  "viaDiameter": 600,
+  "padDiameter": 500,
+  "clearance": 200
+}

@@ -30,3 +30,10 @@ Initial planning alpha: five-stage model, interactive studio, configured rules, 
 ## 0.3.0 — 2026-09-06
 
 Scalable integer-cost assignment with independent residual/Hall certificates; coupled hard-constraint search with replayable partition coverage; negotiated-congestion routing; independent continuous finite-width trace/via/pad clearance checks; expected-technology-bound review verification; integrated UI/CLI; new regression, exhaustive-oracle, adversarial and native-browser suites. Fixed corpus routing completion 71→88/100; no vendor superiority claim.
+
+### Routed native handoff qualification
+
+- Export checked two-layer copper with explicit drill/thickness/envelope, reserved pads and keepouts.
+- Add source-bound structural replay, exclusive-output CLI and workbench downloads that invalidate on source changes.
+- Add real native geometry, connectivity, DRC, damaged-layout controls, CLI and browser regressions.
+- Correct release fixture version and invalid workflow context; preserve all retained tests.

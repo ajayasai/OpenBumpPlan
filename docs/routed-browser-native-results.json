@@ -1,0 +1,17 @@
+{
+  "browser": "143.0.7499.4",
+  "origin": "http-source",
+  "passed": 8,
+  "failed": 0,
+  "scenarios": [
+    "No fabricated output without source witness",
+    "Actual copper and receipt downloads replay through standalone CLI",
+    "Invalid technology clears output and fails copper checks",
+    "Malformed specification cannot keep a stale download enabled",
+    "Project replacement invalidates old routes and download controls",
+    "User project and witness files reproduce deterministic native output",
+    "Partial witness rejected, without automatic repair or missing-net suppression",
+    "Receipt cannot substitute for independently checked source routes"
+  ],
+  "pageErrors": []
+}
